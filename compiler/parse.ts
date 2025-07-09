@@ -1,7 +1,9 @@
+#!/usr/bin/env tsx
+
 import fs from 'fs';
 const swc = require('@swc/core');
 
-const CODE = fs.readFileSync('../tests/1.js', 'utf-8');
+const CODE = fs.readFileSync(__dirname + '/../tests/1.js', 'utf-8');
 
 /// @todo get rid of sync to parse multiple inputs at one time
 const ast = swc.parseSync(CODE, {
@@ -11,5 +13,5 @@ const ast = swc.parseSync(CODE, {
     dynamicImport: true
   });
 
-fs.writeFileSync('../output/AST.json', JSON.stringify(ast, null, 4));
+fs.writeFileSync(__dirname + '/output/AST.json', JSON.stringify(ast, null, 4));
 
