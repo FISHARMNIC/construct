@@ -1,0 +1,2 @@
+Use template functions to allow floats and it sums etc
+Cpp has native lamdba support too
