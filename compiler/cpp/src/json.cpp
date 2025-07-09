@@ -1,11 +1,6 @@
-#include <fstream>
-#include <string>
-#include <iostream>
+#include <util/json.hpp>
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
-json loadFile(std::string fileName)
+json json_loadFile(std::string fileName)
 {
     std::ifstream jsonStream(fileName);
 

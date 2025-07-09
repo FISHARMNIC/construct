@@ -1,9 +1,9 @@
-#include <cstdlib>
+#include <util/genAST.hpp>
 
-#include <util/files.hpp>
+#include <iostream>
 
 int genAST()
 {
-    int ret = std::system(FNA_AST_GENERATOR);
+    int ret = std::system(FILE_GETDIR("/../../",FNA_AST_GENERATOR));
     return WEXITSTATUS(ret);
 }

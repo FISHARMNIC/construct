@@ -1,2 +1,6 @@
 Use template functions to allow floats and it sums etc
 Cpp has native lamdba support too
+Basic data types arent classes until they need to be
+    -> for example numbers can just be base numbers until a method is called
+    -> js     : let bob = 10; bob.valueOf()
+    -> becomes: int bob = 10; Number.valueOf(&bob);

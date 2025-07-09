@@ -22,7 +22,9 @@ echo -e "$C_MAG------- beginning compilation ------$C_DONE"
 find "$SRC_DIR" -type f -name "*.cpp" | while read -r sfile; do
     fname=$(basename "$sfile" .cpp)
     echo -e "[ ${C_YLW}COMPILE$C_DONE   ] : $sfile" 
-    g++ -std=c++11 -I $INC_DIR -Wall -Wextra -Werror -c -$OPTIM "$sfile" -o "$BIN_DIR/$fname.o"
+    dpath=$(dirname "$sfile")
+
+    g++ -std=c++17 -I $INC_DIR -D__DIRNAME=\"$dpath\" -Wall -Wextra -Werror -c -$OPTIM "$sfile" -o "$BIN_DIR/$fname.o"
     if [ $? -eq 0 ]; then
         echo -e "[        ${C_GREEN}OK$C_DONE ]"
     else
@@ -33,3 +35,5 @@ find "$SRC_DIR" -type f -name "*.cpp" | while read -r sfile; do
 done
 
 echo -e "$C_MAG------ compilation successful ------$C_DONE"
+
+g++ $BIN_DIR/*.o -o $BIN_DIR/main
