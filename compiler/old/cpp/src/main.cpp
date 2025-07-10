@@ -11,5 +11,7 @@ int main()
         std::exit(EXIT_FAILURE);
     }
 
-    json file = json_loadFile(FILE_GETDIR("/../../output/",FNA_JSON_OP));
+    json ast = json_loadFile(FILE_GETDIR("/../../output/",FNA_JSON_OP));
+
+    json body = ast["body"];
 }
