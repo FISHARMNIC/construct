@@ -4,3 +4,68 @@ Basic data types arent classes until they need to be
     -> for example numbers can just be base numbers until a method is called
     -> js     : let bob = 10; bob.valueOf()
     -> becomes: int bob = 10; Number.valueOf(&bob);
+Store all numbers as doubles, and cast to int when needed
+
+Deal with NaNs? (like: 10 - "hello")
+
+Tricky parts:
+Multi-typed array
+Objects (not really, just maps)
+Variable re-typing
+    -> use templates and create new variables
+    -> example:
+
+        function thing(n)
+        {
+            print(n + 100)
+        }
+
+        let bob = 10;
+        thing(bob);
+        bob = "hello";
+        thing(bob);
+
+        --------
+        
+        template <typename T>
+        void thing(T n)
+        {
+            print(n + 100) // Supposing "string" has a "+" overload
+        }
+
+        double bob_double = 10;
+        thing(bob_double);
+        string bob_string = "hello";
+        thing(bob_string);
+    -> possible issues:
+        -> in a loop:
+            Solution:
+            Tagged struct + union with most recent type set from an enum
+            struct {
+                tag
+                union {
+                    ...types
+                }
+
+                get() {
+                    return this as types[tag] // need an if statement
+                }
+            }
+            Templates are called based the tag (not exactly templates anymore)
+            print_overloads[bob.tag](bob.get())
+            This is only done with "iffy variables", who are re-typed with backwards control flow
+
+            let bob = 10;
+            repeat(10)
+            {
+                print(bob);
+                bob = "hello";
+            }
+
+            --------
+
+            double bob_double = 10;
+            repeat(10)
+            {
+
+            }
