@@ -86,5 +86,23 @@ export default {
                 type: cpp.types.STRING
             }
         };
-    }
+    },
+
+    Identifier(node: ESTree.Identifier, build: buildInfo[]): buildInfo {
+        let binding = cpp.variables.get(node);
+        // if is variable
+        if(binding)
+        {
+            return {
+            content: binding.name,
+            info: {
+                type: binding.type
+            }
+        };
+        }
+        else
+        {
+            ASTerr(node, `@tod identifier "${node.name}" is not declared or unimplemented`);
+        }
+    },
 }

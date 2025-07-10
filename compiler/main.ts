@@ -2,6 +2,10 @@ import parseAST from './parse';
 import * as ESTree from '@babel/types';
 import ASTerr from './ASTerr';
 import nodes from './nodes';
+import { Binding } from '@babel/traverse';
+/// @ts-ignore
+import { analyze } from "eslint-scope"; 
+
 
 const INPUTFILE = __dirname + '/../tests/1.js';
 
@@ -16,7 +20,11 @@ export interface buildInfo
   info: nodeInfo;
 }
 
-export let ast = parseAST(INPUTFILE);
+const bindings = new Map<ESTree.Identifier, Binding>();
+
+export const ast = parseAST(INPUTFILE);
+export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
+
 export function walk(node: ESTree.Node): buildInfo[]
 {
   let build: buildInfo[] = [];

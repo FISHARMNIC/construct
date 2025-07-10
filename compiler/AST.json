@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 30,
+    "end": 131,
     "loc": {
         "start": {
             "line": 1,
@@ -9,16 +9,16 @@
             "index": 0
         },
         "end": {
-            "line": 2,
-            "column": 16,
-            "index": 30
+            "line": 10,
+            "column": 2,
+            "index": 131
         }
     },
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 30,
+        "end": 131,
         "loc": {
             "start": {
                 "line": 1,
@@ -26,9 +26,9 @@
                 "index": 0
             },
             "end": {
-                "line": 2,
-                "column": 16,
-                "index": 30
+                "line": 10,
+                "column": 2,
+                "index": 131
             }
         },
         "sourceType": "module",
@@ -189,6 +189,101 @@
                     }
                 ],
                 "kind": "let"
+            },
+            {
+                "type": "VariableDeclaration",
+                "start": 32,
+                "end": 42,
+                "loc": {
+                    "start": {
+                        "line": 4,
+                        "column": 0,
+                        "index": 32
+                    },
+                    "end": {
+                        "line": 4,
+                        "column": 10,
+                        "index": 42
+                    }
+                },
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "start": 36,
+                        "end": 41,
+                        "loc": {
+                            "start": {
+                                "line": 4,
+                                "column": 4,
+                                "index": 36
+                            },
+                            "end": {
+                                "line": 4,
+                                "column": 9,
+                                "index": 41
+                            }
+                        },
+                        "id": {
+                            "type": "Identifier",
+                            "start": 36,
+                            "end": 37,
+                            "loc": {
+                                "start": {
+                                    "line": 4,
+                                    "column": 4,
+                                    "index": 36
+                                },
+                                "end": {
+                                    "line": 4,
+                                    "column": 5,
+                                    "index": 37
+                                },
+                                "identifierName": "c"
+                            },
+                            "name": "c"
+                        },
+                        "init": {
+                            "type": "Identifier",
+                            "start": 40,
+                            "end": 41,
+                            "loc": {
+                                "start": {
+                                    "line": 4,
+                                    "column": 8,
+                                    "index": 40
+                                },
+                                "end": {
+                                    "line": 4,
+                                    "column": 9,
+                                    "index": 41
+                                },
+                                "identifierName": "b"
+                            },
+                            "name": "b"
+                        }
+                    }
+                ],
+                "kind": "let",
+                "trailingComments": [
+                    {
+                        "type": "CommentBlock",
+                        "value": "\nnumber a = static_cast<number>(1.23)\nstring b = std::string(\"Hello\")\nstring c = b\n",
+                        "start": 44,
+                        "end": 131,
+                        "loc": {
+                            "start": {
+                                "line": 6,
+                                "column": 0,
+                                "index": 44
+                            },
+                            "end": {
+                                "line": 10,
+                                "column": 2,
+                                "index": 131
+                            }
+                        }
+                    }
+                ]
             }
         ],
         "directives": [],
@@ -196,5 +291,24 @@
             "topLevelAwait": false
         }
     },
-    "comments": []
+    "comments": [
+        {
+            "type": "CommentBlock",
+            "value": "\nnumber a = static_cast<number>(1.23)\nstring b = std::string(\"Hello\")\nstring c = b\n",
+            "start": 44,
+            "end": 131,
+            "loc": {
+                "start": {
+                    "line": 6,
+                    "column": 0,
+                    "index": 44
+                },
+                "end": {
+                    "line": 10,
+                    "column": 2,
+                    "index": 131
+                }
+            }
+        }
+    ]
 }

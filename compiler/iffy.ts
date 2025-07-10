@@ -18,23 +18,21 @@ export default function(ident: ESTree.Identifier): boolean
             {
                 return;
             }
-            else
+            else // if we found another identifier with my name
             {
+                // get the binding of the identifier
                 const binding = path.scope.getBinding(myName);
 
                 if(binding == undefined)
                 {
                     return;
                 }
-                // found the same identifier somewhere else
+                // if the identifier is the same as me
                 else if(binding.identifier === ident)
                 {
                     const parent = path.parent;
 
-                    // if(ESTree.isVariableDeclarator(parent))
-                    //     return;
-
-                    // Variable is reassigned somewhere
+                    // If the identifier is being reassigned a value
                     if(ESTree.isAssignmentExpression(parent) && parent.left === node)
                     {
                         ASTerr(node, "SSA only for now");
