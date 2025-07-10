@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 16,
+    "end": 30,
     "loc": {
         "start": {
             "line": 1,
@@ -9,16 +9,16 @@
             "index": 0
         },
         "end": {
-            "line": 1,
+            "line": 2,
             "column": 16,
-            "index": 16
+            "index": 30
         }
     },
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 16,
+        "end": 30,
         "loc": {
             "start": {
                 "line": 1,
@@ -26,9 +26,9 @@
                 "index": 0
             },
             "end": {
-                "line": 1,
+                "line": 2,
                 "column": 16,
-                "index": 16
+                "index": 30
             }
         },
         "sourceType": "module",
@@ -37,7 +37,7 @@
             {
                 "type": "VariableDeclaration",
                 "start": 0,
-                "end": 16,
+                "end": 13,
                 "loc": {
                     "start": {
                         "line": 1,
@@ -46,15 +46,15 @@
                     },
                     "end": {
                         "line": 1,
-                        "column": 16,
-                        "index": 16
+                        "column": 13,
+                        "index": 13
                     }
                 },
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
                         "start": 4,
-                        "end": 15,
+                        "end": 12,
                         "loc": {
                             "start": {
                                 "line": 1,
@@ -63,8 +63,8 @@
                             },
                             "end": {
                                 "line": 1,
-                                "column": 15,
-                                "index": 15
+                                "column": 12,
+                                "index": 12
                             }
                         },
                         "id": {
@@ -87,9 +87,9 @@
                             "name": "a"
                         },
                         "init": {
-                            "type": "BinaryExpression",
+                            "type": "NumericLiteral",
                             "start": 8,
-                            "end": 15,
+                            "end": 12,
                             "loc": {
                                 "start": {
                                     "line": 1,
@@ -98,55 +98,93 @@
                                 },
                                 "end": {
                                     "line": 1,
-                                    "column": 15,
-                                    "index": 15
+                                    "column": 12,
+                                    "index": 12
                                 }
                             },
-                            "left": {
-                                "type": "NumericLiteral",
-                                "start": 8,
-                                "end": 10,
-                                "loc": {
-                                    "start": {
-                                        "line": 1,
-                                        "column": 8,
-                                        "index": 8
-                                    },
-                                    "end": {
-                                        "line": 1,
-                                        "column": 10,
-                                        "index": 10
-                                    }
-                                },
-                                "extra": {
-                                    "rawValue": 10,
-                                    "raw": "10"
-                                },
-                                "value": 10
+                            "extra": {
+                                "rawValue": 1.23,
+                                "raw": "1.23"
                             },
-                            "operator": "+",
-                            "right": {
-                                "type": "NumericLiteral",
-                                "start": 13,
-                                "end": 15,
-                                "loc": {
-                                    "start": {
-                                        "line": 1,
-                                        "column": 13,
-                                        "index": 13
-                                    },
-                                    "end": {
-                                        "line": 1,
-                                        "column": 15,
-                                        "index": 15
-                                    }
-                                },
-                                "extra": {
-                                    "rawValue": 12,
-                                    "raw": "12"
-                                },
-                                "value": 12
+                            "value": 1.23
+                        }
+                    }
+                ],
+                "kind": "let"
+            },
+            {
+                "type": "VariableDeclaration",
+                "start": 14,
+                "end": 30,
+                "loc": {
+                    "start": {
+                        "line": 2,
+                        "column": 0,
+                        "index": 14
+                    },
+                    "end": {
+                        "line": 2,
+                        "column": 16,
+                        "index": 30
+                    }
+                },
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "start": 18,
+                        "end": 29,
+                        "loc": {
+                            "start": {
+                                "line": 2,
+                                "column": 4,
+                                "index": 18
+                            },
+                            "end": {
+                                "line": 2,
+                                "column": 15,
+                                "index": 29
                             }
+                        },
+                        "id": {
+                            "type": "Identifier",
+                            "start": 18,
+                            "end": 19,
+                            "loc": {
+                                "start": {
+                                    "line": 2,
+                                    "column": 4,
+                                    "index": 18
+                                },
+                                "end": {
+                                    "line": 2,
+                                    "column": 5,
+                                    "index": 19
+                                },
+                                "identifierName": "b"
+                            },
+                            "name": "b"
+                        },
+                        "init": {
+                            "type": "StringLiteral",
+                            "start": 22,
+                            "end": 29,
+                            "loc": {
+                                "start": {
+                                    "line": 2,
+                                    "column": 8,
+                                    "index": 22
+                                },
+                                "end": {
+                                    "line": 2,
+                                    "column": 15,
+                                    "index": 29
+                                }
+                            },
+                            "extra": {
+                                "rawValue": "Hello",
+                                "raw": "\"Hello\""
+                            },
+                            "value": "Hello"
                         }
                     }
                 ],

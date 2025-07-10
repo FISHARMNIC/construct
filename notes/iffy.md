@@ -6,3 +6,4 @@
 * Iffy variables are represented with variants, and read with visit (see iffy.cpp)
 * Iffy variables should emit a warning, that they drastically slow performance
     * Note that they can also snowball into making everything iffy
+* All values in objects are iffy

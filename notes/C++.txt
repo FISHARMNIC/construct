@@ -6,6 +6,9 @@ Basic data types arent classes until they need to be
     -> becomes: int bob = 10; Number.valueOf(&bob);
 Store all numbers as doubles, and cast to int when needed
 
+Use/create tool that auto does semi colons
+    -> like while(a = 10) {} does not need a semi-c on the inside
+
 Deal with NaNs? (like: 10 - "hello")
 
 Tricky parts:

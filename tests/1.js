@@ -1,1 +1,2 @@
-let a = 10 + 12;
+let a = 1.23;
+let b = "Hello";

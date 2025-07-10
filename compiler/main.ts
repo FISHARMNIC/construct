@@ -1,36 +1,50 @@
 import parseAST from './parse';
-import traverse, { NodePath } from '@babel/traverse';
 import * as ESTree from '@babel/types';
 import ASTerr from './ASTerr';
 import nodes from './nodes';
 
 const INPUTFILE = __dirname + '/../tests/1.js';
 
-let output: string[] = [];
-
-let ast = parseAST(INPUTFILE);
-
-export function walk(node: ESTree.Node): string[]
+interface nodeInfo
 {
-  let build: string[] = [];
+  type?:string
+}
 
-  let type = node.type
+export interface buildInfo
+{
+  content: string;
+  info: nodeInfo;
+}
+
+export let ast = parseAST(INPUTFILE);
+export function walk(node: ESTree.Node): buildInfo[]
+{
+  let build: buildInfo[] = [];
+
+  let type = node.type;
   if(type in nodes)
   {
-    build.push(nodes[node.type](node, build))
+    build.push(nodes[node.type](node, build));
   }
   else
   {
-    ASTerr(node, `Unable to handle node "${type}"`)
+    ASTerr(node, `Unable to handle node "${type}"`);
   }
 
   return build;
 }
 
+let output: string[] = [];
 
 for(const statement of ast.program.body)
 {
-  output.push(...walk(statement));
+  let info: buildInfo[] | string[] = walk(statement);
+
+  let strinfo = info.map((v: buildInfo): string => {
+    return v.content;
+  })
+
+  output.push(...strinfo);
 }
 
 
