@@ -34,7 +34,7 @@ function main()
 {
     // Proper scope handling (this a != global a) 
     let a = 2;
-    
+
     // Proper JS type coercion (only for 4-main math for now)
     // note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
     // still works but forces c to be a "let" instead
@@ -77,6 +77,6 @@ int main() {
   std::cout << c << std::endl;
 }
 ```
-`js::number` = alias for `double`
-`js::string` = alias for `std::string`
-`let` = WIP abuse of `std::variant` with overloads
+`js::number` = alias for `double`  
+`js::string` = alias for `std::string`  
+`let` = WIP abuse of `std::variant` with overloads  
