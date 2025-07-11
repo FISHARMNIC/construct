@@ -4,5 +4,5 @@ let b = "Hello";
 function main()
 {
     let a = 3.21;
-    let b = (5 + 10) * 2;
+    let b = ("Hello" + 10) * 2;
 }

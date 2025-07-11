@@ -15,9 +15,6 @@ namespace js
 
 using JSvalue = std::variant<js::number, js::string>;
 
-js::string operator+(js::number left, const js::string &right);
-js::string operator+(const js::string &left, js::number right);
-
 struct let
 {
     JSvalue value;
@@ -28,7 +25,21 @@ struct let
     let(const char *s);
 
     let operator+(let const &other);
+    let operator-(let const &other);
+    let operator*(let const &other);
+    let operator/(let const &other);
 };
 
 #define NUMBER(n) static_cast<js::number>(n)
+
+#define LET_OPOO(_o_)                          \
+    let let::operator _o_ (let const &other)      \
+    {                                          \
+        let result = std::visit(               \
+            [](auto &&x, auto &&y) -> let {    \
+                let ret = x _o_ y;             \
+                return ret; },                 \
+            this->value, other.value);         \
+        return result;                         \
+    }
 #endif // __JS_H__

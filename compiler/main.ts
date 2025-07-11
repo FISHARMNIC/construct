@@ -7,6 +7,7 @@ import chalk from 'chalk';
 
 const pre = `
 #include "include/js.hpp"
+#include "include/string.hpp"
 `
 
 const OUTFILE = __dirname + "/../output/out.cpp";

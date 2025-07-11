@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 95,
+    "end": 101,
     "loc": {
         "start": {
             "line": 1,
@@ -11,18 +11,18 @@
         "end": {
             "line": 8,
             "column": 1,
-            "index": 95
+            "index": 101
         }
     },
     "range": [
         0,
-        95
+        101
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 95,
+        "end": 101,
         "loc": {
             "start": {
                 "line": 1,
@@ -32,12 +32,12 @@
             "end": {
                 "line": 8,
                 "column": 1,
-                "index": 95
+                "index": 101
             }
         },
         "range": [
             0,
-            95
+            101
         ],
         "sourceType": "module",
         "interpreter": null,
@@ -233,7 +233,7 @@
             {
                 "type": "FunctionDeclaration",
                 "start": 32,
-                "end": 95,
+                "end": 101,
                 "loc": {
                     "start": {
                         "line": 4,
@@ -243,12 +243,12 @@
                     "end": {
                         "line": 8,
                         "column": 1,
-                        "index": 95
+                        "index": 101
                     }
                 },
                 "range": [
                     32,
-                    95
+                    101
                 ],
                 "id": {
                     "type": "Identifier",
@@ -279,7 +279,7 @@
                 "body": {
                     "type": "BlockStatement",
                     "start": 48,
-                    "end": 95,
+                    "end": 101,
                     "loc": {
                         "start": {
                             "line": 5,
@@ -289,12 +289,12 @@
                         "end": {
                             "line": 8,
                             "column": 1,
-                            "index": 95
+                            "index": 101
                         }
                     },
                     "range": [
                         48,
-                        95
+                        101
                     ],
                     "body": [
                         {
@@ -394,7 +394,7 @@
                         {
                             "type": "VariableDeclaration",
                             "start": 72,
-                            "end": 93,
+                            "end": 99,
                             "loc": {
                                 "start": {
                                     "line": 7,
@@ -403,19 +403,19 @@
                                 },
                                 "end": {
                                     "line": 7,
-                                    "column": 25,
-                                    "index": 93
+                                    "column": 31,
+                                    "index": 99
                                 }
                             },
                             "range": [
                                 72,
-                                93
+                                99
                             ],
                             "declarations": [
                                 {
                                     "type": "VariableDeclarator",
                                     "start": 76,
-                                    "end": 92,
+                                    "end": 98,
                                     "loc": {
                                         "start": {
                                             "line": 7,
@@ -424,13 +424,13 @@
                                         },
                                         "end": {
                                             "line": 7,
-                                            "column": 24,
-                                            "index": 92
+                                            "column": 30,
+                                            "index": 98
                                         }
                                     },
                                     "range": [
                                         76,
-                                        92
+                                        98
                                     ],
                                     "id": {
                                         "type": "Identifier",
@@ -458,7 +458,7 @@
                                     "init": {
                                         "type": "BinaryExpression",
                                         "start": 80,
-                                        "end": 92,
+                                        "end": 98,
                                         "loc": {
                                             "start": {
                                                 "line": 7,
@@ -467,18 +467,18 @@
                                             },
                                             "end": {
                                                 "line": 7,
-                                                "column": 24,
-                                                "index": 92
+                                                "column": 30,
+                                                "index": 98
                                             }
                                         },
                                         "range": [
                                             80,
-                                            92
+                                            98
                                         ],
                                         "left": {
                                             "type": "BinaryExpression",
                                             "start": 81,
-                                            "end": 87,
+                                            "end": 93,
                                             "loc": {
                                                 "start": {
                                                     "line": 7,
@@ -487,18 +487,18 @@
                                                 },
                                                 "end": {
                                                     "line": 7,
-                                                    "column": 19,
-                                                    "index": 87
+                                                    "column": 25,
+                                                    "index": 93
                                                 }
                                             },
                                             "range": [
                                                 81,
-                                                87
+                                                93
                                             ],
                                             "left": {
-                                                "type": "NumericLiteral",
+                                                "type": "StringLiteral",
                                                 "start": 81,
-                                                "end": 82,
+                                                "end": 88,
                                                 "loc": {
                                                     "start": {
                                                         "line": 7,
@@ -507,40 +507,40 @@
                                                     },
                                                     "end": {
                                                         "line": 7,
-                                                        "column": 14,
-                                                        "index": 82
+                                                        "column": 20,
+                                                        "index": 88
                                                     }
                                                 },
                                                 "range": [
                                                     81,
-                                                    82
+                                                    88
                                                 ],
                                                 "extra": {
-                                                    "rawValue": 5,
-                                                    "raw": "5"
+                                                    "rawValue": "Hello",
+                                                    "raw": "\"Hello\""
                                                 },
-                                                "value": 5
+                                                "value": "Hello"
                                             },
                                             "operator": "+",
                                             "right": {
                                                 "type": "NumericLiteral",
-                                                "start": 85,
-                                                "end": 87,
+                                                "start": 91,
+                                                "end": 93,
                                                 "loc": {
                                                     "start": {
                                                         "line": 7,
-                                                        "column": 17,
-                                                        "index": 85
+                                                        "column": 23,
+                                                        "index": 91
                                                     },
                                                     "end": {
                                                         "line": 7,
-                                                        "column": 19,
-                                                        "index": 87
+                                                        "column": 25,
+                                                        "index": 93
                                                     }
                                                 },
                                                 "range": [
-                                                    85,
-                                                    87
+                                                    91,
+                                                    93
                                                 ],
                                                 "extra": {
                                                     "rawValue": 10,
@@ -556,23 +556,23 @@
                                         "operator": "*",
                                         "right": {
                                             "type": "NumericLiteral",
-                                            "start": 91,
-                                            "end": 92,
+                                            "start": 97,
+                                            "end": 98,
                                             "loc": {
                                                 "start": {
                                                     "line": 7,
-                                                    "column": 23,
-                                                    "index": 91
+                                                    "column": 29,
+                                                    "index": 97
                                                 },
                                                 "end": {
                                                     "line": 7,
-                                                    "column": 24,
-                                                    "index": 92
+                                                    "column": 30,
+                                                    "index": 98
                                                 }
                                             },
                                             "range": [
-                                                91,
-                                                92
+                                                97,
+                                                98
                                             ],
                                             "extra": {
                                                 "rawValue": 2,

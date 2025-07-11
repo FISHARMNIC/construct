@@ -111,12 +111,12 @@ export default {
         let right = right_a[0];
 
         // @todo return type based on types of left and right
-        let str = "(" + left.content + node.operator + right.content + ")";
-
+        let cotype = coerce(node, left.info.type, right.info.type);
+        let str = cpp.cast.static(cotype, left.content + node.operator + right.content);
         return {
             content: str,
             info: {
-                type: coerce(node, left.info.type, right.info.type),
+                type: cotype,
                 left: left, 
                 right: right
             }
