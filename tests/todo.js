@@ -23,8 +23,7 @@ function main()
     // c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
     dbgprint(c);
 
-    // Re-typing
-    c = "Hello!";
+    a = "Hello!"; // -----> breaks since a is now a let, and line 13 uses a in math
 
     dbgprint(c);
 }

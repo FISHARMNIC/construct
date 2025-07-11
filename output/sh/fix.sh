@@ -1,3 +1,5 @@
+#!/bin/bash
+
 D=$(dirname "$0")
 
 # sometimes it doesn't work fully the first time

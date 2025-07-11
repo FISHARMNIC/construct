@@ -5,7 +5,8 @@
 * Produces semi-readable c++
 * Currently implemented:
     * string and number variables
-        * Simple variable assignment (can't evaluate non-existent references yet)
+        * Simple variable assignment + reassignment
+        * reassignment is limited and will often fallback to `lets` for now (see below)
     * four-function math with proper JS type coercion
     * function declaration (no calling nor parameters, so essentially `main` is the only thing you can do with this)
     * cout placeholder `dbgprint()`
@@ -24,15 +25,35 @@
 ## Example conversion
 #### Input:
 ```JS
+// Global variables
 let a = 1.23;
 let b = "Hello";
 
+// Functions (no params no return yet)
 function main()
 {
-    let a = 3.21;
-    let b = ("10" + 10) * 2;
+    // Proper scope handling (this a != global a) 
+    let a = 2;
+    // Proper JS type coercion (only for 4-main math for now)
+    // note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
+    // still works but forces c to be a "let" instead
+    let b = ("10" + 10) * a;
+    let c = 100;
 
-    dbgprint(b);
+    // 100
+    dbgprint(c);
+
+    // Reassignment
+    a = 10;
+    c = b;
+
+    // c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
+    dbgprint(c);
+
+    // Re-typing
+    c = "Hello!";
+
+    dbgprint(c);
 }
 ```
 #### Becomes:
@@ -40,17 +61,21 @@ function main()
 #include "include/js.hpp"
 #include "include/string.hpp"
 
-/* 
-js::number and js::string are just aliases
-of double and std:string accordingly
-*/
 js::number a = NUMBER(1.23);
 js::string b = js::string("Hello");
 
 int main() {
-  js::number a = NUMBER(3.21);
-  js::number b = static_cast<js::number>(
-      static_cast<js::string>(js::string("10") + NUMBER(10)) * NUMBER(2));
-  std::cout << b << std::endl;
+  js::number a = NUMBER(2);
+  js::number b = static_cast<js::number>(static_cast<js::string>(js::string("10") + NUMBER(10)) * a);
+  let c = NUMBER(100);
+  std::cout << c << std::endl;
+  a = NUMBER(10);
+  c = b;
+  std::cout << c << std::endl;
+  c = js::string("Hello!");
+  std::cout << c << std::endl;
 }
 ```
+`js::number` = alias for `double`
+`js::string` = alias for `std::string`
+`let` = WIP abuse of `std::variant` with overloads

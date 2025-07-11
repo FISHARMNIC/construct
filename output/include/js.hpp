@@ -15,6 +15,7 @@ namespace js
 
 using JSvalue = std::variant<js::number, js::string>;
 
+/// @todo make `let` part of js namespace
 struct let
 {
     JSvalue value;

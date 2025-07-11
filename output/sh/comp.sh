@@ -1,3 +1,5 @@
+#!/bin/bash
+
 D=$(dirname "$0")
 LIBS_DIR=$D/../libs
 BIN_DIR=$D/../bin
