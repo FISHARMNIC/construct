@@ -3,11 +3,12 @@ import ASTerr from './ASTerr';
 import { buildInfo, walk } from './walk';
 import { cpp } from './cpp';
 import iffy from './iffy';
+import { coerce } from './typeco';
 
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo | void {
         const kind = node.kind; // let, const, var
-        let myType = cpp.types.UNKNOWN;
+        let myType = cpp.types.AUTO;
 
         if (node.declarations.length != 1) {
             ASTerr(node, "@todo multiple declrations not implemented");
@@ -17,7 +18,7 @@ export default {
                 // each declaration can have multiple declarators: "let a = 2,b = 10";
                 const ident = dec.id;
                 if (!ESTree.isIdentifier(ident)) {
-                    ASTerr(node, "Non-simple variable declaration (destructuring?) not implemented");
+                    ASTerr(node, "@todo non-simple variable declaration (destructuring?) not implemented");
                 }
                 else {
                     const name = (ident as ESTree.Identifier).name;
@@ -28,11 +29,13 @@ export default {
 
                     let value: buildInfo = {
                         content: "",
-                        info: {}
+                        info: {
+                            type: cpp.types.IFFY
+                        }
                     };
 
                     if (iffy(ident)) {
-                        myType = cpp.types.UNKNOWN;
+                        myType = cpp.types.IFFY;
                     }
                     else {
                         // given value: "let a = 10" as opposed to "let a"
@@ -71,7 +74,13 @@ export default {
     },
 
     FunctionDeclaration(node: ESTree.FunctionDeclaration, build: buildInfo[]): buildInfo {
-        let name = node.id?.name;
+        let id = node.id;
+        if(id == undefined || id == null)
+        {
+            ASTerr(node, "[INTERNAL] Function has no ID");
+        }
+
+        let name: string = id.name;
         let params = node.params;
 
         //console.log(node)
@@ -81,17 +90,42 @@ export default {
         }
         else {
             return {
-                content: cpp.functions.create(name, params, node.body),
+                content: cpp.functions.create(id, name, params, node.body),
                 info: {
-                    type: cpp.types.NUMBER
+                    type: cpp.types.FUNCTION
                 }
             };
         }
     },
 
+    BinaryExpression(node: ESTree.BinaryExpression, build: buildInfo[]): buildInfo {
+        let left_a = walk(node.left);
+        let right_a = walk(node.right);
+
+        if(left_a.length != 1 || right_a.length != 1)
+        {
+            ASTerr(node, "Unsure what to do with binary expression (got multiple values, expected 1)");
+        }
+
+        let left = left_a[0];
+        let right = right_a[0];
+
+        // @todo return type based on types of left and right
+        let str = "(" + left.content + node.operator + right.content + ")";
+
+        return {
+            content: str,
+            info: {
+                type: coerce(node, left.info.type, right.info.type),
+                left: left, 
+                right: right
+            }
+        }
+    },
+
     NumericLiteral(node: ESTree.NumericLiteral, build: buildInfo[]): buildInfo {
         return {
-            content: cpp.cast.static(cpp.types.NUMBER, node.value.toString()),
+            content: cpp.cast.number(node.value.toString()),
             info: {
                 type: cpp.types.NUMBER
             }

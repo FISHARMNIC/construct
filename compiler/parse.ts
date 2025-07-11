@@ -5,7 +5,9 @@ import { parse, ParseResult } from '@babel/parser';
 export default function parseAST(fileDir: string): ParseResult<any> {
     const CODE: string = fs.readFileSync(fileDir, 'utf-8');
     const ast = parse(CODE, {
-        sourceType: 'module'
+        sourceType: 'module',
+        ranges: true,    
+        // tokens: true
     });
     fs.writeFileSync('AST.json', JSON.stringify(ast, null, 4));
     return ast;

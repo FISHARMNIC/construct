@@ -10,7 +10,9 @@ import { analyze } from "eslint-scope";
 const INPUTFILE = __dirname + '/../tests/1.js';
 
 interface nodeInfo {
-  type?: string
+  type: string,
+  left?: buildInfo,
+  right?: buildInfo
 }
 
 export interface buildInfo {
@@ -37,6 +39,27 @@ export function walk(node: ESTree.Node): buildInfo[] {
   return build;
 }
 
+
+export function walkBody(body: ESTree.Statement[]): string[]
+{
+  let output: string[] = [];
+
+    for (const statement of body) {
+        let info: buildInfo[] | string[] = walk(statement);
+
+        let strinfo = info.map((v: buildInfo | undefined): string => {
+            if (v == undefined) {
+                console.log("[INTERNAL ERROR] Something didnt return a buildinfo");
+                process.exit(1);
+            }
+            return v.content;
+        })
+
+        output.push(...strinfo);
+    }
+
+    return output;
+}
 
 // traverse(ast, {
 //   VariableDeclaration(path: NodePath<ESTree.VariableDeclaration>) {

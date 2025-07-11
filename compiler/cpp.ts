@@ -1,8 +1,8 @@
 import * as ESTree from '@babel/types';
-import { eslintScope } from './walk';
-import { err } from './ASTerr';
+import { eslintScope, walkBody } from './walk';
+import ASTerr, { err } from './ASTerr';
 
-type ctype = string;
+export type ctype = string;
 
 interface CVariable
 {
@@ -11,7 +11,15 @@ interface CVariable
     constant: boolean,
 }
 
+interface CFunction
+{
+    return: ctype;
+    name: string,
+    parameters: ESTree.FunctionParameter[]
+}
+
 let allVars = new Map<ESTree.Identifier, CVariable>();
+let allFuncs = new Map<ESTree.Identifier, CFunction>();
 
 // this is an absolutley disgusting TEMPORARY function until I'm not lazy and fix the walker to store path info
 export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | undefined {
@@ -42,7 +50,10 @@ export let cpp =  {
         FUNCTION: "void*", // @todo use cpp function types
         STRING: "js::string",
         ARRAY: "ERROR_NOT_IMPLEMENTED",
-        UNKNOWN: "let",
+        IFFY: "let",
+        AUTO: "auto", // only to be used by functions
+        BOOLEAN: "boolean",
+        // @todo null literals
         LATER: function() {
             return `__TYPE_${new_unique()}__` // @todo use macros to replace later
         }
@@ -52,6 +63,10 @@ export let cpp =  {
         static(to: ctype, value: string): string
         {
             return `static_cast<${to}>(${value})`;
+        },
+        number(value: string): string
+        {
+            return `NUMBER(${value})`
         }
     },
     string:
@@ -71,6 +86,11 @@ export let cpp =  {
         },
         create(node: ESTree.Identifier, type: ctype, name: string, value: string, constant: boolean = false): string
         {
+            if(allVars.has(node))
+            {
+                ASTerr(node, `Identical variable "${name}" already declared`);
+            }
+
             allVars.set(node, {
                 type, name, constant
             });
@@ -89,21 +109,36 @@ export let cpp =  {
     },
     functions:
     {
-        create(name: string, params: ESTree.FunctionParameter[], body: ESTree.BlockStatement)
+        all: allFuncs,
+        create(node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement)
         {
+            let body = block.body;
+
+            if(allFuncs.has(node))
+            {
+                ASTerr(node, `Identical function "${name}" already declared`);
+            }
+
+            allFuncs.set(node, {
+                return: cpp.types.AUTO,
+                parameters: params,
+                name,
+            });
+
             if(params.length != 0)
             {
-                // use variable create to store them
-                err("@todo parameters not implemented")
+                // use allVars to create to store them
+                err("@todo parameters not implemented");
             }
             else
             {
-                // @todo find some way to return the later
-
-                let returnT = cpp.types.LATER();
-                let ostring = `${returnT} ${name}()\n{\n`
+                let ostring = `auto ${name}()\n{\n`;
 
                 // @todo function body here
+
+                let output: string[] = walkBody(body);
+
+                ostring += output.join("\n");
 
                 ostring += "\n}"
 

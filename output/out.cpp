@@ -1,8 +1,8 @@
 
 #include "include/js.hpp"
-js::number a = static_cast<js::number>(1.23);
+js::number a = NUMBER(1.23);
 js::string b = js::string("Hello");
-__TYPE_1__ main()
-{
-
+int main() {
+  js::number a = NUMBER(3.21);
+  js::number b = ((NUMBER(5) + NUMBER(10)) * NUMBER(2));
 }
