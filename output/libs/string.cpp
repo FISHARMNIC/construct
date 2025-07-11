@@ -7,6 +7,20 @@ String overloads for basic math
 
 */
 
+static double stod_noexep(const std::string& s) {
+        const char* cstr = s.c_str();
+        char* eptr = nullptr;
+        js::number converted = std::strtod(cstr, &eptr);
+        if (cstr == eptr) 
+        {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+        else
+        {
+            return converted;
+        }
+}
+
 js::string operator+(NUM_STR)
 {
     js::string formatted = fmt::format("{}", left);
@@ -21,48 +35,48 @@ js::string operator+(STR_NUM)
 
 js::number operator-(STR_STR)
 {
-    return std::stod(left) - std::stod(right);
+    return stod_noexep(left) - stod_noexep(right);
 }
 
 
 js::number operator-(NUM_STR)
 {
-    return left - std::stod(right);
+    return left - stod_noexep(right);
 }
 
 js::number operator-(STR_NUM)
 {
-    return std::stod(left) - right;
+    return stod_noexep(left) - right;
 }
 
 js::number operator*(STR_STR)
 {
-    return std::stod(left) * std::stod(right);
+    return stod_noexep(left) * stod_noexep(right);
 }
 
 
 js::number operator*(NUM_STR)
 {
-    return left * std::stod(right);
+    return left * stod_noexep(right);
 }
 
 js::number operator*(STR_NUM)
 {
-    return std::stod(left) * right;
+    return stod_noexep(left) * right;
 }
 
 js::number operator/(STR_STR)
 {
-    return std::stod(left) / std::stod(right);
+    return stod_noexep(left) / stod_noexep(right);
 }
 
 
 js::number operator/(NUM_STR)
 {
-    return left / std::stod(right);
+    return left / stod_noexep(right);
 }
 
 js::number operator/(STR_NUM)
 {
-    return std::stod(left) / right;
+    return stod_noexep(left) / right;
 }

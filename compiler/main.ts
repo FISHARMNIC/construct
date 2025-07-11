@@ -5,8 +5,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import chalk from 'chalk';
 
-const pre = `
-#include "include/js.hpp"
+const pre = `#include "include/js.hpp"
 #include "include/string.hpp"
 `
 
@@ -17,7 +16,7 @@ const FIXFILE = __dirname + "/../output/sh/fix.sh";
 function begin(): void {
 
     /// @ts-ignore
-    console.log(chalk.green("=== Compiling ==="));
+    console.log(chalk.green("|| (construct) JS => Cpp"));
 
     let output: string[] = walkBody(ast.program.body);
 
@@ -26,9 +25,12 @@ function begin(): void {
     fs.writeFileSync(OUTFILE, ostr, 'utf-8');
 
     /// @ts-ignore
-    console.log(chalk.green("=== Fixing C++ ==="));
+    console.log(chalk.green("|| DONE\n|| (g++) Cpp => Bin"));
 
     exec(FIXFILE, (e, stdout, stderr) => {
+        /// @ts-ignore
+        console.log(chalk.green(`|| DONE\n|| Output in ${__dirname + "/../output/bin/a.out"}\n`));
+
         if (e) {
             console.error(`ERROR: ${e.message}`);
             return;
@@ -38,7 +40,7 @@ function begin(): void {
         }
 
         /// @ts-ignore
-        console.log(chalk.green("=== Done! ==="));
+        console.log(chalk.green("(Ignore the errors above!)"));
     });
 }
 

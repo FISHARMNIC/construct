@@ -123,6 +123,38 @@ export default {
         }
     },
 
+    ExpressionStatement(node: ESTree.ExpressionStatement, build: buildInfo[]): buildInfo
+    {
+        let expression = node.expression;
+
+        if(ESTree.isCallExpression(expression))
+        {
+            /// @ts-ignore
+            let fname: string = expression.callee.name;
+
+            /// debug
+            if(fname === "dbgprint")
+            {
+                return {
+                    // @ts-ignore
+                    content: `std::cout << ${expression.arguments[0].name} << std::endl`,
+                    info: {
+                        type: cpp.types.NUMBER
+                    }
+                }
+            }
+            else
+            {
+                ASTerr(expression, "@todo call expressions not implemented (only dbgprint)");
+            }
+        }
+        else
+        {
+            ASTerr(expression, `@todo expression type ${expression.type} not implemented`);
+        }
+        process.exit(0)
+    },
+
     NumericLiteral(node: ESTree.NumericLiteral, build: buildInfo[]): buildInfo {
         return {
             content: cpp.cast.number(node.value.toString()),
