@@ -7,15 +7,18 @@ let::let(js::number n) : value(n) {}
 let::let(js::string s) : value(s) {}
 let::let(const char *s) : value(js::string(s)) {}
 
-// LET_OPOO(+)
-
-let let::operator+(let const &other)
+std::ostream &operator<<(std::ostream &os, let const &me)
 {
-    let result = std::visit([](auto &&x, auto &&y) -> let
-                            { let ret = x + y; return ret; }, this->value, other.value);
-    return result;
+    std::visit(
+        [&](auto && v) -> void
+        {    
+            os << v;
+        }, me.value);
+
+    return os;
 }
 
+LET_OPOO(+)
 LET_OPOO(-)
 LET_OPOO(*)
 LET_OPOO(/)

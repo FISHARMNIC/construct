@@ -30,6 +30,8 @@ struct let
     let operator/(let const &other);
 };
 
+std::ostream &operator<<(std::ostream &os, let const &me);
+
 #define NUMBER(n) static_cast<js::number>(n)
 
 #define LET_OPOO(_o_)                          \

@@ -1,10 +1,11 @@
 import parseAST from './parse';
 import * as ESTree from '@babel/types';
-import ASTerr from './ASTerr';
+import ASTerr, { err } from './ASTerr';
 import nodes from './nodes';
 import { Binding } from '@babel/traverse';
 /// @ts-ignore
 import { analyze } from "eslint-scope";
+import { dummyMode, setDummyMode } from './cpp';
 
 
 const INPUTFILE = __dirname + '/../tests/1.js';
@@ -25,7 +26,10 @@ const bindings = new Map<ESTree.Identifier, Binding>();
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
 
-export function walk(node: ESTree.Node): buildInfo[] {
+export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
+
+  setDummyMode(dummy);
+
   let build: buildInfo[] = [];
 
   let type = node.type;
@@ -36,29 +40,44 @@ export function walk(node: ESTree.Node): buildInfo[] {
     ASTerr(node, `Unable to handle node "${type}"`);
   }
 
+  setDummyMode(false);
+
   return build;
 }
 
-
-export function walkBody(body: ESTree.Statement[]): string[]
+// Use to make sure that the return of a `walk` only has one item
+export function walk_requireSingle(node: ESTree.Node, err: string = "Expected single value", dummy: boolean = false): buildInfo
 {
+  let bInfo: buildInfo[] = walk(node, dummy);
+
+  if(bInfo.length != 1)
+  {
+    ASTerr(node, err);
+  }
+  
+  return bInfo[0];
+}
+
+
+export function walkBody(body: ESTree.Statement[], dummy: boolean = false): string[] {
+
   let output: string[] = [];
 
-    for (const statement of body) {
-        let info: buildInfo[] | string[] = walk(statement);
+  for (const statement of body) {
+    let info: buildInfo[] | string[] = walk(statement, dummy);
 
-        let strinfo = info.map((v: buildInfo | undefined): string => {
-            if (v == undefined) {
-                console.log("[INTERNAL ERROR] Something didnt return a buildinfo");
-                process.exit(1);
-            }
-            return v.content;
-        })
+    let strinfo = info.map((v: buildInfo | undefined): string => {
+      if (v == undefined) {
+        console.log("[INTERNAL ERROR] Something didnt return a buildinfo");
+        process.exit(1);
+      }
+      return v.content;
+    })
 
-        output.push(...strinfo);
-    }
+    output.push(...strinfo);
+  }
 
-    return output;
+  return output;
 }
 
 // traverse(ast, {

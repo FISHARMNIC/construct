@@ -5,7 +5,7 @@
 * Produces semi-readable c++
 * Currently implemented:
     * string and number variables
-        * only single assignment right now
+        * Simple variable assignment (can't evaluate non-existent references yet)
     * four-function math with proper JS type coercion
     * function declaration (no calling nor parameters, so essentially `main` is the only thing you can do with this)
     * cout placeholder `dbgprint()`

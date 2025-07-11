@@ -1,6 +1,6 @@
 import * as ESTree from '@babel/types';
-import ASTerr from './ASTerr';
-import { buildInfo, walk } from './walk';
+import ASTerr, { ASTerr_kill } from './ASTerr';
+import { buildInfo, walk, walk_requireSingle } from './walk';
 import { cpp } from './cpp';
 import iffy from './iffy';
 import { coerce } from './typeco';
@@ -11,7 +11,7 @@ export default {
         let myType = cpp.types.AUTO;
 
         if (node.declarations.length != 1) {
-            ASTerr(node, "@todo multiple declrations not implemented");
+            ASTerr(node, "@todo multiple declarations not implemented");
         }
         else {
             for (const dec of node.declarations) {
@@ -34,27 +34,24 @@ export default {
                         }
                     };
 
-                    if (iffy(ident)) {
-                        myType = cpp.types.IFFY;
-                    }
-                    else {
+                    
                         // given value: "let a = 10" as opposed to "let a"
                         if (!(value_in === undefined || value_in === null)) {
                             //console.log(value_in);
-                            let allInfo: buildInfo[] = walk(value_in);
-                            if (allInfo.length != 1) {
-                                ASTerr(node, "Assigning multiple values to variable");
-                            }
-                            else {
-                                value = allInfo[0];
+                            value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
+
 
                                 if (value.info.type) {
                                     myType = value.info.type;
                                 }
-                            }
-                        }
-                    }
 
+                                if (iffy(ident, myType)) {
+                                    myType = cpp.types.IFFY;
+                                }
+                        
+                        }
+                    
+                    //console.log("CREATING", myType, name, value)
                     let compiled = cpp.variables.create(ident, myType, name, value.content, kind === "const");
 
                     //console.log(compiled);
@@ -71,6 +68,36 @@ export default {
                 }
             }
         }
+    },
+
+    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[]): buildInfo {
+        let left = node.left;
+        if(!ESTree.isIdentifier(left))
+        {
+            ASTerr_kill(left, "@todo LHS of assignment is not an identifier");
+        }
+        else
+        {
+            let existingVar = cpp.variables.get(left);
+            if(existingVar == undefined)
+            {
+                ASTerr_kill(left, `@todo LHS of assignment "${left.name}" is not a variable (or isn't declared)`);
+            }
+            else
+            {
+                let rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
+                let reassignment: string = cpp.variables.reassign(left, existingVar, rval);
+
+                return {
+                    content: reassignment,
+                    info: {
+                        type: existingVar.type,
+                    }
+                };
+
+            }
+        }
+
     },
 
     FunctionDeclaration(node: ESTree.FunctionDeclaration, build: buildInfo[]): buildInfo {
@@ -99,16 +126,8 @@ export default {
     },
 
     BinaryExpression(node: ESTree.BinaryExpression, build: buildInfo[]): buildInfo {
-        let left_a = walk(node.left);
-        let right_a = walk(node.right);
-
-        if(left_a.length != 1 || right_a.length != 1)
-        {
-            ASTerr(node, "Unsure what to do with binary expression (got multiple values, expected 1)");
-        }
-
-        let left = left_a[0];
-        let right = right_a[0];
+        let left = walk_requireSingle(node.left, "Unsure what to do with binary expression (got multiple values, expected 1)");
+        let right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
 
         // @todo return type based on types of left and right
         let cotype = coerce(node, left.info.type, right.info.type);
@@ -137,6 +156,8 @@ export default {
             {
                 return {
                     // @ts-ignore
+                    // @todo for will get compiler error if you dont just put a single item
+                    // it expects an identifier
                     content: `std::cout << ${expression.arguments[0].name} << std::endl`,
                     info: {
                         type: cpp.types.NUMBER
@@ -150,7 +171,14 @@ export default {
         }
         else
         {
+            if(expression.type in this)
+            {
+                return this[expression.type](expression, build);
+            }
+            else
+            {
             ASTerr(expression, `@todo expression type ${expression.type} not implemented`);
+            }
         }
         process.exit(0)
     },
@@ -185,7 +213,7 @@ export default {
             };
         }
         else {
-            ASTerr(node, `@tod identifier "${node.name}" is not declared or unimplemented`);
+            ASTerr(node, `@todo identifier "${node.name}" is not declared or is unimplemented`);
         }
     },
 }
