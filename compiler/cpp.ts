@@ -1,5 +1,6 @@
 import * as ESTree from '@babel/types';
-import { eslintScope } from './main';
+import { eslintScope } from './walk';
+import { err } from './ASTerr';
 
 type ctype = string;
 
@@ -27,13 +28,24 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
   return undefined;
 }
 
-export default {
+let unique_label = 0;
+
+function new_unique()
+{
+    return ++unique_label;
+}
+
+export let cpp =  {
     types:
     {
-        NUMBER: "number",
-        STRING: "string",
+        NUMBER: "js::number",
+        FUNCTION: "void*", // @todo use cpp function types
+        STRING: "js::string",
         ARRAY: "ERROR_NOT_IMPLEMENTED",
-        UNKNOWN: "let"
+        UNKNOWN: "let",
+        LATER: function() {
+            return `__TYPE_${new_unique()}__` // @todo use macros to replace later
+        }
     },
     cast:
     {
@@ -46,7 +58,7 @@ export default {
     {
         fromCstr(cstr: string): string
         {
-            return `std::string("${cstr}")`;
+            return `${cpp.types.STRING}("${cstr}")`;
         }
     },
     variables:
@@ -68,11 +80,35 @@ export default {
         get(node: ESTree.Identifier): CVariable | undefined
         {
             const binding = ident2binding(node);
-            
+
             if(binding == undefined)
                 return binding
 
             return allVars.get(binding);
+        }
+    },
+    functions:
+    {
+        create(name: string, params: ESTree.FunctionParameter[], body: ESTree.BlockStatement)
+        {
+            if(params.length != 0)
+            {
+                // use variable create to store them
+                err("@todo parameters not implemented")
+            }
+            else
+            {
+                // @todo find some way to return the later
+
+                let returnT = cpp.types.LATER();
+                let ostring = `${returnT} ${name}()\n{\n`
+
+                // @todo function body here
+
+                ostring += "\n}"
+
+                return ostring;
+            }
         }
     }
 }

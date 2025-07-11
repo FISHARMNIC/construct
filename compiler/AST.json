@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 131,
+    "end": 52,
     "loc": {
         "start": {
             "line": 1,
@@ -9,16 +9,16 @@
             "index": 0
         },
         "end": {
-            "line": 10,
-            "column": 2,
-            "index": 131
+            "line": 7,
+            "column": 1,
+            "index": 52
         }
     },
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 131,
+        "end": 52,
         "loc": {
             "start": {
                 "line": 1,
@@ -26,9 +26,9 @@
                 "index": 0
             },
             "end": {
-                "line": 10,
-                "column": 2,
-                "index": 131
+                "line": 7,
+                "column": 1,
+                "index": 52
             }
         },
         "sourceType": "module",
@@ -191,9 +191,9 @@
                 "kind": "let"
             },
             {
-                "type": "VariableDeclaration",
+                "type": "FunctionDeclaration",
                 "start": 32,
-                "end": 42,
+                "end": 52,
                 "loc": {
                     "start": {
                         "line": 4,
@@ -201,89 +201,52 @@
                         "index": 32
                     },
                     "end": {
-                        "line": 4,
-                        "column": 10,
-                        "index": 42
+                        "line": 7,
+                        "column": 1,
+                        "index": 52
                     }
                 },
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "start": 36,
-                        "end": 41,
-                        "loc": {
-                            "start": {
-                                "line": 4,
-                                "column": 4,
-                                "index": 36
-                            },
-                            "end": {
-                                "line": 4,
-                                "column": 9,
-                                "index": 41
-                            }
+                "id": {
+                    "type": "Identifier",
+                    "start": 41,
+                    "end": 45,
+                    "loc": {
+                        "start": {
+                            "line": 4,
+                            "column": 9,
+                            "index": 41
                         },
-                        "id": {
-                            "type": "Identifier",
-                            "start": 36,
-                            "end": 37,
-                            "loc": {
-                                "start": {
-                                    "line": 4,
-                                    "column": 4,
-                                    "index": 36
-                                },
-                                "end": {
-                                    "line": 4,
-                                    "column": 5,
-                                    "index": 37
-                                },
-                                "identifierName": "c"
-                            },
-                            "name": "c"
+                        "end": {
+                            "line": 4,
+                            "column": 13,
+                            "index": 45
                         },
-                        "init": {
-                            "type": "Identifier",
-                            "start": 40,
-                            "end": 41,
-                            "loc": {
-                                "start": {
-                                    "line": 4,
-                                    "column": 8,
-                                    "index": 40
-                                },
-                                "end": {
-                                    "line": 4,
-                                    "column": 9,
-                                    "index": 41
-                                },
-                                "identifierName": "b"
-                            },
-                            "name": "b"
+                        "identifierName": "main"
+                    },
+                    "name": "main"
+                },
+                "generator": false,
+                "async": false,
+                "params": [],
+                "body": {
+                    "type": "BlockStatement",
+                    "start": 48,
+                    "end": 52,
+                    "loc": {
+                        "start": {
+                            "line": 5,
+                            "column": 0,
+                            "index": 48
+                        },
+                        "end": {
+                            "line": 7,
+                            "column": 1,
+                            "index": 52
                         }
-                    }
-                ],
-                "kind": "let",
-                "trailingComments": [
-                    {
-                        "type": "CommentBlock",
-                        "value": "\nnumber a = static_cast<number>(1.23)\nstring b = std::string(\"Hello\")\nstring c = b\n",
-                        "start": 44,
-                        "end": 131,
-                        "loc": {
-                            "start": {
-                                "line": 6,
-                                "column": 0,
-                                "index": 44
-                            },
-                            "end": {
-                                "line": 10,
-                                "column": 2,
-                                "index": 131
-                            }
-                        }
-                    }
-                ]
+                    },
+                    "body": [],
+                    "directives": []
+                }
             }
         ],
         "directives": [],
@@ -291,24 +254,5 @@
             "topLevelAwait": false
         }
     },
-    "comments": [
-        {
-            "type": "CommentBlock",
-            "value": "\nnumber a = static_cast<number>(1.23)\nstring b = std::string(\"Hello\")\nstring c = b\n",
-            "start": 44,
-            "end": 131,
-            "loc": {
-                "start": {
-                    "line": 6,
-                    "column": 0,
-                    "index": 44
-                },
-                "end": {
-                    "line": 10,
-                    "column": 2,
-                    "index": 131
-                }
-            }
-        }
-    ]
+    "comments": []
 }

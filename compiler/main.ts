@@ -1,92 +1,57 @@
-import parseAST from './parse';
-import * as ESTree from '@babel/types';
-import ASTerr from './ASTerr';
-import nodes from './nodes';
-import { Binding } from '@babel/traverse';
-/// @ts-ignore
-import { analyze } from "eslint-scope"; 
+import { ast } from './walk';
+import { buildInfo } from './walk';
+import { walk } from './walk';
+import { exec } from 'child_process';
+import fs from 'fs';
+import chalk from 'chalk';
 
+const pre = `
+#include "include/js.hpp"
+`
 
-const INPUTFILE = __dirname + '/../tests/1.js';
+const OUTFILE = __dirname + "/../output/out.cpp";
+const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-interface nodeInfo
-{
-  type?:string
+function begin(): void {
+
+    /// @ts-ignore
+    console.log(chalk.green("=== Compiling ==="));
+
+    let output: string[] = [];
+
+    for (const statement of ast.program.body) {
+        let info: buildInfo[] | string[] = walk(statement);
+
+        let strinfo = info.map((v: buildInfo | undefined): string => {
+            if (v == undefined) {
+                console.log("[INTERNAL ERROR] Something didnt return a buildinfo");
+                process.exit(1);
+            }
+            return v.content;
+        })
+
+        output.push(...strinfo);
+    }
+
+    let ostr: string = pre + output.join("\n");
+
+    fs.writeFileSync(OUTFILE, ostr, 'utf-8');
+
+    /// @ts-ignore
+    console.log(chalk.green("=== Fixing C++ ==="));
+
+    exec(FIXFILE, (e, stdout, stderr) => {
+        if (e) {
+            console.error(`ERROR: ${e.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`${stderr}`);
+        }
+
+        /// @ts-ignore
+        console.log(chalk.green("=== Done! ==="));
+    });
 }
 
-export interface buildInfo
-{
-  content: string;
-  info: nodeInfo;
-}
-
-const bindings = new Map<ESTree.Identifier, Binding>();
-
-export const ast = parseAST(INPUTFILE);
-export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
-
-export function walk(node: ESTree.Node): buildInfo[]
-{
-  let build: buildInfo[] = [];
-
-  let type = node.type;
-  if(type in nodes)
-  {
-    build.push(nodes[node.type](node, build));
-  }
-  else
-  {
-    ASTerr(node, `Unable to handle node "${type}"`);
-  }
-
-  return build;
-}
-
-let output: string[] = [];
-
-for(const statement of ast.program.body)
-{
-  let info: buildInfo[] | string[] = walk(statement);
-
-  let strinfo = info.map((v: buildInfo): string => {
-    return v.content;
-  })
-
-  output.push(...strinfo);
-}
-
-
-
-
-// traverse(ast, {
-//   VariableDeclaration(path: NodePath<ESTree.VariableDeclaration>) {
-//     const node = path.node;
-//     const kind = node.kind; // const, let, var
-
-//     // Can be multiple declarators, like "let a, b";
-//     node.declarations.forEach((dec: ESTree.VariableDeclarator): void => {
-//       const value = dec.init;
-//       const ident = dec.id;
-
-//       if (ESTree.isIdentifier(ident)) {
-//         const name = ident.name;
-//         console.log('Variable name:', name);
-//         ident.skip();
-//       }
-//       else
-//       {
-//         ASTerr(node, "Non-simple variable declaration (destructuring?) not implemented");
-//       }
-
-//       if (ESTree.isLiteral(dec.init)) {
-//         console.log('Initial value:', dec.init.value);
-//       } else if (dec.init) {
-//         console.log('Init type:', dec.init.type);
-//       }
-//     })
-//   },
-
-//   Identifier(path: NodePath<ESTree.Identifier>) {
-//     console.log("ID", path.node.name)
-//   }
-// });
+begin()

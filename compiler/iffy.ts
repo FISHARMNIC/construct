@@ -1,6 +1,6 @@
 import * as ESTree from '@babel/types';
 import traverse from '@babel/traverse';
-import { ast } from './main';
+import { ast } from './walk';
 import ASTerr from './ASTerr';
 
 export default function(ident: ESTree.Identifier): boolean
