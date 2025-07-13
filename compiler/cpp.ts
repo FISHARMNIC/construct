@@ -82,10 +82,20 @@ export let cpp = {
     cast:
     {
         static(to: ctype, value: string): string {
-            return `static_cast<${to}>(${value})`;
+            let castTo = `static_cast<${to}>`;
+
+            // already being casted
+            if(value.slice(0, castTo.length) == castTo)
+            {
+                return value;
+            }
+            else
+            {
+                return `${castTo}(${value})`;
+            }
         },
         number(value: string): string {
-            return `NUMBER(${value})`
+            return cpp.cast.static(cpp.types.NUMBER, value)
         }
     },
     string:
