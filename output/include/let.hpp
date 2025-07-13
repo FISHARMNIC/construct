@@ -94,12 +94,12 @@ LET_OPOO_OT(*)
 
 LET_OPOO_OT(/)
 
-// LET_OPOO_OT_FLP(+)
+LET_OPOO_OT_FLP(+)
 
 LET_OPOO_OT_FLP(-)
 
 LET_OPOO_OT_FLP(*)
 
-// LET_OPOO_OT_FLP(/)
+LET_OPOO_OT_FLP(/)
 
 #endif // __LET_H__
