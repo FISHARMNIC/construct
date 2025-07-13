@@ -110,7 +110,7 @@ export let cpp = {
                 type, name, constant
             });
 
-            return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${value}`);
+            return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
             if(value.info.type !== existingVar.type && existingVar.type !== cpp.types.IFFY)
@@ -118,7 +118,7 @@ export let cpp = {
                 ASTerr(node, `@todo unable to coercer ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
             }
 
-            return `${existingVar.name} = ${value.content}`;
+            return `${existingVar.name} = ${cpp.cast.static(existingVar.type, value.content)}`;
         },
 
         get(node: ESTree.Identifier): CVariable | undefined {

@@ -23,7 +23,7 @@ function main()
     // c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
     dbgprint(c);
 
-    a = "Hello!"; // -----> breaks since a is now a let, and line 13 uses a in math
+    a = "Hello!"; // -----> used to break since a is now a let, which would cause ovelroad issues on line 13
 
     dbgprint(c);
 }

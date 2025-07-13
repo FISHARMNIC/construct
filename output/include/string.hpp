@@ -1,8 +1,6 @@
 #ifndef __STRING_H__
 #define __STRING_H__
 
-#include "js.hpp"
-
 #define NUM_STR js::number left, const js::string &right
 #define STR_NUM const js::string &left, js::number right
 #define STR_STR const js::string &left, const js::string &right

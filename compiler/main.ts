@@ -5,8 +5,13 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import chalk from 'chalk';
 
-const pre = `#include "include/js.hpp"
-#include "include/string.hpp"
+
+// dont include any other file. Make all inclusions under js.hpp
+// Theres some order dependent stuff (let overloads depending on string overloads) that I need to fix
+const pre = `
+// Compiled with Construct 
+
+#include "include/js.hpp"
 `
 
 const OUTFILE = __dirname + "/../output/out.cpp";

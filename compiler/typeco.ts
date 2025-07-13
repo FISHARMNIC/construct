@@ -29,10 +29,10 @@ let truthStatements =
 (truthStatements["*"][cpp.types.STRING] ??= {})[cpp.types.NUMBER] = cpp.types.NUMBER;
 (truthStatements["*"][cpp.types.NUMBER] ??= {})[cpp.types.STRING] = cpp.types.NUMBER;
 
-(truthStatements["*"][cpp.types.NUMBER] ??= {})[cpp.types.NUMBER] = cpp.types.NUMBER;
-(truthStatements["*"][cpp.types.STRING] ??= {})[cpp.types.STRING] = cpp.types.NUMBER;
-(truthStatements["*"][cpp.types.STRING] ??= {})[cpp.types.NUMBER] = cpp.types.NUMBER;
-(truthStatements["*"][cpp.types.NUMBER] ??= {})[cpp.types.STRING] = cpp.types.NUMBER;
+(truthStatements["/"][cpp.types.NUMBER] ??= {})[cpp.types.NUMBER] = cpp.types.NUMBER;
+(truthStatements["/"][cpp.types.STRING] ??= {})[cpp.types.STRING] = cpp.types.NUMBER;
+(truthStatements["/"][cpp.types.STRING] ??= {})[cpp.types.NUMBER] = cpp.types.NUMBER;
+(truthStatements["/"][cpp.types.NUMBER] ??= {})[cpp.types.STRING] = cpp.types.NUMBER;
 
 
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
