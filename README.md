@@ -59,21 +59,21 @@ function main()
 ```
 #### Becomes:
 ```C++
+
+// Compiled with Construct 
+
 #include "include/js.hpp"
-#include "include/string.hpp"
-
-js::number a = NUMBER(1.23);
-js::string b = js::string("Hello");
-
+js::number a = static_cast<js::number>(1.23);
+js::string b = static_cast<js::string>(js::string("Hello"));
 int main() {
-  js::number a = NUMBER(2);
-  js::number b = static_cast<js::number>(static_cast<js::string>(js::string("10") + NUMBER(10)) * a);
-  let c = NUMBER(100);
+  js::number a = static_cast<js::number>(2);
+  js::number b = static_cast<js::number>(static_cast<js::string>(js::string("10") + static_cast<js::number>(10)) * a);
+  let c = static_cast<let>(static_cast<js::number>(100));
   std::cout << c << std::endl;
-  a = NUMBER(10);
-  c = b;
+  a = static_cast<js::number>(10);
+  c = static_cast<let>(b);
   std::cout << c << std::endl;
-  c = js::string("Hello!");
+  c = static_cast<let>(js::string("Hello!"));
   std::cout << c << std::endl;
 }
 ```
