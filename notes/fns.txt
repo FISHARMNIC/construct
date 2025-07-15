@@ -1,0 +1,23 @@
+Functions should scan all calls of that function for type checking
+
+try to use templates somehow?
+
+* when a function is going to be compiled, put it in hold off as long as possible (until call expecting a return)
+* If possible, evaluate the return type of the function by walking it in dummy mode
+* Construct a dependecy tree of what functions call what, as to what to evaluate first
+
+* JS -> push all functions to bottom
+* evaluate global code and wrap as main
+* Take notes on fn calls (parameter types)
+    * If fn returns something -> attempt to evaluate the function in dummy mode
+        * Also make sure to block calling other, un-evaluated functions
+    * If encounters other un-evaluated function -> push current fn to stack
+        * attempt to eval new fn in dummy mode
+        * If fail, repeat the cycle until we get back to ourself, or solve a function
+        * If fails normally (not via fn call) go to next item in stack
+        * On success -> reval in real mode -> pop stack to last failed function
+            * Make sure that we have'nt already compiled
+            * Eval, and repeat the process
+
+Essentially, on fail    -> try deeper
+             on success -> zoom out

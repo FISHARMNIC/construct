@@ -1,7 +1,7 @@
 import * as ESTree from '@babel/types';
 import ASTerr, { ASTerr_kill } from './ASTerr';
 import { buildInfo, walk, walk_requireSingle } from './walk';
-import { cpp } from './cpp';
+import { cpp, ident2binding } from './cpp';
 import iffy from './iffy';
 import { coerce } from './typeco';
 
@@ -79,9 +79,23 @@ export default {
         else
         {
             let existingVar = cpp.variables.get(left);
-            if(existingVar == undefined)
+            if(existingVar === undefined) // variable is declared elsewhere, but compiler hasn't looked at it yet
             {
-                ASTerr_kill(left, `@todo LHS of assignment "${left.name}" is not a variable (or isn't declared)`);
+                /* 
+                @todo this is where a throw (ASTerr normal) should be used 
+                
+                In the future, on function decs, they should only walk the body/blockStatement as a dummy in an attempt to compile
+                If fail (like this for example, where it uses a var declared later), then catch and hold off until the function is called,
+                then try to revaluate the function (again in dummy mode)
+                If success, reval not in dummy mode for reals this time
+
+                */
+
+                ASTerr_kill(left, `@todo assignment to "${left.name}" before it is declared`);
+            }
+            else if(existingVar === null) // variable is not declared anywhere
+            {
+                ASTerr_kill(left, `LHS of assignment "${left.name}" is never declared`);
             }
             else
             {

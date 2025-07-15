@@ -1,10 +1,85 @@
+/*
+
+@todo MAJOR ISSUE
+========================================
+Dummy mode should still create the variables temporarily
+If theres the function:
+'''
+function bob()
+{
+    let a = 10;
+    dbgprint(a);
+}
+'''
+And it is evaluated in dummy mode, then 'a' will show up as invalid on the dbgprint line
+
+SOLUTION:
+At the beginning of a dummy walk on a BLOCKSTATEMENT ONLY add an empty list to the temp stack
+Instead of just not adding new vars/funcs to the map, add them temporarily
+    -> add them to the last list on the temp stack
+at the end of a dummy walk of a BLOCKSTATEMENT, inside the walk fn itself clear all temporaries 
+    -> as in delete all items that exist in the last list in the temp stack
+    -> then remove the last list itself as to make the stack smaller / go back to jow it was before
+
+note: no issues with nested functions are fine because they need to be try evaled before they are compiled anyways
+
+
+
+========================================
+
+C++ bindings
+
+Each function returns a string with the compiled code
+
+In normal mode:
+    Calling any function here may have side effects such as:
+        * Noting a new variable along with it's type 
+        * Noting a new function along with everything that it associates with
+
+In dummy mode:
+    Doing things like creating a variable won't have any side effects (i.e. the variable won't be marked)
+    This is used to try the evluation of something before actually doing it
+
+
+*/
+
+
 import * as ESTree from '@babel/types';
-import { buildInfo, eslintScope, walkBody } from './walk';
+import { buildInfo, walkBody } from './walk';
+import { ast, eslintScope} from './main';
 import ASTerr, { err } from './ASTerr';
 
 declare global {
-    interface Map<K, V> {
-        add(key: K, value: V): void;
+    interface Map<K extends ESTree.Identifier, V> {
+        add(key: K, to: ESTree.Identifier[][], value: V): void;
+    }
+}
+
+// safe version of Map::set
+Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: ESTree.Identifier[][], value: V): void {
+    if (!dummyMode) {
+
+        if (this.has(key)) {
+            err(`[INTERNAL] map already contains ${value}`);
+        }
+        else {
+            this.set(key, value);
+        }
+
+        // if(dummyMode)
+        // {
+
+        // let last = to.at(-1);
+
+        // if(last != undefined)
+        // {
+        //     last.push(key);
+        // }
+        // else
+        // {
+        //     err('[INTERNAL] no tempstack exists')
+        // }
+        // }
     }
 }
 
@@ -24,6 +99,12 @@ interface CFunction {
 
 let allVars = new Map<ESTree.Identifier, CVariable>();
 let allFuncs = new Map<ESTree.Identifier, CFunction>();
+
+let tempStack =
+{
+    funcs: [],
+    vars: []
+}
 
 let unique_label = 0;
 function new_unique() {
@@ -49,19 +130,6 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
         }
     }
     return undefined;
-}
-
-// safe version of Map::set
-Map.prototype.add = function <K, V>(key: K, value: V): void {
-    if (!dummyMode) {
-
-        if (this.has(key)) {
-            err(`[INTERNAL] map already contains ${value}`);
-        }
-        else {
-            this.set(key, value);
-        }
-    }
 }
 
 export let cpp = {
@@ -116,7 +184,7 @@ export let cpp = {
                 ASTerr(node, `Identical variable "${name}" already declared`);
             }
 
-            allVars.add(node, {
+            allVars.add(node, tempStack.vars, {
                 type, name, constant
             });
 
@@ -131,11 +199,12 @@ export let cpp = {
             return `${existingVar.name} = ${cpp.cast.static(existingVar.type, value.content)}`;
         },
 
-        get(node: ESTree.Identifier): CVariable | undefined {
+        /// Returns null if no binding at all (variable isn't declared anywhere scopewise), returns undefined if variable is declared but hasn't been interp yet
+        get(node: ESTree.Identifier): CVariable | undefined | null {
             const binding = ident2binding(node);
 
             if (binding == undefined)
-                return binding
+                return null;
 
             return allVars.get(binding);
         }
@@ -150,7 +219,7 @@ export let cpp = {
                 ASTerr(node, `Identical function "${name}" already declared`);
             }
 
-            allFuncs.add(node, {
+            allFuncs.add(node, tempStack.funcs, {
                 return: cpp.types.AUTO,
                 parameters: params,
                 name,

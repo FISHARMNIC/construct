@@ -8,8 +8,6 @@ import { analyze } from "eslint-scope";
 import { dummyMode, setDummyMode } from './cpp';
 
 
-const INPUTFILE = __dirname + '/../tests/1.js';
-
 interface nodeInfo {
   type: string,
   left?: buildInfo,
@@ -22,9 +20,6 @@ export interface buildInfo {
 }
 
 const bindings = new Map<ESTree.Identifier, Binding>();
-
-export const ast = parseAST(INPUTFILE);
-export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
 
 export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
 

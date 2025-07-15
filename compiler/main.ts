@@ -1,9 +1,11 @@
-import { ast, walkBody } from './walk';
+import { walkBody } from './walk';
 import { buildInfo } from './walk';
 import { walk } from './walk';
 import { exec } from 'child_process';
 import fs from 'fs';
 import chalk from 'chalk';
+import parseAST from './parse';
+import { analyze } from 'eslint-scope';
 
 
 // dont include any other file. Make all inclusions under js.hpp
@@ -17,11 +19,15 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
+const INPUTFILE = __dirname + '/../tests/1.js';
+
+export const ast = parseAST(INPUTFILE);
+export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
 
 function begin(): void {
 
     /// @ts-ignore
-    console.log(chalk.green("|| (construct) JS => Cpp"));
+    console.log(chalk.green(`|| (construct) JS => Cpp\n|| Compiling: "${INPUTFILE}"`));
 
     let output: string[] = walkBody(ast.program.body);
 
