@@ -6,6 +6,9 @@ import fs from 'fs';
 import chalk from 'chalk';
 import parseAST from './parse';
 import { analyze } from 'eslint-scope';
+import { allFuncs } from './cpp';
+import { evaluateAllFunctions, unevaledFuncs } from './funcs';
+import { err } from './ASTerr';
 
 
 // dont include any other file. Make all inclusions under js.hpp
@@ -19,7 +22,7 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/1.js';
+const INPUTFILE = __dirname + '/../tests/3.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
@@ -30,6 +33,15 @@ function begin(): void {
     console.log(chalk.green(`|| (construct) JS => Cpp\n|| Compiling: "${INPUTFILE}"`));
 
     let output: string[] = walkBody(ast.program.body);
+
+    if(unevaledFuncs.length != 0)
+    {
+        evaluateAllFunctions();
+    }
+    if(unevaledFuncs.length != 0)
+    {
+        err(`Unable to evaluate functions: [${unevaledFuncs.map((value: any): string => value.func.id.name).join(", ")}]`);
+    }
 
     let ostr: string = pre + output.join("\n");
 

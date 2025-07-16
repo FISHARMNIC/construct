@@ -46,41 +46,40 @@ In dummy mode:
 
 import * as ESTree from '@babel/types';
 import { buildInfo, walkBody } from './walk';
-import { ast, eslintScope} from './main';
+import { ast, eslintScope } from './main';
 import ASTerr, { err } from './ASTerr';
 
 declare global {
     interface Map<K extends ESTree.Identifier, V> {
-        add(key: K, to: ESTree.Identifier[][], value: V): void;
+        add(key: K, to: string, value: V): void;
     }
 }
 
 // safe version of Map::set
-Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: ESTree.Identifier[][], value: V): void {
-    if (!dummyMode) {
+Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string, value: V): void {
+    //if (!dummyMode) {
 
-        if (this.has(key)) {
-            err(`[INTERNAL] map already contains ${value}`);
-        }
-        else {
-            this.set(key, value);
-        }
-
-        // if(dummyMode)
-        // {
-
-        // let last = to.at(-1);
-
-        // if(last != undefined)
-        // {
-        //     last.push(key);
-        // }
-        // else
-        // {
-        //     err('[INTERNAL] no tempstack exists')
-        // }
-        // }
+    if (this.has(key)) {
+        err(`[INTERNAL] map already contains ${value}`);
     }
+    else {
+        this.set(key, value);
+
+        if (dummyMode) {
+
+            let last = tempStack.at(-1);
+
+            if (last != undefined) {
+                last[to].push(key);
+                console.log("ijoj")
+            }
+            else {
+                err('[INTERNAL] no tempstack exists');
+            }
+        }
+
+    }
+    //}
 }
 
 export type ctype = string;
@@ -97,14 +96,15 @@ interface CFunction {
     parameters: ESTree.FunctionParameter[]
 }
 
-let allVars = new Map<ESTree.Identifier, CVariable>();
-let allFuncs = new Map<ESTree.Identifier, CFunction>();
+export let allVars = new Map<ESTree.Identifier, CVariable>();
+export let allFuncs = new Map<ESTree.Identifier, CFunction>();
 
-let tempStack =
-{
-    funcs: [],
-    vars: []
+export interface stackInfo {
+    funcs: ESTree.Identifier[],
+    vars: ESTree.Identifier[]
 }
+
+export let tempStack: stackInfo[] = [];
 
 let unique_label = 0;
 function new_unique() {
@@ -112,8 +112,7 @@ function new_unique() {
 }
 
 export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
-export function setDummyMode(mode: boolean): void
-{
+export function setDummyMode(mode: boolean): void {
     dummyMode = mode;
 }
 
@@ -153,12 +152,10 @@ export let cpp = {
             let castTo = `static_cast<${to}>`;
 
             // already being casted
-            if(value.slice(0, castTo.length) == castTo)
-            {
+            if (value.slice(0, castTo.length) == castTo) {
                 return value;
             }
-            else
-            {
+            else {
                 return `${castTo}(${value})`;
             }
         },
@@ -184,15 +181,14 @@ export let cpp = {
                 ASTerr(node, `Identical variable "${name}" already declared`);
             }
 
-            allVars.add(node, tempStack.vars, {
+            allVars.add(node, 'vars', {
                 type, name, constant
             });
 
             return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
-            if(value.info.type !== existingVar.type && existingVar.type !== cpp.types.IFFY)
-            {
+            if (value.info.type !== existingVar.type && existingVar.type !== cpp.types.IFFY) {
                 ASTerr(node, `@todo unable to coercer ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
             }
 
@@ -219,7 +215,7 @@ export let cpp = {
                 ASTerr(node, `Identical function "${name}" already declared`);
             }
 
-            allFuncs.add(node, tempStack.funcs, {
+            allFuncs.add(node, 'funcs', {
                 return: cpp.types.AUTO,
                 parameters: params,
                 name,
@@ -232,7 +228,18 @@ export let cpp = {
             else {
                 let ostring = `auto ${name}()\n{\n`;
 
-                // @todo function body here
+                /*
+
+                HERE 
+
+                @todo add to funcs and use evaluateAllFunctions from funcs.ts
+
+                Buildinfo should contain an optional property that causes replacement if triggered
+                This is so that if a function fails to eval, it can be revaled later on the next function creation
+
+                also find some way to pass .replacement binding
+
+                */
 
                 let output: string[] = walkBody(body);
 
