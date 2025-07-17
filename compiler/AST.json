@@ -1609,13 +1609,13 @@
                                 "column": 1,
                                 "index": 611
                             },
-                            "identifierName": "a"
+                            "identifierName": "c"
                         },
                         "range": [
                             610,
                             611
                         ],
-                        "name": "a"
+                        "name": "c"
                     },
                     "right": {
                         "type": "StringLiteral",
@@ -1744,13 +1744,13 @@
                                     "column": 10,
                                     "index": 635
                                 },
-                                "identifierName": "a"
+                                "identifierName": "c"
                             },
                             "range": [
                                 634,
                                 635
                             ],
-                            "name": "a"
+                            "name": "c"
                         }
                     ]
                 }

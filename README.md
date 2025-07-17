@@ -26,55 +26,69 @@
 #### Input:
 ```JS
 // Global variables
-let a = 1.23;
-let b = "Hello";
+let a = 2;
 
 // Functions (no params no return yet)
-function main()
-{
+function bob() {
     // Proper scope handling (this a != global a) 
-    let a = 2;
+    let a = 1.23;
+    let b = "Hello";
 
-    // Proper JS type coercion (only for 4-main math for now)
-    // note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
-    // still works but forces c to be a "let" instead
-    let b = ("10" + 10) * a;
-    let c = 100;
-
-    // 100
-    dbgprint(c);
-
-    // Reassignment
-    a = 10;
-    c = b;
-
-    // c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
-    dbgprint(c);
-
-    // Re-typing
-    c = "Hello!";
-
-    dbgprint(c);
+    dbgprint(a);
+    dbgprint(b);
 }
+
+// Proper JS type coercion (only for 4-main math for now)
+// note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
+// still works but forces c to be a "let" instead
+let b = ("10" + 10) * a;
+let c = 100;
+
+// 100
+dbgprint(c);
+
+// Reassignment
+a = 10;
+c = b;
+
+// c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
+dbgprint(c);
+
+// Re-typing
+c = "Hello!";
+
+dbgprint(c);
+
 ```
 #### Becomes:
 ```C++
-
 // Compiled with Construct 
 
 #include "include/js.hpp"
-js::number a = static_cast<js::number>(1.23);
-js::string b = static_cast<js::string>(js::string("Hello"));
+js::number a;
+js::number b;
+let c = static_cast<let>(0);
+
 int main() {
-  js::number a = static_cast<js::number>(2);
-  js::number b = static_cast<js::number>(static_cast<js::string>(js::string("10") + static_cast<js::number>(10)) * a);
-  let c = static_cast<let>(static_cast<js::number>(100));
+  a = static_cast<js::number>(2);
+  b = static_cast<js::number>(
+      static_cast<js::string>(js::string("10") + static_cast<js::number>(10)) *
+      a);
+  c = static_cast<let>(static_cast<js::number>(100));
   std::cout << c << std::endl;
   a = static_cast<js::number>(10);
   c = static_cast<let>(b);
   std::cout << c << std::endl;
   c = static_cast<let>(js::string("Hello!"));
   std::cout << c << std::endl;
+  return 0;
+}
+auto bob()
+{
+  js::number a = static_cast<js::number>(1.23);
+  js::string b = static_cast<js::string>(js::string("Hello"));
+  std::cout << a << std::endl;
+  std::cout << b << std::endl;
 }
 ```
 `js::number` = alias for `double`  

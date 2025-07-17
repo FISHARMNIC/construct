@@ -34,7 +34,7 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/2.js';
+const INPUTFILE = __dirname + '/../tests/1.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
@@ -99,7 +99,7 @@ function begin(): void {
 
     allGlobalVars.forEach((variable) => {
 
-        // @todo make default type undefined, and add undefined to the variant
+        // @todo Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
         // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
         ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0") : ""};\n`; 
     })
