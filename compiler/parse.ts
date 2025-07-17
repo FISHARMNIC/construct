@@ -1,3 +1,9 @@
+/*
+
+Takes file directory and converts it into an ESTree via Babel
+
+*/
+
 import fs from 'fs';
 import { parse, ParseResult } from '@babel/parser';
 

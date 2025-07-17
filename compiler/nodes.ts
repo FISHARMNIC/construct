@@ -1,7 +1,15 @@
+/*
+
+Each item in the export should be an ESTree node type
+
+Each node is automatically called by walk, and is expected to return a buildInfo with the compiled code, and information about it
+
+*/
+
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw } from './ASTerr';
-import { buildInfo, walk, walk_requireSingle } from './walk';
-import { cpp, ident2binding } from './cpp';
+import { buildInfo, walk_requireSingle } from './walk';
+import { cpp } from './cpp';
 import iffy from './iffy';
 import { coerce } from './typeco';
 

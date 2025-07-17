@@ -1,13 +1,27 @@
+/*
+
+Given an identifier (which must be a new variable!), check if it is ever reassigned a new type
+    -> returns if the identifier is ever re-typed
+
+In the future, there will be more types of iffys/lets for speed optimization
+    let_simple = string or number
+    let_obj = array or object
+    let_all = let_simple or let_obj
+        -> should this be a variant with let_simple and let_obj? or a 4-way variant of the types collapsed
+
+*/
+
+
 import * as ESTree from '@babel/types';
 import traverse from '@babel/traverse';
-import {buildInfo, walk, walk_requireSingle } from './walk';
+import { walk_requireSingle } from './walk';
 import { ast } from './main';
-import { ASTerr_kill, ASTwarn } from './ASTerr';
-import { ctype, dummyMode, setDummyMode } from './cpp';
+import { ASTwarn } from './ASTerr';
+import { ctype } from './ctypes';
 
+// @todo check that the ident is the binding itself. This is only meant for new variables
 export default function(ident: ESTree.Identifier, currentType: ctype): boolean
 {
-    const loc = ident.loc;
     const myName = ident.name;
 
     let isIffy = false;

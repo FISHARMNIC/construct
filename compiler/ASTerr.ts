@@ -3,9 +3,10 @@ import { setDummyMode } from './cpp';
 
 /*
 Ignore this:
-Use default when when there is a critical errro
+Use kill when when there is a critical error, like a parser error
 Use throw when something couldn't be evaluated because of missing context, but its not a fatal error
 -> example: unknown identifier
+-> so walkBodyDummy can catch it and try to re evaluate something later
 */
 
 export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
@@ -27,6 +28,7 @@ export function ASTerr_kill(node: ESTree.Node, ...args: any[]): never
     process.exit(1);
 }
 
+// General error, kills the program
 export function err(...args: any[]): never
 {
     console.error(`[ERROR] on {?} : `, ...args);

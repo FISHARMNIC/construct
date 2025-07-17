@@ -1,8 +1,13 @@
+/*
+
+Computes resulting type of binary mathematical expression involving two same or different types
+
+*/
+
 import * as ESTree from '@babel/types';
-import { ctype } from './cpp';
 import { cpp } from './cpp';
 import { ASTerr_kill } from './ASTerr';
-// import ASTerr from './ASTerr';
+import { ctype } from './ctypes';
 
 let truthStatements = 
 {

@@ -1,33 +1,34 @@
-import parseAST from './parse';
 import * as ESTree from '@babel/types';
-import { ASTerr_kill, err } from './ASTerr';
+import { ASTerr_kill } from './ASTerr';
 import nodes from './nodes';
-import { Binding } from '@babel/traverse';
 /// @ts-ignore
-import { analyze } from "eslint-scope";
-import { allFuncs, allVars, dummyMode, setDummyMode, stackInfo, tempStack } from './cpp';
+import { allFuncs, allVars, dummyMode, setDummyMode, tempStack } from './cpp';
+import { ctype, stackInfo } from './ctypes';
 
+// export let toReplace: replaceObj[] = [];
 
 interface nodeInfo {
-  type: string,
-  left?: buildInfo,
-  right?: buildInfo
+  type: ctype,              // what type is the node
+  left?: buildInfo,         // info about what is on the left (not always provided)
+  right?: buildInfo         // "
 }
 
 export interface replaceObj {
-  ready: boolean,
-  with?: buildInfo[],
-  surroundings?: string[]
+  ready: boolean,           // if the parenting build info is ready to be replaced
+  with?: buildInfo[],       // what to replace with
+  surroundings?: string[]   // [0] addes a prefix, [1] adds a suffix, for example a function definition wrapper: int main() {...}
 }
 
 export interface buildInfo {
   content: string;
   info: nodeInfo;
   defer?: boolean;      // dont place in the main function, for example like a function dec
-  replace?: replaceObj;
+  replace?: replaceObj; // if this exists and so does .ready, then this build info .content should be replaces with .replace.with
+                        // used for fuction evaluation that may be pushed off until later
 }
 
-const bindings = new Map<ESTree.Identifier, Binding>();
+
+export let nestLevel = -1;
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
@@ -73,13 +74,12 @@ export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], su
   };
 }
 
-
-export let toReplace: replaceObj[] = [];
-
+// just extract contents of buildInfo
 export function buildInfoToStr(bInfo: buildInfo[]): string[] {
   return bInfo.map((value: buildInfo): string => value.content);
 }
 
+// fully walk a single node, not a collection of statements
 export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
 
   let oldMode = dummyMode;
@@ -133,9 +133,8 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
   return bInfo[0];
 }
 
-export let nestLevel = -1;
-
 // walk a series of statement like those within the main file or the block statement of a fn
+// unsafe is only to be used by walkBodyDummy
 export function walkBody(body: ESTree.Statement[], dummy: boolean = false, unsafe: boolean = false): buildInfo[] {
 
   //let output: string[] = [];

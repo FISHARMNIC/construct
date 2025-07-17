@@ -11,7 +11,7 @@ function bob() {
     dbgprint(b);
 }
 
-// Proper JS type coercion (only for 4-main math for now)
+// Proper JS type coercion (only for the 4 main math functions for now)
 // note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
 // still works but forces c to be a "let" instead
 let b = ("10" + 10) * a;

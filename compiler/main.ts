@@ -1,27 +1,21 @@
 /*
 
-HERE 
-
-@todo wrap all global code in main()
-
-
+Main code that handles everything else. Run tsx here
 
 */
 
 
-
 import { buildInfoToStr, walkBody } from './walk';
 import { buildInfo } from './walk';
-import { walk } from './walk';
 import { exec } from 'child_process';
 import fs from 'fs';
 import chalk from 'chalk';
 import parseAST from './parse';
 import { analyze } from 'eslint-scope';
-import { allFuncs, allGlobalVars, cpp } from './cpp';
+import { allGlobalVars, cpp } from './cpp';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
-
+import './extensions';
 
 // dont include any other file. Make all inclusions under js.hpp
 // Theres some order dependent stuff (let overloads depending on string overloads) that I need to fix
@@ -33,7 +27,6 @@ const pre = `
 
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
-
 const INPUTFILE = __dirname + '/../tests/1.js';
 
 export const ast = parseAST(INPUTFILE);

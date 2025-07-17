@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 638,
+    "end": 652,
     "loc": {
         "start": {
             "line": 1,
@@ -11,18 +11,18 @@
         "end": {
             "line": 34,
             "column": 0,
-            "index": 638
+            "index": 652
         }
     },
     "range": [
         0,
-        638
+        652
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 638,
+        "end": 652,
         "loc": {
             "start": {
                 "line": 1,
@@ -32,12 +32,12 @@
             "end": {
                 "line": 34,
                 "column": 0,
-                "index": 638
+                "index": 652
             }
         },
         "range": [
             0,
-            638
+            652
         ],
         "sourceType": "module",
         "interpreter": null,
@@ -637,9 +637,9 @@
                 "trailingComments": [
                     {
                         "type": "CommentLine",
-                        "value": " Proper JS type coercion (only for 4-main math for now)",
+                        "value": " Proper JS type coercion (only for the 4 main math functions for now)",
                         "start": 216,
-                        "end": 273,
+                        "end": 287,
                         "loc": {
                             "start": {
                                 "line": 14,
@@ -648,44 +648,44 @@
                             },
                             "end": {
                                 "line": 14,
-                                "column": 57,
-                                "index": 273
+                                "column": 71,
+                                "index": 287
                             }
                         }
                     },
                     {
                         "type": "CommentLine",
                         "value": " note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared",
-                        "start": 274,
-                        "end": 386,
+                        "start": 288,
+                        "end": 400,
                         "loc": {
                             "start": {
                                 "line": 15,
                                 "column": 0,
-                                "index": 274
+                                "index": 288
                             },
                             "end": {
                                 "line": 15,
                                 "column": 112,
-                                "index": 386
+                                "index": 400
                             }
                         }
                     },
                     {
                         "type": "CommentLine",
                         "value": " still works but forces c to be a \"let\" instead",
-                        "start": 387,
-                        "end": 436,
+                        "start": 401,
+                        "end": 450,
                         "loc": {
                             "start": {
                                 "line": 16,
                                 "column": 0,
-                                "index": 387
+                                "index": 401
                             },
                             "end": {
                                 "line": 16,
                                 "column": 49,
-                                "index": 436
+                                "index": 450
                             }
                         }
                     }
@@ -713,127 +713,127 @@
             },
             {
                 "type": "VariableDeclaration",
-                "start": 437,
-                "end": 461,
+                "start": 451,
+                "end": 475,
                 "loc": {
                     "start": {
                         "line": 17,
                         "column": 0,
-                        "index": 437
+                        "index": 451
                     },
                     "end": {
                         "line": 17,
                         "column": 24,
-                        "index": 461
+                        "index": 475
                     }
                 },
                 "range": [
-                    437,
-                    461
+                    451,
+                    475
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 441,
-                        "end": 460,
+                        "start": 455,
+                        "end": 474,
                         "loc": {
                             "start": {
                                 "line": 17,
                                 "column": 4,
-                                "index": 441
+                                "index": 455
                             },
                             "end": {
                                 "line": 17,
                                 "column": 23,
-                                "index": 460
+                                "index": 474
                             }
                         },
                         "range": [
-                            441,
-                            460
+                            455,
+                            474
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 441,
-                            "end": 442,
+                            "start": 455,
+                            "end": 456,
                             "loc": {
                                 "start": {
                                     "line": 17,
                                     "column": 4,
-                                    "index": 441
+                                    "index": 455
                                 },
                                 "end": {
                                     "line": 17,
                                     "column": 5,
-                                    "index": 442
+                                    "index": 456
                                 },
                                 "identifierName": "b"
                             },
                             "range": [
-                                441,
-                                442
+                                455,
+                                456
                             ],
                             "name": "b"
                         },
                         "init": {
                             "type": "BinaryExpression",
-                            "start": 445,
-                            "end": 460,
+                            "start": 459,
+                            "end": 474,
                             "loc": {
                                 "start": {
                                     "line": 17,
                                     "column": 8,
-                                    "index": 445
+                                    "index": 459
                                 },
                                 "end": {
                                     "line": 17,
                                     "column": 23,
-                                    "index": 460
+                                    "index": 474
                                 }
                             },
                             "range": [
-                                445,
-                                460
+                                459,
+                                474
                             ],
                             "left": {
                                 "type": "BinaryExpression",
-                                "start": 446,
-                                "end": 455,
+                                "start": 460,
+                                "end": 469,
                                 "loc": {
                                     "start": {
                                         "line": 17,
                                         "column": 9,
-                                        "index": 446
+                                        "index": 460
                                     },
                                     "end": {
                                         "line": 17,
                                         "column": 18,
-                                        "index": 455
+                                        "index": 469
                                     }
                                 },
                                 "range": [
-                                    446,
-                                    455
+                                    460,
+                                    469
                                 ],
                                 "left": {
                                     "type": "StringLiteral",
-                                    "start": 446,
-                                    "end": 450,
+                                    "start": 460,
+                                    "end": 464,
                                     "loc": {
                                         "start": {
                                             "line": 17,
                                             "column": 9,
-                                            "index": 446
+                                            "index": 460
                                         },
                                         "end": {
                                             "line": 17,
                                             "column": 13,
-                                            "index": 450
+                                            "index": 464
                                         }
                                     },
                                     "range": [
-                                        446,
-                                        450
+                                        460,
+                                        464
                                     ],
                                     "extra": {
                                         "rawValue": "10",
@@ -844,23 +844,23 @@
                                 "operator": "+",
                                 "right": {
                                     "type": "NumericLiteral",
-                                    "start": 453,
-                                    "end": 455,
+                                    "start": 467,
+                                    "end": 469,
                                     "loc": {
                                         "start": {
                                             "line": 17,
                                             "column": 16,
-                                            "index": 453
+                                            "index": 467
                                         },
                                         "end": {
                                             "line": 17,
                                             "column": 18,
-                                            "index": 455
+                                            "index": 469
                                         }
                                     },
                                     "range": [
-                                        453,
-                                        455
+                                        467,
+                                        469
                                     ],
                                     "extra": {
                                         "rawValue": 10,
@@ -870,30 +870,30 @@
                                 },
                                 "extra": {
                                     "parenthesized": true,
-                                    "parenStart": 445
+                                    "parenStart": 459
                                 }
                             },
                             "operator": "*",
                             "right": {
                                 "type": "Identifier",
-                                "start": 459,
-                                "end": 460,
+                                "start": 473,
+                                "end": 474,
                                 "loc": {
                                     "start": {
                                         "line": 17,
                                         "column": 22,
-                                        "index": 459
+                                        "index": 473
                                     },
                                     "end": {
                                         "line": 17,
                                         "column": 23,
-                                        "index": 460
+                                        "index": 474
                                     },
                                     "identifierName": "a"
                                 },
                                 "range": [
-                                    459,
-                                    460
+                                    473,
+                                    474
                                 ],
                                 "name": "a"
                             }
@@ -904,9 +904,9 @@
                 "leadingComments": [
                     {
                         "type": "CommentLine",
-                        "value": " Proper JS type coercion (only for 4-main math for now)",
+                        "value": " Proper JS type coercion (only for the 4 main math functions for now)",
                         "start": 216,
-                        "end": 273,
+                        "end": 287,
                         "loc": {
                             "start": {
                                 "line": 14,
@@ -915,44 +915,44 @@
                             },
                             "end": {
                                 "line": 14,
-                                "column": 57,
-                                "index": 273
+                                "column": 71,
+                                "index": 287
                             }
                         }
                     },
                     {
                         "type": "CommentLine",
                         "value": " note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared",
-                        "start": 274,
-                        "end": 386,
+                        "start": 288,
+                        "end": 400,
                         "loc": {
                             "start": {
                                 "line": 15,
                                 "column": 0,
-                                "index": 274
+                                "index": 288
                             },
                             "end": {
                                 "line": 15,
                                 "column": 112,
-                                "index": 386
+                                "index": 400
                             }
                         }
                     },
                     {
                         "type": "CommentLine",
                         "value": " still works but forces c to be a \"let\" instead",
-                        "start": 387,
-                        "end": 436,
+                        "start": 401,
+                        "end": 450,
                         "loc": {
                             "start": {
                                 "line": 16,
                                 "column": 0,
-                                "index": 387
+                                "index": 401
                             },
                             "end": {
                                 "line": 16,
                                 "column": 49,
-                                "index": 436
+                                "index": 450
                             }
                         }
                     }
@@ -960,87 +960,87 @@
             },
             {
                 "type": "VariableDeclaration",
-                "start": 462,
-                "end": 474,
+                "start": 476,
+                "end": 488,
                 "loc": {
                     "start": {
                         "line": 18,
                         "column": 0,
-                        "index": 462
+                        "index": 476
                     },
                     "end": {
                         "line": 18,
                         "column": 12,
-                        "index": 474
+                        "index": 488
                     }
                 },
                 "range": [
-                    462,
-                    474
+                    476,
+                    488
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 466,
-                        "end": 473,
+                        "start": 480,
+                        "end": 487,
                         "loc": {
                             "start": {
                                 "line": 18,
                                 "column": 4,
-                                "index": 466
+                                "index": 480
                             },
                             "end": {
                                 "line": 18,
                                 "column": 11,
-                                "index": 473
+                                "index": 487
                             }
                         },
                         "range": [
-                            466,
-                            473
+                            480,
+                            487
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 466,
-                            "end": 467,
+                            "start": 480,
+                            "end": 481,
                             "loc": {
                                 "start": {
                                     "line": 18,
                                     "column": 4,
-                                    "index": 466
+                                    "index": 480
                                 },
                                 "end": {
                                     "line": 18,
                                     "column": 5,
-                                    "index": 467
+                                    "index": 481
                                 },
                                 "identifierName": "c"
                             },
                             "range": [
-                                466,
-                                467
+                                480,
+                                481
                             ],
                             "name": "c"
                         },
                         "init": {
                             "type": "NumericLiteral",
-                            "start": 470,
-                            "end": 473,
+                            "start": 484,
+                            "end": 487,
                             "loc": {
                                 "start": {
                                     "line": 18,
                                     "column": 8,
-                                    "index": 470
+                                    "index": 484
                                 },
                                 "end": {
                                     "line": 18,
                                     "column": 11,
-                                    "index": 473
+                                    "index": 487
                                 }
                             },
                             "range": [
-                                470,
-                                473
+                                484,
+                                487
                             ],
                             "extra": {
                                 "rawValue": 100,
@@ -1055,18 +1055,18 @@
                     {
                         "type": "CommentLine",
                         "value": " 100",
-                        "start": 476,
-                        "end": 482,
+                        "start": 490,
+                        "end": 496,
                         "loc": {
                             "start": {
                                 "line": 20,
                                 "column": 0,
-                                "index": 476
+                                "index": 490
                             },
                             "end": {
                                 "line": 20,
                                 "column": 6,
-                                "index": 482
+                                "index": 496
                             }
                         }
                     }
@@ -1074,88 +1074,88 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 483,
-                "end": 495,
+                "start": 497,
+                "end": 509,
                 "loc": {
                     "start": {
                         "line": 21,
                         "column": 0,
-                        "index": 483
+                        "index": 497
                     },
                     "end": {
                         "line": 21,
                         "column": 12,
-                        "index": 495
+                        "index": 509
                     }
                 },
                 "range": [
-                    483,
-                    495
+                    497,
+                    509
                 ],
                 "expression": {
                     "type": "CallExpression",
-                    "start": 483,
-                    "end": 494,
+                    "start": 497,
+                    "end": 508,
                     "loc": {
                         "start": {
                             "line": 21,
                             "column": 0,
-                            "index": 483
+                            "index": 497
                         },
                         "end": {
                             "line": 21,
                             "column": 11,
-                            "index": 494
+                            "index": 508
                         }
                     },
                     "range": [
-                        483,
-                        494
+                        497,
+                        508
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 483,
-                        "end": 491,
+                        "start": 497,
+                        "end": 505,
                         "loc": {
                             "start": {
                                 "line": 21,
                                 "column": 0,
-                                "index": 483
+                                "index": 497
                             },
                             "end": {
                                 "line": 21,
                                 "column": 8,
-                                "index": 491
+                                "index": 505
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            483,
-                            491
+                            497,
+                            505
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 492,
-                            "end": 493,
+                            "start": 506,
+                            "end": 507,
                             "loc": {
                                 "start": {
                                     "line": 21,
                                     "column": 9,
-                                    "index": 492
+                                    "index": 506
                                 },
                                 "end": {
                                     "line": 21,
                                     "column": 10,
-                                    "index": 493
+                                    "index": 507
                                 },
                                 "identifierName": "c"
                             },
                             "range": [
-                                492,
-                                493
+                                506,
+                                507
                             ],
                             "name": "c"
                         }
@@ -1165,18 +1165,18 @@
                     {
                         "type": "CommentLine",
                         "value": " Reassignment",
-                        "start": 497,
-                        "end": 512,
+                        "start": 511,
+                        "end": 526,
                         "loc": {
                             "start": {
                                 "line": 23,
                                 "column": 0,
-                                "index": 497
+                                "index": 511
                             },
                             "end": {
                                 "line": 23,
                                 "column": 15,
-                                "index": 512
+                                "index": 526
                             }
                         }
                     }
@@ -1185,18 +1185,18 @@
                     {
                         "type": "CommentLine",
                         "value": " 100",
-                        "start": 476,
-                        "end": 482,
+                        "start": 490,
+                        "end": 496,
                         "loc": {
                             "start": {
                                 "line": 20,
                                 "column": 0,
-                                "index": 476
+                                "index": 490
                             },
                             "end": {
                                 "line": 20,
                                 "column": 6,
-                                "index": 482
+                                "index": 496
                             }
                         }
                     }
@@ -1204,87 +1204,87 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 513,
-                "end": 520,
+                "start": 527,
+                "end": 534,
                 "loc": {
                     "start": {
                         "line": 24,
                         "column": 0,
-                        "index": 513
+                        "index": 527
                     },
                     "end": {
                         "line": 24,
                         "column": 7,
-                        "index": 520
+                        "index": 534
                     }
                 },
                 "range": [
-                    513,
-                    520
+                    527,
+                    534
                 ],
                 "expression": {
                     "type": "AssignmentExpression",
-                    "start": 513,
-                    "end": 519,
+                    "start": 527,
+                    "end": 533,
                     "loc": {
                         "start": {
                             "line": 24,
                             "column": 0,
-                            "index": 513
+                            "index": 527
                         },
                         "end": {
                             "line": 24,
                             "column": 6,
-                            "index": 519
+                            "index": 533
                         }
                     },
                     "range": [
-                        513,
-                        519
+                        527,
+                        533
                     ],
                     "operator": "=",
                     "left": {
                         "type": "Identifier",
-                        "start": 513,
-                        "end": 514,
+                        "start": 527,
+                        "end": 528,
                         "loc": {
                             "start": {
                                 "line": 24,
                                 "column": 0,
-                                "index": 513
+                                "index": 527
                             },
                             "end": {
                                 "line": 24,
                                 "column": 1,
-                                "index": 514
+                                "index": 528
                             },
                             "identifierName": "a"
                         },
                         "range": [
-                            513,
-                            514
+                            527,
+                            528
                         ],
                         "name": "a"
                     },
                     "right": {
                         "type": "NumericLiteral",
-                        "start": 517,
-                        "end": 519,
+                        "start": 531,
+                        "end": 533,
                         "loc": {
                             "start": {
                                 "line": 24,
                                 "column": 4,
-                                "index": 517
+                                "index": 531
                             },
                             "end": {
                                 "line": 24,
                                 "column": 6,
-                                "index": 519
+                                "index": 533
                             }
                         },
                         "range": [
-                            517,
-                            519
+                            531,
+                            533
                         ],
                         "extra": {
                             "rawValue": 10,
@@ -1297,18 +1297,18 @@
                     {
                         "type": "CommentLine",
                         "value": " Reassignment",
-                        "start": 497,
-                        "end": 512,
+                        "start": 511,
+                        "end": 526,
                         "loc": {
                             "start": {
                                 "line": 23,
                                 "column": 0,
-                                "index": 497
+                                "index": 511
                             },
                             "end": {
                                 "line": 23,
                                 "column": 15,
-                                "index": 512
+                                "index": 526
                             }
                         }
                     }
@@ -1316,88 +1316,88 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 521,
-                "end": 527,
+                "start": 535,
+                "end": 541,
                 "loc": {
                     "start": {
                         "line": 25,
                         "column": 0,
-                        "index": 521
+                        "index": 535
                     },
                     "end": {
                         "line": 25,
                         "column": 6,
-                        "index": 527
+                        "index": 541
                     }
                 },
                 "range": [
-                    521,
-                    527
+                    535,
+                    541
                 ],
                 "expression": {
                     "type": "AssignmentExpression",
-                    "start": 521,
-                    "end": 526,
+                    "start": 535,
+                    "end": 540,
                     "loc": {
                         "start": {
                             "line": 25,
                             "column": 0,
-                            "index": 521
+                            "index": 535
                         },
                         "end": {
                             "line": 25,
                             "column": 5,
-                            "index": 526
+                            "index": 540
                         }
                     },
                     "range": [
-                        521,
-                        526
+                        535,
+                        540
                     ],
                     "operator": "=",
                     "left": {
                         "type": "Identifier",
-                        "start": 521,
-                        "end": 522,
+                        "start": 535,
+                        "end": 536,
                         "loc": {
                             "start": {
                                 "line": 25,
                                 "column": 0,
-                                "index": 521
+                                "index": 535
                             },
                             "end": {
                                 "line": 25,
                                 "column": 1,
-                                "index": 522
+                                "index": 536
                             },
                             "identifierName": "c"
                         },
                         "range": [
-                            521,
-                            522
+                            535,
+                            536
                         ],
                         "name": "c"
                     },
                     "right": {
                         "type": "Identifier",
-                        "start": 525,
-                        "end": 526,
+                        "start": 539,
+                        "end": 540,
                         "loc": {
                             "start": {
                                 "line": 25,
                                 "column": 4,
-                                "index": 525
+                                "index": 539
                             },
                             "end": {
                                 "line": 25,
                                 "column": 5,
-                                "index": 526
+                                "index": 540
                             },
                             "identifierName": "b"
                         },
                         "range": [
-                            525,
-                            526
+                            539,
+                            540
                         ],
                         "name": "b"
                     }
@@ -1406,18 +1406,18 @@
                     {
                         "type": "CommentLine",
                         "value": " c = b = (\"10\" + 10) * 2 = \"1010\" * 2 = number 2020",
-                        "start": 529,
-                        "end": 582,
+                        "start": 543,
+                        "end": 596,
                         "loc": {
                             "start": {
                                 "line": 27,
                                 "column": 0,
-                                "index": 529
+                                "index": 543
                             },
                             "end": {
                                 "line": 27,
                                 "column": 53,
-                                "index": 582
+                                "index": 596
                             }
                         }
                     }
@@ -1425,88 +1425,88 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 583,
-                "end": 595,
+                "start": 597,
+                "end": 609,
                 "loc": {
                     "start": {
                         "line": 28,
                         "column": 0,
-                        "index": 583
+                        "index": 597
                     },
                     "end": {
                         "line": 28,
                         "column": 12,
-                        "index": 595
+                        "index": 609
                     }
                 },
                 "range": [
-                    583,
-                    595
+                    597,
+                    609
                 ],
                 "expression": {
                     "type": "CallExpression",
-                    "start": 583,
-                    "end": 594,
+                    "start": 597,
+                    "end": 608,
                     "loc": {
                         "start": {
                             "line": 28,
                             "column": 0,
-                            "index": 583
+                            "index": 597
                         },
                         "end": {
                             "line": 28,
                             "column": 11,
-                            "index": 594
+                            "index": 608
                         }
                     },
                     "range": [
-                        583,
-                        594
+                        597,
+                        608
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 583,
-                        "end": 591,
+                        "start": 597,
+                        "end": 605,
                         "loc": {
                             "start": {
                                 "line": 28,
                                 "column": 0,
-                                "index": 583
+                                "index": 597
                             },
                             "end": {
                                 "line": 28,
                                 "column": 8,
-                                "index": 591
+                                "index": 605
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            583,
-                            591
+                            597,
+                            605
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 592,
-                            "end": 593,
+                            "start": 606,
+                            "end": 607,
                             "loc": {
                                 "start": {
                                     "line": 28,
                                     "column": 9,
-                                    "index": 592
+                                    "index": 606
                                 },
                                 "end": {
                                     "line": 28,
                                     "column": 10,
-                                    "index": 593
+                                    "index": 607
                                 },
                                 "identifierName": "c"
                             },
                             "range": [
-                                592,
-                                593
+                                606,
+                                607
                             ],
                             "name": "c"
                         }
@@ -1516,18 +1516,18 @@
                     {
                         "type": "CommentLine",
                         "value": " Re-typing",
-                        "start": 597,
-                        "end": 609,
+                        "start": 611,
+                        "end": 623,
                         "loc": {
                             "start": {
                                 "line": 30,
                                 "column": 0,
-                                "index": 597
+                                "index": 611
                             },
                             "end": {
                                 "line": 30,
                                 "column": 12,
-                                "index": 609
+                                "index": 623
                             }
                         }
                     }
@@ -1536,18 +1536,18 @@
                     {
                         "type": "CommentLine",
                         "value": " c = b = (\"10\" + 10) * 2 = \"1010\" * 2 = number 2020",
-                        "start": 529,
-                        "end": 582,
+                        "start": 543,
+                        "end": 596,
                         "loc": {
                             "start": {
                                 "line": 27,
                                 "column": 0,
-                                "index": 529
+                                "index": 543
                             },
                             "end": {
                                 "line": 27,
                                 "column": 53,
-                                "index": 582
+                                "index": 596
                             }
                         }
                     }
@@ -1555,87 +1555,87 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 610,
-                "end": 623,
+                "start": 624,
+                "end": 637,
                 "loc": {
                     "start": {
                         "line": 31,
                         "column": 0,
-                        "index": 610
+                        "index": 624
                     },
                     "end": {
                         "line": 31,
                         "column": 13,
-                        "index": 623
+                        "index": 637
                     }
                 },
                 "range": [
-                    610,
-                    623
+                    624,
+                    637
                 ],
                 "expression": {
                     "type": "AssignmentExpression",
-                    "start": 610,
-                    "end": 622,
+                    "start": 624,
+                    "end": 636,
                     "loc": {
                         "start": {
                             "line": 31,
                             "column": 0,
-                            "index": 610
+                            "index": 624
                         },
                         "end": {
                             "line": 31,
                             "column": 12,
-                            "index": 622
+                            "index": 636
                         }
                     },
                     "range": [
-                        610,
-                        622
+                        624,
+                        636
                     ],
                     "operator": "=",
                     "left": {
                         "type": "Identifier",
-                        "start": 610,
-                        "end": 611,
+                        "start": 624,
+                        "end": 625,
                         "loc": {
                             "start": {
                                 "line": 31,
                                 "column": 0,
-                                "index": 610
+                                "index": 624
                             },
                             "end": {
                                 "line": 31,
                                 "column": 1,
-                                "index": 611
+                                "index": 625
                             },
                             "identifierName": "c"
                         },
                         "range": [
-                            610,
-                            611
+                            624,
+                            625
                         ],
                         "name": "c"
                     },
                     "right": {
                         "type": "StringLiteral",
-                        "start": 614,
-                        "end": 622,
+                        "start": 628,
+                        "end": 636,
                         "loc": {
                             "start": {
                                 "line": 31,
                                 "column": 4,
-                                "index": 614
+                                "index": 628
                             },
                             "end": {
                                 "line": 31,
                                 "column": 12,
-                                "index": 622
+                                "index": 636
                             }
                         },
                         "range": [
-                            614,
-                            622
+                            628,
+                            636
                         ],
                         "extra": {
                             "rawValue": "Hello!",
@@ -1648,18 +1648,18 @@
                     {
                         "type": "CommentLine",
                         "value": " Re-typing",
-                        "start": 597,
-                        "end": 609,
+                        "start": 611,
+                        "end": 623,
                         "loc": {
                             "start": {
                                 "line": 30,
                                 "column": 0,
-                                "index": 597
+                                "index": 611
                             },
                             "end": {
                                 "line": 30,
                                 "column": 12,
-                                "index": 609
+                                "index": 623
                             }
                         }
                     }
@@ -1667,88 +1667,88 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 625,
-                "end": 637,
+                "start": 639,
+                "end": 651,
                 "loc": {
                     "start": {
                         "line": 33,
                         "column": 0,
-                        "index": 625
+                        "index": 639
                     },
                     "end": {
                         "line": 33,
                         "column": 12,
-                        "index": 637
+                        "index": 651
                     }
                 },
                 "range": [
-                    625,
-                    637
+                    639,
+                    651
                 ],
                 "expression": {
                     "type": "CallExpression",
-                    "start": 625,
-                    "end": 636,
+                    "start": 639,
+                    "end": 650,
                     "loc": {
                         "start": {
                             "line": 33,
                             "column": 0,
-                            "index": 625
+                            "index": 639
                         },
                         "end": {
                             "line": 33,
                             "column": 11,
-                            "index": 636
+                            "index": 650
                         }
                     },
                     "range": [
-                        625,
-                        636
+                        639,
+                        650
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 625,
-                        "end": 633,
+                        "start": 639,
+                        "end": 647,
                         "loc": {
                             "start": {
                                 "line": 33,
                                 "column": 0,
-                                "index": 625
+                                "index": 639
                             },
                             "end": {
                                 "line": 33,
                                 "column": 8,
-                                "index": 633
+                                "index": 647
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            625,
-                            633
+                            639,
+                            647
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 634,
-                            "end": 635,
+                            "start": 648,
+                            "end": 649,
                             "loc": {
                                 "start": {
                                     "line": 33,
                                     "column": 9,
-                                    "index": 634
+                                    "index": 648
                                 },
                                 "end": {
                                     "line": 33,
                                     "column": 10,
-                                    "index": 635
+                                    "index": 649
                                 },
                                 "identifierName": "c"
                             },
                             "range": [
-                                634,
-                                635
+                                648,
+                                649
                             ],
                             "name": "c"
                         }
@@ -1818,9 +1818,9 @@
         },
         {
             "type": "CommentLine",
-            "value": " Proper JS type coercion (only for 4-main math for now)",
+            "value": " Proper JS type coercion (only for the 4 main math functions for now)",
             "start": 216,
-            "end": 273,
+            "end": 287,
             "loc": {
                 "start": {
                     "line": 14,
@@ -1829,116 +1829,116 @@
                 },
                 "end": {
                     "line": 14,
-                    "column": 57,
-                    "index": 273
+                    "column": 71,
+                    "index": 287
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared",
-            "start": 274,
-            "end": 386,
+            "start": 288,
+            "end": 400,
             "loc": {
                 "start": {
                     "line": 15,
                     "column": 0,
-                    "index": 274
+                    "index": 288
                 },
                 "end": {
                     "line": 15,
                     "column": 112,
-                    "index": 386
+                    "index": 400
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " still works but forces c to be a \"let\" instead",
-            "start": 387,
-            "end": 436,
+            "start": 401,
+            "end": 450,
             "loc": {
                 "start": {
                     "line": 16,
                     "column": 0,
-                    "index": 387
+                    "index": 401
                 },
                 "end": {
                     "line": 16,
                     "column": 49,
-                    "index": 436
+                    "index": 450
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " 100",
-            "start": 476,
-            "end": 482,
+            "start": 490,
+            "end": 496,
             "loc": {
                 "start": {
                     "line": 20,
                     "column": 0,
-                    "index": 476
+                    "index": 490
                 },
                 "end": {
                     "line": 20,
                     "column": 6,
-                    "index": 482
+                    "index": 496
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " Reassignment",
-            "start": 497,
-            "end": 512,
+            "start": 511,
+            "end": 526,
             "loc": {
                 "start": {
                     "line": 23,
                     "column": 0,
-                    "index": 497
+                    "index": 511
                 },
                 "end": {
                     "line": 23,
                     "column": 15,
-                    "index": 512
+                    "index": 526
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " c = b = (\"10\" + 10) * 2 = \"1010\" * 2 = number 2020",
-            "start": 529,
-            "end": 582,
+            "start": 543,
+            "end": 596,
             "loc": {
                 "start": {
                     "line": 27,
                     "column": 0,
-                    "index": 529
+                    "index": 543
                 },
                 "end": {
                     "line": 27,
                     "column": 53,
-                    "index": 582
+                    "index": 596
                 }
             }
         },
         {
             "type": "CommentLine",
             "value": " Re-typing",
-            "start": 597,
-            "end": 609,
+            "start": 611,
+            "end": 623,
             "loc": {
                 "start": {
                     "line": 30,
                     "column": 0,
-                    "index": 597
+                    "index": 611
                 },
                 "end": {
                     "line": 30,
                     "column": 12,
-                    "index": 609
+                    "index": 623
                 }
             }
         }

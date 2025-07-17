@@ -1,6 +1,5 @@
 /*
-
-How this works:
+slightly outdated, but mostly correct:
 
 Expects:
     * A list/queue of all function declarations / methods / etc
@@ -33,7 +32,7 @@ function trycompile(function)
 import * as ESTree from '@babel/types';
 import { buildInfo, replaceObj, walk, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill } from './ASTerr';
-// import ASTerr from './ASTerr';
+import './extensions';
 
 interface FunctionQueueElement {
     func: ESTree.Function;
@@ -41,22 +40,12 @@ interface FunctionQueueElement {
     // id: number;
 };
 
-type FunctionQueue = FunctionQueueElement[];
-
-declare global {
-    interface Array<T> {
-        pushFront(value: T): void;
-    }
-}
-
-Array.prototype.pushFront = function <T>(value: T) {
-    this.splice(0, 0, value);
-}
-
 interface evalInfo {
     bInfo: buildInfo[],
     successfull: boolean
 };
+
+type FunctionQueue = FunctionQueueElement[];
 
 export let unevaledFuncs: FunctionQueue = [];
 let alreadyTried: FunctionQueue = [];
@@ -91,7 +80,6 @@ export function evaluateAllFunctions(): string[] {
 
     return [""];
 }
-
 
 function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
     let succeeded = false;

@@ -1,7 +1,12 @@
 /*
 
-@todo MAJOR ISSUE
+@todo (was) MAJOR ISSUE 
 ========================================
+
+THIS IS CURRENTLY IMPLEMENTED (needs to be tested)
+
+!HERE! !important! THIS NEEDS TO BE TESTED
+
 Dummy mode should still create the variables temporarily
 If theres the function:
 '''
@@ -49,71 +54,20 @@ import { buildInfo, nestLevel, replaceObj, walkBody } from './walk';
 import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
-
-declare global {
-    interface Map<K extends ESTree.Identifier, V> {
-        add(key: K, to: string, value: V): void;
-    }
-}
-
-// safe version of Map::set
-Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string, value: V): void {
-    //if (!dummyMode) {
-
-    if (this.has(key)) {
-        err(`[INTERNAL] map already contains ${value}`);
-    }
-    else {
-        this.set(key, value);
-
-        if (dummyMode) {
-
-            let last = tempStack.at(-1);
-
-            if (last != undefined) {
-                last[to].push(key);
-                console.log("ijoj")
-            }
-            else {
-                err('[INTERNAL] no tempstack exists');
-            }
-        }
-
-    }
-    //}
-}
-
-export type ctype = string;
-
-interface CVariable {
-    type: ctype,
-    name: string,
-    constant: boolean,
-}
-
-interface CFunction {
-    return: ctype;
-    name: string,
-    parameters: ESTree.FunctionParameter[]
-}
+import './extensions';
+import { CFunction, ctype, CVariable, stackInfo } from './ctypes';
 
 export let allVars = new Map<ESTree.Identifier, CVariable>();
 export let allGlobalVars: CVariable[] = [];
 export let allFuncs = new Map<ESTree.Identifier, CFunction>();
-
-export interface stackInfo {
-    funcs: ESTree.Identifier[],
-    vars: ESTree.Identifier[]
-}
-
 export let tempStack: stackInfo[] = [];
+export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
 
 let unique_label = 0;
 function new_unique() {
     return ++unique_label;
 }
 
-export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
 export function setDummyMode(mode: boolean): void {
     dummyMode = mode;
 }
