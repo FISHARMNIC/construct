@@ -8,7 +8,7 @@ Use throw when something couldn't be evaluated because of missing context, but i
 -> example: unknown identifier
 */
 
-export default function(node: ESTree.Node, ...args: any[]): never
+export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
 {
     console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args);
     setDummyMode(false); // for catches

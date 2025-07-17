@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import traverse from '@babel/traverse';
 import {buildInfo, walk, walk_requireSingle } from './walk';
 import { ast } from './main';
-import ASTerr, { ASTerr_kill, ASTwarn } from './ASTerr';
+import { ASTerr_kill, ASTwarn } from './ASTerr';
 import { ctype, dummyMode, setDummyMode } from './cpp';
 
 export default function(ident: ESTree.Identifier, currentType: ctype): boolean

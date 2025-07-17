@@ -1,6 +1,6 @@
 import parseAST from './parse';
 import * as ESTree from '@babel/types';
-import ASTerr, { err } from './ASTerr';
+import { ASTerr_kill, err } from './ASTerr';
 import nodes from './nodes';
 import { Binding } from '@babel/traverse';
 /// @ts-ignore
@@ -14,17 +14,24 @@ interface nodeInfo {
   right?: buildInfo
 }
 
+export interface replaceObj
+{
+  ready: boolean,
+  with?: buildInfo[],
+  surroundings?: string[]
+}
+
 export interface buildInfo {
   content: string;
   info: nodeInfo;
-  replace?: string;
+  replace?: replaceObj;
 }
 
 const bindings = new Map<ESTree.Identifier, Binding>();
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
-export function walkBodyDummy(body: ESTree.Statement[]): string[] {
+export function walkBodyDummy(body: ESTree.Statement[]): buildInfo[] {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -33,7 +40,7 @@ export function walkBodyDummy(body: ESTree.Statement[]): string[] {
 
   tempStack.push(lastObj);
 
-  let out: string[] = walkBody(body, true);
+  let out: buildInfo[] = walkBody(body, true);
 
   ///  @todo make this more dynamic
 
@@ -50,6 +57,14 @@ export function walkBodyDummy(body: ESTree.Statement[]): string[] {
   return out;
 }
 
+
+export let toReplace: replaceObj[] = [];
+
+export function buildInfoToStr(bInfo: buildInfo[]): string[]
+{
+  return bInfo.map((value: buildInfo): string => value.content);
+}
+
 export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
 
   let oldMode = dummyMode;
@@ -62,18 +77,32 @@ export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
     build.push(nodes[node.type](node, build));
   }
   else {
-    ASTerr(node, `Unable to handle node "${type}"`);
+    ASTerr_kill(node, `Unable to handle node "${type}"`);
   }
 
   setDummyMode(oldMode);
 
   // used for revaling functions
-  build.forEach((info: buildInfo): void => {
-    if(info.replace)
-    {
-      info.content = info.replace;
-    }
-  })
+  // build.forEach((info: buildInfo): void => {
+  //   // console.log("REPLACEEEEE", info.replace)
+  //   if(info.replace && info.replace.ready && info.replace.with)
+  //   {
+  //     let repwith = buildInfoToStr(info.replace.with);
+  //     let build = "";
+  //     if(info.replace.surroundings)
+  //     {
+  //       build += info.replace.surroundings[0];
+  //       build += repwith.join("\n");
+  //       build += info.replace.surroundings[1];
+  //     }
+  //     else
+  //     {
+  //       build = repwith.join("\n");
+  //     }
+
+  //     info.content = build;
+  //   }
+  // })
 
   return build;
 }
@@ -83,16 +112,17 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
   let bInfo: buildInfo[] = walk(node, dummy);
 
   if (bInfo.length != 1) {
-    ASTerr(node, err);
+    ASTerr_kill(node, err);
   }
 
   return bInfo[0];
 }
 
 // walk a series of statement like those within the main file or the block statement of a fn
-export function walkBody(body: ESTree.Statement[], dummy: boolean = false): string[] {
+export function walkBody(body: ESTree.Statement[], dummy: boolean = false): buildInfo[] {
 
-  let output: string[] = [];
+  //let output: string[] = [];
+  let output: buildInfo[] = [];
 
   for (const statement of body) {
     let info: buildInfo[] = walk(statement, dummy);
@@ -105,7 +135,9 @@ export function walkBody(body: ESTree.Statement[], dummy: boolean = false): stri
       return v.content;
     })
 
-    output.push(...strinfo);
+    output.push(...info);
+
+    //output.push(...strinfo);
   }
 
   return output;

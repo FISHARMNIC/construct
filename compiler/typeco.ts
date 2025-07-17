@@ -1,7 +1,8 @@
 import * as ESTree from '@babel/types';
 import { ctype } from './cpp';
 import { cpp } from './cpp';
-import ASTerr from './ASTerr';
+import { ASTerr_kill } from './ASTerr';
+// import ASTerr from './ASTerr';
 
 let truthStatements = 
 {
@@ -52,12 +53,12 @@ export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType
         }
         else
         {
-            ASTerr(node, `@todo type coercion with expression: (${leftType} ${operator} ${rightType}) doesn't exist or isnt' supported`)
+            ASTerr_kill(node, `@todo type coercion with expression: (${leftType} ${operator} ${rightType}) doesn't exist or isnt' supported`)
         }
     }
     else
     {
-        ASTerr(node, `@todo unimplemented operator ${operator}`)
+        ASTerr_kill(node, `@todo unimplemented operator ${operator}`)
     }
     // "+" | "-" | "/" | "%" | "*" | "**" | "&" | "|" | ">>" | ">>>" | "<<" | "^" | "==" | "===" | "!=" | "!==" | "in" | "instanceof" | ">" | "<" | ">=" | "<=" | "|>"
 }

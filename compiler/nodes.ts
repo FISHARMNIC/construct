@@ -1,5 +1,5 @@
 import * as ESTree from '@babel/types';
-import ASTerr, { ASTerr_kill } from './ASTerr';
+import { ASTerr_kill, ASTerr_throw } from './ASTerr';
 import { buildInfo, walk, walk_requireSingle } from './walk';
 import { cpp, ident2binding } from './cpp';
 import iffy from './iffy';
@@ -11,14 +11,14 @@ export default {
         let myType = cpp.types.AUTO;
 
         if (node.declarations.length != 1) {
-            ASTerr(node, "@todo multiple declarations not implemented");
+            ASTerr_kill(node, "@todo multiple declarations not implemented");
         }
         else {
             for (const dec of node.declarations) {
                 // each declaration can have multiple declarators: "let a = 2,b = 10";
                 const ident = dec.id;
                 if (!ESTree.isIdentifier(ident)) {
-                    ASTerr(node, "@todo non-simple variable declaration (destructuring?) not implemented");
+                    ASTerr_kill(node, "@todo non-simple variable declaration (destructuring?) not implemented");
                 }
                 else {
                     const name = (ident as ESTree.Identifier).name;
@@ -91,7 +91,7 @@ export default {
 
                 */
 
-                ASTerr_kill(left, `@todo assignment to "${left.name}" before it is declared`);
+                ASTerr_throw(left, `@todo assignment to "${left.name}" before it is declared`);
             }
             else if(existingVar === null) // variable is not declared anywhere
             {
@@ -118,7 +118,7 @@ export default {
         let id = node.id;
         if(id == undefined || id == null)
         {
-            ASTerr(node, "[INTERNAL] Function has no ID");
+            ASTerr_kill(node, "[INTERNAL] Function has no ID");
         }
 
         let name: string = id.name;
@@ -127,14 +127,17 @@ export default {
         //console.log(node)
 
         if (name == undefined) {
-            ASTerr(node, "Function has no name");
+            ASTerr_kill(node, "Function has no name");
         }
         else {
+            let fn = cpp.functions.create(node, id, name, params, node.body);
+            console.log("INFO", fn);
             return {
-                content: cpp.functions.create(id, name, params, node.body),
+                content: fn.strconts,
                 info: {
                     type: cpp.types.FUNCTION
-                }
+                },
+                replace: fn.repObj,
             };
         }
     },
@@ -180,7 +183,7 @@ export default {
             }
             else
             {
-                ASTerr(expression, "@todo call expressions not implemented (only dbgprint)");
+                ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
             }
         }
         else
@@ -191,10 +194,9 @@ export default {
             }
             else
             {
-            ASTerr(expression, `@todo expression type ${expression.type} not implemented`);
+            ASTerr_kill(expression, `@todo expression type ${expression.type} not implemented`);
             }
         }
-        process.exit(0)
     },
 
     NumericLiteral(node: ESTree.NumericLiteral, build: buildInfo[]): buildInfo {
@@ -227,7 +229,7 @@ export default {
             };
         }
         else {
-            ASTerr(node, `@todo identifier "${node.name}" is not declared or is unimplemented`);
+            ASTerr_throw(node, `@todo identifier "${node.name}" is not declared or is unimplemented`);
         }
     },
 }

@@ -45,9 +45,10 @@ In dummy mode:
 
 
 import * as ESTree from '@babel/types';
-import { buildInfo, walkBody } from './walk';
+import { buildInfo, replaceObj, walkBody } from './walk';
 import { ast, eslintScope } from './main';
-import ASTerr, { err } from './ASTerr';
+import { ASTerr_kill, err } from './ASTerr';
+import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 
 declare global {
     interface Map<K extends ESTree.Identifier, V> {
@@ -97,6 +98,7 @@ interface CFunction {
 }
 
 export let allVars = new Map<ESTree.Identifier, CVariable>();
+export let allGlobalVars: CVariable[] = [];
 export let allFuncs = new Map<ESTree.Identifier, CFunction>();
 
 export interface stackInfo {
@@ -116,7 +118,7 @@ export function setDummyMode(mode: boolean): void {
     dummyMode = mode;
 }
 
-// this is an absolutley disgusting TEMPORARY function until I'm not lazy and fix the walker to store path info
+// @todo this is an absolutley disgusting TEMPORARY function until I'm not lazy and fix the walker to store path info
 export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | undefined {
 
     for (const s of eslintScope.scopes) {
@@ -129,6 +131,17 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
         }
     }
     return undefined;
+}
+
+// @todo also disgusting
+export function isGlobalVar(node: ESTree.Identifier): boolean {
+  for (const s of eslintScope.scopes) {
+    const v = s.set.get(node.name);
+    if (v && v.defs.length > 0 && v.identifiers.includes(node)) {
+      return s.type === "global";
+    }
+  }
+  return false;
 }
 
 export let cpp = {
@@ -178,18 +191,30 @@ export let cpp = {
         },
         create(node: ESTree.Identifier, type: ctype, name: string, value: string, constant: boolean = false): string {
             if (allVars.has(node)) {
-                ASTerr(node, `Identical variable "${name}" already declared`);
+                ASTerr_kill(node, `Identical variable "${name}" already declared`);
             }
 
-            allVars.add(node, 'vars', {
+            let cvar: CVariable = {
                 type, name, constant
-            });
+            };
 
-            return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
+            allVars.add(node, 'vars', cvar);
+
+            // let possibleBinding =  eslintScope.acquire(node.);
+
+            if(isGlobalVar(node))
+            {
+                allGlobalVars.push(cvar);
+                return name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
+            }
+            else
+            {
+                return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
+            }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
             if (value.info.type !== existingVar.type && existingVar.type !== cpp.types.IFFY) {
-                ASTerr(node, `@todo unable to coercer ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
+                ASTerr_kill(node, `@todo unable to coerce ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
             }
 
             return `${existingVar.name} = ${cpp.cast.static(existingVar.type, value.content)}`;
@@ -208,11 +233,11 @@ export let cpp = {
     functions:
     {
         all: allFuncs,
-        create(node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement) {
+        create(fn: ESTree.Function, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): {strconts: string, repObj: replaceObj} {
             let body = block.body;
 
             if (allFuncs.has(node)) {
-                ASTerr(node, `Identical function "${name}" already declared`);
+                ASTerr_kill(node, `Identical function "${name}" already declared`);
             }
 
             allFuncs.add(node, 'funcs', {
@@ -226,8 +251,6 @@ export let cpp = {
                 err("@todo parameters not implemented");
             }
             else {
-                let ostring = `auto ${name}()\n{\n`;
-
                 /*
 
                 HERE 
@@ -241,13 +264,30 @@ export let cpp = {
 
                 */
 
-                let output: string[] = walkBody(body);
+                let ostring = `auto ${name}()\n{\n`;
 
-                ostring += output.join("\n");
+                let repObj: replaceObj = {ready: false, surroundings: [ostring, "\n}"]};
+                unevaledFuncs.push({func: fn, evaluatedCode: repObj});
+                evaluateAllFunctions();
 
+                // ostring += output.join("\n");
+                
                 ostring += "\n}"
 
-                return ostring;
+                return {
+                    strconts: ostring,
+                    repObj
+                };
+
+                // let ostring = `auto ${name}()\n{\n`;
+
+                // let output: string[] = walkBody(body);
+
+                // ostring += output.join("\n");
+
+                // ostring += "\n}"
+
+                // return ostring;
             }
         }
     }

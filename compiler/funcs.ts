@@ -31,12 +31,13 @@ function trycompile(function)
 */
 
 import * as ESTree from '@babel/types';
-import { buildInfo, walk, walkBody, walkBodyDummy } from './walk';
-import ASTerr from './ASTerr';
+import { buildInfo, replaceObj, walk, walkBody, walkBodyDummy } from './walk';
+import { ASTerr_kill } from './ASTerr';
+// import ASTerr from './ASTerr';
 
 interface FunctionQueueElement {
     func: ESTree.Function;
-    evaluatedCode: buildInfo[]; //used for .replace
+    evaluatedCode: replaceObj; //used for .replace
     // id: number;
 };
 
@@ -53,11 +54,12 @@ Array.prototype.pushFront = function <T>(value: T) {
 }
 
 interface evalInfo {
-    bInfo: string[],
+    bInfo: buildInfo[],
     successfull: boolean
 };
 
 export let unevaledFuncs: FunctionQueue = [];
+let alreadyTried: FunctionQueue = [];
 
 export function evaluateAllFunctions(): string[] {
 
@@ -66,13 +68,23 @@ export function evaluateAllFunctions(): string[] {
     //     return { func, id, evaluatedCode: [] };
     // })
 
+    alreadyTried = [];
+
     while (unevaledFuncs.length != 0) {
         let fn = unevaledFuncs.pop()!;
+
+        if(alreadyTried.includes(fn))
+        {
+            unevaledFuncs.pushFront(fn);
+            break;
+        }
+
         let info: evalInfo = evaluateSingle(fn);
 
         // if failed, push it back in
         if (!info.successfull) {
             unevaledFuncs.pushFront(fn);
+            alreadyTried.push(fn);
         }
 
         // @todo check loops, for now if its never fixed then it will just go forever
@@ -84,7 +96,7 @@ export function evaluateAllFunctions(): string[] {
 
 function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
     let succeeded = false;
-    let output: string[] = [];
+    let output: buildInfo[] = [];
     try {
         // walk in dummy mode
         if (ESTree.isFunctionDeclaration(funcInfo.func)) {
@@ -96,10 +108,16 @@ function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
 
             // if it gets here, it succeeded
             output = walkBody(node.body.body);
+            //console.log("AAAAAAA", output);
+            // @todo HERE i think the issue is walkBody destroys all buildInfo so changing this does nothing
+            // fix with toReplace list or some other way 
+            funcInfo.evaluatedCode.with = output;
+            funcInfo.evaluatedCode.ready = true;
+
             succeeded = true;
         }
         else {
-            ASTerr(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
+            ASTerr_kill(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
         }
     }
     catch (err) {
