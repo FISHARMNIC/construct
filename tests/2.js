@@ -1,29 +1,33 @@
 // Global variables
-let a = 1.23;
-let b = "Hello";
+let a = 2;
 
 // Functions (no params no return yet)
-function main()
-{
+function bob() {
     // Proper scope handling (this a != global a) 
-    let a = 2;
-    // Proper JS type coercion (only for 4-main math for now)
-    // note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
-    // still works but forces c to be a "let" instead
-    let b = ("10" + 10) * a;
-    let c = 100;
+    let a = 1.23;
+    let b = "Hello";
 
-    // 100
-    dbgprint(c);
-
-    // Reassignment
-    a = 10;
-    c = b;
-
-    // c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
-    dbgprint(c);
-
-    a = "Hello!"; // -----> used to break since a is now a let, which would cause ovelroad issues on line 13
-
-    dbgprint(c);
+    dbgprint(a);
+    dbgprint(b);
 }
+
+// Proper JS type coercion (only for 4-main math for now)
+// note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
+// still works but forces c to be a "let" instead
+let b = ("10" + 10) * a;
+let c = 100;
+
+// 100
+dbgprint(c);
+
+// Reassignment
+a = 10;
+c = b;
+
+// c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
+dbgprint(c);
+
+// Re-typing
+a = "Hello!";
+
+dbgprint(a);

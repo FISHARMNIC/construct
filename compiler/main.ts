@@ -34,7 +34,7 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/3.js';
+const INPUTFILE = __dirname + '/../tests/2.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
@@ -47,35 +47,43 @@ function begin(): void {
     let output: buildInfo[] = walkBody(ast.program.body);
 
     // if there are any functions left over
-    if(unevaledFuncs.length != 0)
-    {
+    if (unevaledFuncs.length != 0) {
         evaluateAllFunctions();
     }
-    if(unevaledFuncs.length != 0)
-    {
+    if (unevaledFuncs.length != 0) {
         err(`Unable to evaluate functions: [${unevaledFuncs.map((value: any): string => value.func.id.name).join(", ")}]`);
     }
 
-    output.forEach((info: buildInfo): void => {
-    // console.log("REPLACEEEEE", info.replace)
-    if(info.replace && info.replace.ready && info.replace.with)
-    {
-      let repwith = buildInfoToStr(info.replace.with);
-      let build = "";
-      if(info.replace.surroundings)
-      {
-        build += info.replace.surroundings[0];
-        build += repwith.join("\n");
-        build += info.replace.surroundings[1];
-      }
-      else
-      {
-        build = repwith.join("\n");
-      }
+    // sorting defers to the back
+    output.sort((a: buildInfo, b: buildInfo) => {
+        if (a.defer && !b.defer) return 1;
+        if (!a.defer && b.defer) return -1;
+        return 0;                   
+    });
 
-      info.content = build;
-    }
-  })
+    let ind = output.findIndex((value: buildInfo): boolean => "defer" in value);
+    if(ind == -1) ind = output.length;
+    ind++;
+    output.pushFront({content: `int main() {\n`, info: {type: cpp.types.FUNCTION}});
+    output.splice(ind, 0, {content: "return 0;\n}", info: {type: cpp.types.FUNCTION}});
+
+    // replacing things, like functions that were evaled later
+    output.forEach((info: buildInfo): void => {
+        if (info.replace && info.replace.ready && info.replace.with) {
+            let repwith = buildInfoToStr(info.replace.with);
+            let build = "";
+            if (info.replace.surroundings) {
+                build += info.replace.surroundings[0];
+                build += repwith.join("\n");
+                build += info.replace.surroundings[1];
+            }
+            else {
+                build = repwith.join("\n");
+            }
+
+            info.content = build;
+        }
+    })
 
     let output_str: string[] = buildInfoToStr(output);
 
@@ -90,7 +98,10 @@ function begin(): void {
     let ostr: string = pre;
 
     allGlobalVars.forEach((variable) => {
-        ostr += variable.type + " " + variable.name + ";\n";
+
+        // @todo make default type undefined, and add undefined to the variant
+        // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
+        ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0") : ""};\n`; 
     })
 
     ostr += output_str.join("\n");

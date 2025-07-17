@@ -45,7 +45,7 @@ In dummy mode:
 
 
 import * as ESTree from '@babel/types';
-import { buildInfo, replaceObj, walkBody } from './walk';
+import { buildInfo, nestLevel, replaceObj, walkBody } from './walk';
 import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
@@ -202,7 +202,8 @@ export let cpp = {
 
             // let possibleBinding =  eslintScope.acquire(node.);
 
-            if(isGlobalVar(node))
+            //if(isGlobalVar(node))
+            if(nestLevel == 0)
             {
                 allGlobalVars.push(cvar);
                 return name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);

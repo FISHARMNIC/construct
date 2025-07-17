@@ -14,8 +14,7 @@ interface nodeInfo {
   right?: buildInfo
 }
 
-export interface replaceObj
-{
+export interface replaceObj {
   ready: boolean,
   with?: buildInfo[],
   surroundings?: string[]
@@ -24,6 +23,7 @@ export interface replaceObj
 export interface buildInfo {
   content: string;
   info: nodeInfo;
+  defer?: boolean;      // dont place in the main function, for example like a function dec
   replace?: replaceObj;
 }
 
@@ -31,7 +31,7 @@ const bindings = new Map<ESTree.Identifier, Binding>();
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
-export function walkBodyDummy(body: ESTree.Statement[]): buildInfo[] {
+export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], success: boolean } {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -40,7 +40,20 @@ export function walkBodyDummy(body: ESTree.Statement[]): buildInfo[] {
 
   tempStack.push(lastObj);
 
-  let out: buildInfo[] = walkBody(body, true);
+  let success = false;
+  let out: buildInfo[] = [];
+
+  nestLevel++;
+
+  try {
+    out = walkBody(body, true, true);
+    success = true;
+  }
+  catch (err) {
+    success = false;
+  }
+
+  nestLevel--;
 
   ///  @todo make this more dynamic
 
@@ -54,14 +67,16 @@ export function walkBodyDummy(body: ESTree.Statement[]): buildInfo[] {
 
   tempStack.pop();
 
-  return out;
+  return {
+    info: out,
+    success
+  };
 }
 
 
 export let toReplace: replaceObj[] = [];
 
-export function buildInfoToStr(bInfo: buildInfo[]): string[]
-{
+export function buildInfoToStr(bInfo: buildInfo[]): string[] {
   return bInfo.map((value: buildInfo): string => value.content);
 }
 
@@ -118,11 +133,16 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
   return bInfo[0];
 }
 
+export let nestLevel = -1;
+
 // walk a series of statement like those within the main file or the block statement of a fn
-export function walkBody(body: ESTree.Statement[], dummy: boolean = false): buildInfo[] {
+export function walkBody(body: ESTree.Statement[], dummy: boolean = false, unsafe: boolean = false): buildInfo[] {
 
   //let output: string[] = [];
   let output: buildInfo[] = [];
+
+  if (!unsafe)
+    nestLevel++;
 
   for (const statement of body) {
     let info: buildInfo[] = walk(statement, dummy);
@@ -139,6 +159,9 @@ export function walkBody(body: ESTree.Statement[], dummy: boolean = false): buil
 
     //output.push(...strinfo);
   }
+
+  if (!unsafe)
+    nestLevel--;
 
   return output;
 }

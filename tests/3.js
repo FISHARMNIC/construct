@@ -4,8 +4,4 @@ function bob()
 }
 
 let a = 5;
-
-function main()
-{
-    dbgprint(a);
-}
+dbgprint(a);

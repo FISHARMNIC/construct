@@ -73,8 +73,7 @@ export function evaluateAllFunctions(): string[] {
     while (unevaledFuncs.length != 0) {
         let fn = unevaledFuncs.pop()!;
 
-        if(alreadyTried.includes(fn))
-        {
+        if (alreadyTried.includes(fn)) {
             unevaledFuncs.pushFront(fn);
             break;
         }
@@ -97,32 +96,29 @@ export function evaluateAllFunctions(): string[] {
 function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
     let succeeded = false;
     let output: buildInfo[] = [];
-    try {
-        // walk in dummy mode
-        if (ESTree.isFunctionDeclaration(funcInfo.func)) {
-            let node = funcInfo.func as ESTree.FunctionDeclaration;
 
-            console.log(`[ATTEMPTING EVAL] on "${node.id?.name}"`);
-            output = walkBodyDummy(node.body.body);
+    if (ESTree.isFunctionDeclaration(funcInfo.func)) {
+        let node = funcInfo.func as ESTree.FunctionDeclaration;
+
+        console.log(`[ATTEMPTING EVAL] on "${node.id?.name}"`);
+        let out = walkBodyDummy(node.body.body);
+        if (out.success) {
             console.log(`\t-> success`);
 
             // if it gets here, it succeeded
             output = walkBody(node.body.body);
-            //console.log("AAAAAAA", output);
-            // @todo HERE i think the issue is walkBody destroys all buildInfo so changing this does nothing
-            // fix with toReplace list or some other way 
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
             succeeded = true;
         }
         else {
-            ASTerr_kill(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
+            console.log(`\t-> failiure`);
+            succeeded = false;
         }
     }
-    catch (err) {
-        console.log(`\t-> failiure`);
-        succeeded = false;
+    else {
+        ASTerr_kill(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
     }
 
     return {

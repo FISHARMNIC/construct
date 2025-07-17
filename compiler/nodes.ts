@@ -114,6 +114,7 @@ export default {
 
     },
 
+    // @todo create function forward decs
     FunctionDeclaration(node: ESTree.FunctionDeclaration, build: buildInfo[]): buildInfo {
         let id = node.id;
         if(id == undefined || id == null)
@@ -138,6 +139,7 @@ export default {
                     type: cpp.types.FUNCTION
                 },
                 replace: fn.repObj,
+                defer: true
             };
         }
     },
@@ -183,6 +185,7 @@ export default {
             }
             else
             {
+                // @todo on function call need to check if evaluated yet
                 ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
             }
         }
