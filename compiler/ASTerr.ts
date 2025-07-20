@@ -1,5 +1,5 @@
 import * as ESTree from '@babel/types';
-import { setDummyMode } from './cpp';
+import { exitDummyMode } from './cpp';
 import { buildInfo } from './walk';
 
 /*
@@ -22,11 +22,16 @@ export interface ThrowInfo
     };
 }
 
+export function safeThrow(toThrow: any): never
+{
+    exitDummyMode(); // for catches
+    throw toThrow;
+}
+
 export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
 {
     console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args);
-    setDummyMode(false); // for catches
-    throw new Error();
+    safeThrow(new Error());
     //process.exit(1);
 }
 
@@ -43,7 +48,7 @@ export function ASTerr_kill(node: ESTree.Node, ...args: any[]): never
 
 export function ASTinfo_throw(info: ThrowInfo)
 {
-    throw info; // @todo this is not good practice. Throw a subclass of error that removes the Error: XXX prefix
+    safeThrow(info); // @todo this is not good practice. Throw a subclass of error that removes the Error: XXX prefix
 }
 
 // General error, kills the program

@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { allFuncs, allVars, dummyMode, setDummyMode, tempStack } from './cpp';
+import { __dummyModeGlevel, allFuncs, allVars, dummyMode, enterDummyMode, exitDummyMode, setDummyMode, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];
@@ -40,12 +40,13 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   };
 
   tempStack.push(lastObj);
+  // console.log("----- CREATED TEMP STACK -----", __dummyModeGlevel());
 
   let success = false;
   let out: buildInfo[] = [];
   let errInfo: ThrowInfo | undefined = undefined;
 
-    console.log(">>>>>> in", nestLevel, nestLevel + 1);
+    // console.log(">>>>>> in", nestLevel, nestLevel + 1);
   nestLevel++;
 
   try {
@@ -57,7 +58,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
     errInfo = err;
   }
 
-  console.log(">>>>>> out", nestLevel, nestLevel - 1);
+  // console.log(">>>>>> out", nestLevel, nestLevel - 1);
   nestLevel--;
 
   if(beforeDelete)
@@ -76,6 +77,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   });
 
   tempStack.pop();
+  // console.log("----- DESTRYD TEMP STACK -----", __dummyModeGlevel())
 
   return {
     info: out,
@@ -92,8 +94,10 @@ export function buildInfoToStr(bInfo: buildInfo[]): string[] {
 // fully walk a single node, not a collection of statements
 export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
 
-  let oldMode = dummyMode;
-  setDummyMode(dummy);
+  if(dummy)
+  {
+    enterDummyMode();
+  }
 
   let build: buildInfo[] = [];
 
@@ -105,7 +109,10 @@ export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
     ASTerr_kill(node, `Unable to handle node "${type}"`);
   }
 
-  setDummyMode(oldMode);
+  if(dummy)
+  {
+    exitDummyMode();
+  }
 
   // used for revaling functions
   // build.forEach((info: buildInfo): void => {

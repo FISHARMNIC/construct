@@ -9,7 +9,7 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
-import { cpp, dummyMode, ident2binding } from './cpp';
+import { cpp, ident2binding, inDummyMode } from './cpp';
 import iffy, { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 
@@ -111,7 +111,7 @@ export default {
             // used when "iffy" is looking for reassignments
             let lookingFor = dummyWalkPauseOnSet.at(-1);
             if (lookingFor)
-                if (dummyMode && lookingFor.find == binding) {
+                if (inDummyMode() && lookingFor.find == binding) {
                     if (!lookingFor.location)
                         ASTerr_kill(left, "Error");
 

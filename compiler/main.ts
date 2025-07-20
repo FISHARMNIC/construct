@@ -1,11 +1,15 @@
 /*
 
+@todo clean everything up. Go through every file and clean it up. It's such a mess
+
+
+
 Main code that handles everything else. Run tsx here
 
 */
 
 
-import { buildInfoToStr, walkBody } from './walk';
+import { buildInfoToStr, nestLevel, walkBody } from './walk';
 import { buildInfo } from './walk';
 import { exec } from 'child_process';
 import fs from 'fs';
@@ -32,6 +36,17 @@ const INPUTFILE = __dirname + '/../tests/5.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
+
+
+// @todo clean this up and put in other file or something
+const saveLog = console.log;
+console.log = function(...args: any[])
+{
+    if(nestLevel <= 0)
+        saveLog(...args);
+    else
+        saveLog("\t".repeat(nestLevel), ...args);
+}
 
 function begin(): void {
 

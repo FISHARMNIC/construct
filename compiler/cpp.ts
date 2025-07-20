@@ -62,16 +62,40 @@ export let allVars = new Map<ESTree.Identifier, CVariable>();
 export let allGlobalVars: CVariable[] = [];
 export let allFuncs = new Map<ESTree.Identifier, CFunction>();
 export let tempStack: stackInfo[] = [];
-export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
+// export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
 
 let unique_label = 0;
 function new_unique() {
     return ++unique_label;
 }
 
-export function setDummyMode(mode: boolean): void {
-    dummyMode = mode;
+let dummyLevel: number = 0;
+
+export function enterDummyMode() {
+    dummyLevel++;
+    console.log("[dummy] ENTERING to", dummyLevel);
 }
+
+export function exitDummyMode() {
+    if (dummyLevel > 0) {
+        dummyLevel--;
+        console.log("[dummy] EXITING to", dummyLevel);
+    }
+}
+
+export function inDummyMode(): boolean {
+    return dummyLevel != 0;
+}
+
+export function __dummyModeGlevel(): number
+{
+    return dummyLevel;
+}
+
+
+// export function setDummyMode(mode: boolean): void {
+//     dummyMode = mode;
+// }
 
 // @todo this is an absolutley disgusting TEMPORARY function until I'm not lazy and fix the walker to store path info
 export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | undefined {
@@ -90,13 +114,13 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
 
 // @todo also disgusting
 export function isGlobalVar(node: ESTree.Identifier): boolean {
-  for (const s of eslintScope.scopes) {
-    const v = s.set.get(node.name);
-    if (v && v.defs.length > 0 && v.identifiers.includes(node)) {
-      return s.type === "global";
+    for (const s of eslintScope.scopes) {
+        const v = s.set.get(node.name);
+        if (v && v.defs.length > 0 && v.identifiers.includes(node)) {
+            return s.type === "global";
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 export let cpp = {
@@ -158,19 +182,17 @@ export let cpp = {
             // let possibleBinding =  eslintScope.acquire(node.);
 
             //if(isGlobalVar(node))
-            if(nestLevel == 0)
-            {
-                if(!dummyMode)
+            if (nestLevel == 0) {
+                if (!inDummyMode())
                     allGlobalVars.push(cvar);
                 return name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
             }
-            else
-            {
+            else {
                 return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
             }
         },
         create2(node: ESTree.Identifier, name: string, value: buildInfo, constant: boolean = false): string {
-            
+
             let type = value.info.type;
 
             if (iffy(node, type)) {
@@ -185,24 +207,20 @@ export let cpp = {
                 ASTerr_kill(node, `Identical variable "${name}" already declared`);
             }
 
-
+            console.log(`[vars ] creating: "${name}" as "${type}" : dummy? ${inDummyMode()}`);
             allVars.add(node, 'vars', cvar);
 
-
-            console.log(`-- RESOLVED "${name}" is "${cvar.type}"\n`);
             // process.exit(0);
 
-        
+
 
             // let possibleBinding =  eslintScope.acquire(node.);
-            if(nestLevel == 0)
-            {
-                if(!dummyMode)
+            if (nestLevel == 0) {
+                if (!inDummyMode())
                     allGlobalVars.push(cvar);
                 return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
             }
-            else
-            {
+            else {
                 return (constant ? "const " : "") + type + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
             }
         },
@@ -227,7 +245,7 @@ export let cpp = {
     functions:
     {
         all: allFuncs,
-        create(fn: ESTree.Function, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): {strconts: string, repObj: replaceObj} {
+        create(fn: ESTree.Function, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
             let body = block.body;
 
             if (allFuncs.has(node)) {
@@ -247,12 +265,12 @@ export let cpp = {
             else {
                 let ostring = `auto ${name}()\n{\n`;
 
-                let repObj: replaceObj = {ready: false, surroundings: [ostring, "\n}"]};
-                unevaledFuncs.push({func: fn, evaluatedCode: repObj});
+                let repObj: replaceObj = { ready: false, surroundings: [ostring, "\n}"] };
+                unevaledFuncs.push({ func: fn, evaluatedCode: repObj });
                 evaluateAllFunctions();
 
                 // ostring += output.join("\n");
-                
+
                 ostring += "\n}"
 
                 return {

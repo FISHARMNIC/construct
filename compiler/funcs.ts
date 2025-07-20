@@ -88,7 +88,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
     if (ESTree.isFunctionDeclaration(funcInfo.func)) {
         let node = funcInfo.func as ESTree.FunctionDeclaration;
 
-        console.log(`[ATTEMPTING EVAL] on "${node.id?.name}"`);
+        console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
         let out = walkBodyDummy(node.body.body);
         if (out.success) {
             console.log(`\t-> success`);

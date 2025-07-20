@@ -1,5 +1,5 @@
 import * as ESTree from '@babel/types';
-import { dummyMode, tempStack } from './cpp';
+import { inDummyMode, tempStack } from './cpp';
 import { err } from './ASTerr';
 
 // safe version of Map::set
@@ -12,7 +12,7 @@ Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string
     else {
         this.set(key, value);
 
-        if (dummyMode) {
+        if (inDummyMode()) {
 
             let last = tempStack.at(-1);
 

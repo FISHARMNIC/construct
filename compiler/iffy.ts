@@ -31,7 +31,10 @@ export let dummyWalkPauseOnSet: dummyWalkPauseOnSet_t[] = [];
 
 function iffyDbgPrint(...args: any[])
 {
-    console.log("\t".repeat(dummyWalkPauseOnSet.length), ...args);
+    if(dummyWalkPauseOnSet.length <= 0)
+        console.log(...args);
+    else
+        console.log("\t".repeat(dummyWalkPauseOnSet.length), ...args);
 }
 
 // @todo check that the ident is the binding itself. This is only meant for new variables
