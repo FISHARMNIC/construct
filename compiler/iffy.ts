@@ -1,8 +1,30 @@
 /*
+`Iffy` checks where an identifier (must be a new variable!) is ever reassigned a new type
 
-Given an identifier (which must be a new variable!), check if it is ever reassigned a new type
-    -> returns if the identifier is ever re-typed
+It does this by getting the binding/root of the identifer, and looking for any re-assignation to it
 
+The value being assigned to it may be one of two things:
+    1) A simple literal that can be easily evaluated to see if it's a different type
+    2) A local symbol that is defined somewhere else (see test number 5)
+
+Type2 is much more tricky because it has to jump to that function, dummy eval it until it finds the exact statement where
+the variable is being reassigned, pause evaluation, and return the type of the value being given to it
+
+A checking where a Type2 evaluation is needed is done by using a try catch on an attempt to walk the value being assigned
+    -> on success, that means that the value could be easily found and its a Type1 resolution
+    -> on failiure, that means that the value may depend on a local symbol not defined at the moment the the variable was,
+       but may exist when the variable is being reassigned a new value
+
+Note that this is there ASTerr_kill vs ASTerr_throw come into play.
+
+A kill should only be used for something like a syntax error or something thats not implemented
+    -> something that has no chance of being resolved no matter how much context you give it
+
+A throw should only be used when something cannot currently be evaluated, but given more context it might be able to later on
+    -> example: undeclared variable. Online line A it might not exist but on line N it could exist 
+
+----
+@todo
 In the future, there will be more types of iffys/lets for speed optimization
     let_simple = string or number
     let_obj = array or object
@@ -18,7 +40,6 @@ import { buildInfo, walk_requireSingle, walkBodyDummy } from './walk';
 import { ast } from './main';
 import { ASTerr_kill, ASTwarn, ThrowInfo, ThrowInfoTypes } from './ASTerr';
 import { ctype, stackInfo } from './ctypes';
-import { allVars } from './cpp';
 
 interface dummyWalkPauseOnSet_t {
     find: ESTree.Identifier | null,
@@ -29,9 +50,8 @@ let functionStack: ESTree.FunctionDeclaration[] = [];
 
 export let dummyWalkPauseOnSet: dummyWalkPauseOnSet_t[] = [];
 
-function iffyDbgPrint(...args: any[])
-{
-    if(dummyWalkPauseOnSet.length <= 0)
+function iffyDbgPrint(...args: any[]) {
+    if (dummyWalkPauseOnSet.length <= 0)
         console.log(...args);
     else
         console.log("\t".repeat(dummyWalkPauseOnSet.length), ...args);
@@ -113,17 +133,6 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
                             ASTwarn(newValue, `(IGNORE ERROR ABOVE) Using complex type resolving\n\t-> Searching for mods to "${ident.name}"`);
 
-                            /*
-                            @todo to evaluate single on most recent
-                                -> on fail pop again, try again
-                                -> evaluateSingle wont work because uses the uneval function stack stuff
-                                -> just use walkBodyDummy
-
-                            Find way to get variables defined before they are removed from dummy mode
-                                -> maybe return
-
-                            */
-
                             let ready = false;
                             while (!ready && functionStack.length != 0) {
                                 let fnScope = functionStack.pop(); // get the innermost function
@@ -134,23 +143,6 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
                                     iffyDbgPrint(`[iffy ] Attempting to dummy walk the innermost function, defined on line ${fnScope.loc?.start.line}`)
                                     walkBodyDummy(fnScope?.body.body, (tempObjs: stackInfo, success: boolean, errInfo: ThrowInfo | undefined) => {
 
-                                        /*
-                                        !HERE! !IMPORTANT!
-
-                                        Need to find some way to mark all modifications
-
-                                        Here, the variable doesn't exist yet
-                                            -> Do i need to create the variable first?
-                                            -> But how would it evaluate types. The entire point of this function is to do that
-                                            -> Maybe force a pause on walkBodyDummy?
-                                                -> On assignment, throw info
-                                                -> make a global flag (type = identifier) and set it to this idents
-                                                    -> whenever found, throw ctype being set to it
-                                                    -> Along with info to tell catch that this throw was OK
-                                                    -> NO NEED TO MAKE VAR BEFORE
-                                                        -> just check flag before checking if exists
-                                        */
-
                                         // if it didn't succeed
                                         if (!success) {
                                             // check if it was actually just an infoThrow, saying "hey, i found it"
@@ -159,10 +151,10 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
                                                 if (eInfo.type === ThrowInfoTypes.IdentFound) {
                                                     //console.log("--------- YUP -----", ident.name, eInfo.contents.bInfo!.content);
-                                                    
+
                                                     const setInfo: buildInfo = eInfo.contents.bInfo!;
                                                     const newType = setInfo.info.type;
-                                                    
+
                                                     // Here, the reassignment has been found. Now just see if the type is different
                                                     if (newType !== currentType) {
                                                         isIffy = true;
@@ -180,8 +172,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
                                                 // normal error, can't eval this function, jump out one more
                                                 ready = false;
                                             }
-                                        } else 
-                                        {
+                                        } else {
                                             // Function was pointless, didn't tell us anything
                                             // @todo this is an issue with how FunctionDeclaration pushes any fn it find to functionStack 
                                             // These may just be random functions that are opened and closed before the scope of this one
@@ -197,8 +188,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
                             // Did everything it could, none of the functions gave it any info
                             // Just mark it as iffy
-                            if(functionStack.length == 0)
-                            {
+                            if (functionStack.length == 0) {
                                 ASTwarn(node, `Was not able to evaluate type. defaulting to "let"`);
                                 isIffy = true;
                             }
@@ -229,8 +219,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
                         //path.stop();
                     }
 
-                    if(isIffy)
-                    {
+                    if (isIffy) {
                         path.stop();
                     }
                 }

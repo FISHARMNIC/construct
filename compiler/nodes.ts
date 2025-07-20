@@ -14,7 +14,7 @@ import iffy, { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 
 export default {
-    VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo | void {
+    VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
         const kind = node.kind; // let, const, var
         let myType = cpp.types.AUTO;
 
@@ -97,6 +97,10 @@ export default {
                     // return ret;
                 }
             }
+
+            // Should never get here. 
+            // @todo Remove this when multiple decs implemented
+            ASTerr_kill(node, "Inconcievable! ;)");
         }
     },
 
