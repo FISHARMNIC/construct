@@ -6,7 +6,7 @@
 * Currently implemented:
     * string and number variables
         * Simple variable assignment + reassignment
-        * reassignment is limited and will often fallback to `lets` for now (see below)
+        * **UPDATE** : Complex type resolution implemented
     * four-function math with proper JS type coercion
     * function declaration (no calling nor parameters, so essentially `main` is the only thing you can do with this)
     * cout placeholder `dbgprint()`
