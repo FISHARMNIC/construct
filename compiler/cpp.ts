@@ -56,6 +56,7 @@ import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
 import { CFunction, ctype, CVariable, stackInfo } from './ctypes';
+import iffy from './iffy';
 
 export let allVars = new Map<ESTree.Identifier, CVariable>();
 export let allGlobalVars: CVariable[] = [];
@@ -166,6 +167,43 @@ export let cpp = {
             else
             {
                 return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
+            }
+        },
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, constant: boolean = false): string {
+            
+            let type = value.info.type;
+
+            if (iffy(node, type)) {
+                type = cpp.types.IFFY;
+            }
+
+            let cvar: CVariable = {
+                type, name, constant
+            };
+
+            if (allVars.has(node)) {
+                ASTerr_kill(node, `Identical variable "${name}" already declared`);
+            }
+
+
+            allVars.add(node, 'vars', cvar);
+
+
+            console.log(`-- RESOLVED "${name}" is "${cvar.type}"\n`);
+            // process.exit(0);
+
+        
+
+            // let possibleBinding =  eslintScope.acquire(node.);
+            if(nestLevel == 0)
+            {
+                if(!dummyMode)
+                    allGlobalVars.push(cvar);
+                return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
+            }
+            else
+            {
+                return (constant ? "const " : "") + type + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
             }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {

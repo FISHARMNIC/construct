@@ -1,5 +1,5 @@
 import * as ESTree from '@babel/types';
-import { ASTerr_kill } from './ASTerr';
+import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
 import { allFuncs, allVars, dummyMode, setDummyMode, tempStack } from './cpp';
@@ -32,7 +32,7 @@ export let nestLevel = -1;
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
-export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo) => void): { info: buildInfo[], success: boolean } {
+export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -43,6 +43,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 
   let success = false;
   let out: buildInfo[] = [];
+  let errInfo: ThrowInfo | undefined = undefined;
 
     console.log(">>>>>> in", nestLevel, nestLevel + 1);
   nestLevel++;
@@ -53,13 +54,14 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   }
   catch (err) {
     success = false;
+    errInfo = err;
   }
 
   console.log(">>>>>> out", nestLevel, nestLevel - 1);
   nestLevel--;
 
   if(beforeDelete)
-    beforeDelete(lastObj);
+    beforeDelete(lastObj, success, errInfo);
 
   ///  @todo make this more dynamic
 
@@ -69,7 +71,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   });
 
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
-    console.log("::: DELETINGGGGGG", value.name);
+    console.log("[dummy] deleting dummy variable", value.name);
     allVars.delete(value);
   });
 
@@ -78,6 +80,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   return {
     info: out,
     success,
+    errorInfo: errInfo
   };
 }
 
