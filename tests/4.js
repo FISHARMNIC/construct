@@ -1,6 +1,14 @@
-function myfunc(a)
+/*
+Tests:
+    * No side-effects in dummy mode (function eval fails first try, shouldn't create 'q')
+    * Function re-evalutation
+
+*/
+
+function bob()
 {
-    dbgprint(a);
+    let q = 10;
+    a = 2;
 }
 
-myfunc(123);
+let a = 1;

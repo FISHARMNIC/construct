@@ -159,7 +159,8 @@ export let cpp = {
             //if(isGlobalVar(node))
             if(nestLevel == 0)
             {
-                allGlobalVars.push(cvar);
+                if(!dummyMode)
+                    allGlobalVars.push(cvar);
                 return name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
             }
             else
@@ -206,19 +207,6 @@ export let cpp = {
                 err("@todo parameters not implemented");
             }
             else {
-                /*
-
-                HERE 
-
-                @todo add to funcs and use evaluateAllFunctions from funcs.ts
-
-                Buildinfo should contain an optional property that causes replacement if triggered
-                This is so that if a function fails to eval, it can be revaled later on the next function creation
-
-                also find some way to pass .replacement binding
-
-                */
-
                 let ostring = `auto ${name}()\n{\n`;
 
                 let repObj: replaceObj = {ready: false, surroundings: [ostring, "\n}"]};

@@ -32,7 +32,7 @@ export let nestLevel = -1;
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
-export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], success: boolean } {
+export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo) => void): { info: buildInfo[], success: boolean } {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -44,6 +44,7 @@ export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], su
   let success = false;
   let out: buildInfo[] = [];
 
+    console.log(">>>>>> in", nestLevel, nestLevel + 1);
   nestLevel++;
 
   try {
@@ -54,15 +55,21 @@ export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], su
     success = false;
   }
 
+  console.log(">>>>>> out", nestLevel, nestLevel - 1);
   nestLevel--;
+
+  if(beforeDelete)
+    beforeDelete(lastObj);
 
   ///  @todo make this more dynamic
 
+  // clean up all temporary stuff
   lastObj.funcs.forEach((value: ESTree.Identifier): void => {
     allFuncs.delete(value);
   });
 
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
+    console.log("::: DELETINGGGGGG", value.name);
     allVars.delete(value);
   });
 
@@ -70,7 +77,7 @@ export function walkBodyDummy(body: ESTree.Statement[]): { info: buildInfo[], su
 
   return {
     info: out,
-    success
+    success,
   };
 }
 

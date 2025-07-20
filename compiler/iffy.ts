@@ -19,6 +19,9 @@ import { ast } from './main';
 import { ASTwarn } from './ASTerr';
 import { ctype } from './ctypes';
 
+
+let functionStack: ESTree.FunctionDeclaration[] = [];
+
 // @todo check that the ident is the binding itself. This is only meant for new variables
 export default function(ident: ESTree.Identifier, currentType: ctype): boolean
 {
@@ -27,8 +30,15 @@ export default function(ident: ESTree.Identifier, currentType: ctype): boolean
     let isIffy = false;
 
     traverse(ast, {
+        FunctionDeclaration(path) {
+            let node: ESTree.FunctionDeclaration = path.node;
+            
+            functionStack.push(node);
+
+        },
+
         Identifier(path) {
-            let node = path.node;
+            let node: ESTree.Identifier = path.node;
 
             if(node.name !== myName)
             {
@@ -75,6 +85,19 @@ export default function(ident: ESTree.Identifier, currentType: ctype): boolean
                             // for now, just default to "let", but thats lazy so try to fix
                             ASTwarn(newValue, `@todo (IGNORE ERROR ABOVE) variable is reassigned but lookahead is unable to resolve type. Defaulting to "let"`);
                             isIffy = true;
+
+                            /*
+                            @todo to evaluate single on most recent
+                                -> on fail pop again, try again
+                                -> evaluateSingle wont work because uses the uneval function stack stuff
+                                -> just use walkBodyDummy
+
+                            Find way to get variables defined before they are removed from dummy mode
+                                -> maybe return
+
+                            */
+
+                            console.log(functionStack);
                             path.stop();
                         }
 

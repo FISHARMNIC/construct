@@ -2,11 +2,10 @@ import * as ESTree from '@babel/types';
 import { setDummyMode } from './cpp';
 
 /*
-Ignore this:
 Use kill when when there is a critical error, like a parser error
 Use throw when something couldn't be evaluated because of missing context, but its not a fatal error
--> example: unknown identifier
--> so walkBodyDummy can catch it and try to re evaluate something later
+    -> example: unknown identifier
+    -> so walkBodyDummy can catch it and try to re evaluate something later
 */
 
 export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never

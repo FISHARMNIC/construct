@@ -1,3 +1,13 @@
+/*
+Tests:
+    * string and number types
+    * Dynamic re-typing (iffy/let types)
+    * Type coercion for the four main math functions +,-,*,/ 
+    * Variable scoping
+    * Global code
+*/
+
+
 // Global variables
 let a = 2;
 

@@ -1,3 +1,7 @@
+/*
+Similar to Test1, but "a" is also a "let" since it is retyped
+*/
+
 // Global variables
 let a = 2;
 

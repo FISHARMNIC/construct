@@ -18,7 +18,7 @@ Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string
 
             if (last != undefined) {
                 last[to].push(key);
-                console.log("ijoj")
+                //console.log("ijoj")
             }
             else {
                 err('[INTERNAL] no tempstack exists');
