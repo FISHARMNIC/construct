@@ -25,6 +25,7 @@ export interface ThrowInfo
 export function safeThrow(toThrow: any): never
 {
     exitDummyMode(); // for catches
+    console.warn("\t-> throwing!");
     throw toThrow;
 }
 

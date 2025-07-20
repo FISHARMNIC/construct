@@ -91,7 +91,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
         console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
         let out = walkBodyDummy(node.body.body);
         if (out.success) {
-            console.log(`\t-> success`);
+            console.log(`[funcs] -> SUCCESS on eval "${node.id?.name}"`);
 
             // if it gets here, it succeeded
             output = walkBody(node.body.body);
@@ -101,7 +101,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
             succeeded = true;
         }
         else {
-            console.log(`\t-> failiure`);
+            console.log(`[funcs] -> FAILIURE on eval "${node.id?.name}"`);
             succeeded = false;
         }
     }

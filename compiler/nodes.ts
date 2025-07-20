@@ -185,7 +185,7 @@ export default {
         }
         else {
             let fn = cpp.functions.create(node, id, name, params, node.body);
-            console.log("INFO", fn);
+            // console.log("INFO", fn);
             return {
                 content: fn.strconts,
                 info: {

@@ -165,8 +165,7 @@ export function walkBody(body: ESTree.Statement[], dummy: boolean = false, unsaf
 
     let strinfo = info.map((v: buildInfo | undefined): string => {
       if (v == undefined) {
-        console.log("[INTERNAL ERROR] Something didnt return a buildinfo");
-        process.exit(1);
+        err("[INTERNAL ERROR] Something didnt return a buildinfo");
       }
       return v.content;
     })
