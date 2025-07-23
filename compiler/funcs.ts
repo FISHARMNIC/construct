@@ -30,7 +30,7 @@ function trycompile(function)
 */
 
 import * as ESTree from '@babel/types';
-import { buildInfo, changeNestLevel, nestLevel, replaceObj, walk, walkBody, walkBodyDummy } from './walk';
+import { buildInfo, changeNestLevel, replaceObj, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
 

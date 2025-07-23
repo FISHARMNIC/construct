@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, allFuncs, allVars, dummyMode, enterDummyMode, exitDummyMode, setDummyMode, tempStack } from './cpp';
+import { __dummyModeGlevel, allFuncs, allVars, enterDummyMode, exitDummyMode, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];

@@ -10,7 +10,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
 import { cpp, ident2binding, inDummyMode } from './cpp';
-import iffy, { dummyWalkPauseOnSet } from './iffy';
+import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 
 export default {
