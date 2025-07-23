@@ -30,7 +30,7 @@ function trycompile(function)
 */
 
 import * as ESTree from '@babel/types';
-import { buildInfo, replaceObj, walk, walkBody, walkBodyDummy } from './walk';
+import { buildInfo, changeNestLevel, nestLevel, replaceObj, walk, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
 
@@ -82,6 +82,8 @@ export function evaluateAllFunctions(): string[] {
 }
 
 function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
+    changeNestLevel(1);
+
     let succeeded = false;
     let output: buildInfo[] = [];
 
@@ -108,6 +110,8 @@ function evaluateSingle(funcInfo: FunctionQueueElement): evalInfo {
     else {
         ASTerr_kill(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
     }
+
+    changeNestLevel(-1);
 
     return {
         bInfo: output,

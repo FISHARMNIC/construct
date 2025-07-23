@@ -30,6 +30,11 @@ export interface buildInfo {
 
 export let nestLevel = -1;
 
+export function changeNestLevel(by: number)
+{
+  nestLevel += by;
+}
+
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
 export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {

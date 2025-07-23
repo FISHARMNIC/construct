@@ -1,5 +1,3 @@
-#!/usr/bin/env tsx
-
 import fs from 'fs';
 import { parse } from '@babel/parser';
 
