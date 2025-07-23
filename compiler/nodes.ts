@@ -281,4 +281,8 @@ export default {
             ASTerr_throw(node, `@todo identifier "${node.name}" is not declared or is unimplemented`);
         }
     },
+
+    // ReturnStatement(node: ESTree.ReturnStatement, build: buildInfo[]): buildInfo {
+
+    // }
 }

@@ -7,3 +7,6 @@
 * Iffy variables should emit a warning, that they drastically slow performance
     * Note that they can also snowball into making everything iffy
 * All values in objects are iffy
+
+
+If a variable is retyped optionally like within an if statement, make it iffy
