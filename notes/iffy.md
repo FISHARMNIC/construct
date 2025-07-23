@@ -10,3 +10,4 @@
 
 
 If a variable is retyped optionally like within an if statement, make it iffy
+If a variable is retyped inside of loop maek it an iffy

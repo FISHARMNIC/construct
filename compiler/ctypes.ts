@@ -9,11 +9,15 @@ export interface CVariable {
 }
 
 export interface CFunction {
-    return: ctype;
+    return: ctype,
     name: string,
-    parameters: ESTree.FunctionParameter[]
+    // parameters: ESTree.FunctionParameter[]
 }
 
+export interface CTemplateFunction {
+    parameters: ESTree.FunctionParameter[],
+    name: string,
+}
 export interface stackInfo {
     funcs: ESTree.Identifier[],
     vars: ESTree.Identifier[]

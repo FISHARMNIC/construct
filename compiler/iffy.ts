@@ -177,6 +177,10 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
                                             // @todo this is an issue with how FunctionDeclaration pushes any fn it find to functionStack 
                                             // These may just be random functions that are opened and closed before the scope of this one
                                             // need to make it only push when its actually a parent of where this code sits
+
+                                            /*
+                                            @todo !HERE! !IMPORTANT! use 'getWrapperFunc' to extract parent instead
+                                            */
                                             ready = false;
                                         }
                                         //process.exit();

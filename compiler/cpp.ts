@@ -51,16 +51,17 @@ In dummy mode:
 
 import * as ESTree from '@babel/types';
 import { buildInfo, nestLevel, replaceObj } from './walk';
-import { eslintScope } from './main';
+import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
-import { CFunction, ctype, CVariable, stackInfo } from './ctypes';
+import { CFunction, CTemplateFunction, ctype, CVariable, stackInfo } from './ctypes';
 import iffy from './iffy';
 
 export let allVars = new Map<ESTree.Identifier, CVariable>();
 export let allGlobalVars: CVariable[] = [];
 export let allFuncs = new Map<ESTree.Identifier, CFunction>();
+export let allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
 export let tempStack: stackInfo[] = [];
 // export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
 
@@ -87,8 +88,7 @@ export function inDummyMode(): boolean {
     return dummyLevel != 0;
 }
 
-export function __dummyModeGlevel(): number
-{
+export function __dummyModeGlevel(): number {
     return dummyLevel;
 }
 
@@ -121,6 +121,41 @@ export function isGlobalVar(node: ESTree.Identifier): boolean {
         }
     }
     return false;
+}
+
+// @todo also horrible. Really need to put path in the walker
+export function getWrapperFunc(retStatement: ESTree.ReturnStatement): ESTree.Function | null {
+    const root: ESTree.Node = ast.program;
+    const parents = new Map<ESTree.Node, ESTree.Node | null>();
+
+    (function build(node: ESTree.Node, parent: ESTree.Node | null = null): void {
+        if (node == null || typeof node !== 'object') return;
+
+        parents.set(node, parent);
+
+        for (const k in node) {
+            const child = (node as any)[k];
+            if (Array.isArray(child)) {
+                for (const c of child) {
+                    if (c && typeof c === 'object' && 'type' in c) {
+                        build(c, node);
+                    }
+                }
+            } else if (child && typeof child === 'object' && 'type' in child) {
+                build(child, node);
+            }
+        }
+    })(root);
+
+    let curr: ESTree.Node | null | undefined = parents.get(retStatement);
+    while (curr) {
+        if (ESTree.isFunctionDeclaration(curr) ||ESTree.isFunctionExpression(curr) || ESTree.isArrowFunctionExpression(curr)) {
+            return curr as ESTree.Function;
+        }
+        curr = parents.get(curr);
+    }
+
+    return null;
 }
 
 export let cpp = {
@@ -254,7 +289,7 @@ export let cpp = {
 
             allFuncs.add(node, 'funcs', {
                 return: cpp.types.AUTO,
-                parameters: params,
+                // parameters: params,
                 name,
             });
 

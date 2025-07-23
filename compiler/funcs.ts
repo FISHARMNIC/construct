@@ -1,4 +1,9 @@
 /*
+!HERE! !IMPORTANT! Need to implement some type of "iffy" for returns, that finds all returns and compares their types
+    -> doesn't need to be done until the end, just use .replace to cast
+    -> maybe create macro like: RETURN_AS(js::number)(123) ===> return(static_cast<js::number>(123));
+
+
 slightly outdated, but mostly correct:
 
 Expects:
