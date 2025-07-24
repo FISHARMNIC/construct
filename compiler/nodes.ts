@@ -9,9 +9,11 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
-import { cpp, ident2binding, inDummyMode } from './cpp';
+import { allFuncs, allTemplateFuncs, cpp, getFunctionDeclarationFor, ident2binding, inDummyMode } from './cpp';
 import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
+import { ast } from './main';
+import { evaluateTemplateFunction } from './funcs';
 
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
@@ -184,7 +186,7 @@ export default {
             ASTerr_kill(node, "Function has no name");
         }
         else {
-            let fn = cpp.functions.create(node, id, name, params, node.body);
+            let fn = cpp.functions.createDec(node, id, name, params, node.body);
             // console.log("INFO", fn);
             return {
                 content: fn.strconts,
@@ -218,8 +220,16 @@ export default {
         let expression = node.expression;
 
         if (ESTree.isCallExpression(expression)) {
-            /// @ts-ignore
-            let fname: string = expression.callee.name;
+            if (ESTree.isV8IntrinsicIdentifier(expression.callee)) {
+                ASTerr_kill(expression, "Unable to handle callee of type V8IntrinsicIdentifier");
+            }
+
+            const functionCalled: ESTree.Expression = expression.callee;
+
+            if (!ESTree.isIdentifier(functionCalled))
+                ASTerr_kill(functionCalled, `@todo unable to call function of type ${functionCalled.type}`);
+
+            const fname: string = functionCalled.name;
 
             /// debug
             if (fname === "dbgprint") {
@@ -231,10 +241,32 @@ export default {
                     info: {
                         type: cpp.types.NUMBER
                     }
-                }
+                };
             }
             else {
-                // @todo on function call need to check if evaluated yet
+                // @todo - implement call on non templated function
+                /* 
+                !HERE! !IMPORTANT!
+                @todo:
+                    * get binding of what callee is calling
+                    * if its a template function (allTemplateFuncs.has(binding)):
+                        -> Walk each param as expect single to get a buildInfo[]
+                        -> pass the buildInfo to evaluateTemplateFunction
+
+                */
+
+                const fnID: ESTree.Identifier = functionCalled;
+
+                /*
+                !HERE! @todo serious issue ident2binding isn't working here and I have no clue why
+                Maybe its time to finally add path ahh
+                */
+               
+               console.log(Array.from(allTemplateFuncs.values())[0]);
+
+                /// @ts-expect-error
+                true;
+
                 ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
             }
         }

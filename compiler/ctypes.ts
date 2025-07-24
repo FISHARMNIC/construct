@@ -15,10 +15,13 @@ export interface CFunction {
 }
 
 export interface CTemplateFunction {
-    parameters: ESTree.FunctionParameter[],
+    func: ESTree.Function,
+    params: ESTree.FunctionParameter[],
     name: string,
 }
+
 export interface stackInfo {
     funcs: ESTree.Identifier[],
+    templateFuncs: ESTree.Identifier[],
     vars: ESTree.Identifier[]
 }

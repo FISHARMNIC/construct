@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, allFuncs, allVars, enterDummyMode, exitDummyMode, tempStack } from './cpp';
+import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, enterDummyMode, exitDummyMode, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];
@@ -41,7 +41,8 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 
   let lastObj: stackInfo = {
     funcs: [],
-    vars: []
+    vars: [],
+    templateFuncs: [],
   };
 
   tempStack.push(lastObj);
@@ -69,7 +70,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   if(beforeDelete)
     beforeDelete(lastObj, success, errInfo);
 
-  ///  @todo make this more dynamic
+  ///  @todo make this more dynamic. Just instead of it being an Identifier[] also hold the delete function
 
   // clean up all temporary stuff
   lastObj.funcs.forEach((value: ESTree.Identifier): void => {
@@ -79,6 +80,11 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy variable", value.name);
     allVars.delete(value);
+  });
+
+  lastObj.templateFuncs.forEach((value: ESTree.Identifier): void => {
+    console.log("[dummy] deleting dummy templateFunc", value.name);
+    allTemplateFuncs.delete(value);
   });
 
   tempStack.pop();

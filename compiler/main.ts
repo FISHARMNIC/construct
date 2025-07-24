@@ -18,6 +18,7 @@ import { allGlobalVars, cpp } from './cpp';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
 import './extensions';
+import { traverse } from '@babel/types';
 
 // dont include any other file. Make all inclusions under js.hpp
 // Theres some order dependent stuff (let overloads depending on string overloads) that I need to fix
@@ -33,7 +34,7 @@ const FIXFILE = __dirname + "/../output/sh/fix.sh";
 const INPUTFILE = __dirname + '/../tests/6.js';
 
 export const ast = parseAST(INPUTFILE);
-export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
+export const eslintScope = analyze(ast, {ecmaVersion: 2020});
 
 
 // @todo clean this up and put in other file or something

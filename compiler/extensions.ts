@@ -17,6 +17,8 @@ Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string
             let last = tempStack.at(-1);
 
             if (last != undefined) {
+                if(!last[to])
+                    err(`[INTERNAL] "${to}" is not a valid data type in the tempstack`)
                 last[to].push(key);
                 //console.log("ijoj")
             }

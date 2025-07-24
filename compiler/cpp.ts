@@ -149,7 +149,7 @@ export function getWrapperFunc(retStatement: ESTree.ReturnStatement): ESTree.Fun
 
     let curr: ESTree.Node | null | undefined = parents.get(retStatement);
     while (curr) {
-        if (ESTree.isFunctionDeclaration(curr) ||ESTree.isFunctionExpression(curr) || ESTree.isArrowFunctionExpression(curr)) {
+        if (ESTree.isFunctionDeclaration(curr) || ESTree.isFunctionExpression(curr) || ESTree.isArrowFunctionExpression(curr)) {
             return curr as ESTree.Function;
         }
         curr = parents.get(curr);
@@ -203,6 +203,7 @@ export let cpp = {
             const binding = ident2binding(node);
             return binding != undefined && allVars.has(binding);
         },
+        /*
         create(node: ESTree.Identifier, type: ctype, name: string, value: string, constant: boolean = false): string {
             if (allVars.has(node)) {
                 ASTerr_kill(node, `Identical variable "${name}" already declared`);
@@ -226,6 +227,7 @@ export let cpp = {
                 return (constant ? "const " : "") + type + " " + name + (value.length == 0 ? "" : ` = ${cpp.cast.static(type, value)}`);
             }
         },
+        */
         create2(node: ESTree.Identifier, name: string, value: buildInfo, constant: boolean = false): string {
 
             let type = value.info.type;
@@ -280,24 +282,44 @@ export let cpp = {
     functions:
     {
         all: allFuncs,
-        create(fn: ESTree.Function, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
+        createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
             let body = block.body;
 
             if (allFuncs.has(node)) {
                 ASTerr_kill(node, `Identical function "${name}" already declared`);
             }
 
-            allFuncs.add(node, 'funcs', {
-                return: cpp.types.AUTO,
-                // parameters: params,
-                name,
-            });
-
             if (params.length != 0) {
-                // use allVars to create to store them
-                err("@todo parameters not implemented");
+                // @todo use allVars to create to store them
+                console.log(`[funcs] created template function ${name}`);
+
+                fn.params.forEach((param): void => {
+                    if (ESTree.isTSParameterProperty(param)) {
+                        // In the future allow for TS params to optimize functions
+                        ASTerr_kill(param, "@todo got a TS paramter but only support JS style parameters")
+                    }
+                })
+
+                const paramsNoTS = fn.params as ESTree.FunctionParameter[];
+
+                allTemplateFuncs.add(node, 'templateFuncs', {
+                    name, func: fn, params: paramsNoTS
+                })
+
+                return {
+                    strconts: "",
+                    repObj: { ready: false }
+                };
             }
             else {
+
+                allFuncs.add(node, 'funcs', {
+                    return: cpp.types.AUTO,
+                    // parameters: params,
+                    name,
+                });
+
+
                 let ostring = `auto ${name}()\n{\n`;
 
                 let repObj: replaceObj = { ready: false, surroundings: [ostring, "\n}"] };

@@ -1,11 +1,7 @@
-/*
-    Also need to verify to make sure that if the fn returns type A here and type B there, make it an iffy
-*/
-
-function bob()
+function bob(a,b)
 {
-    let a = 10 + 5;
-    return a;
+    let c = a + b;
+    dbgprint(c);
 }
 
-let q = bob();
+bob(1,2);
