@@ -8,7 +8,7 @@ void bob_version1__(js::string a, js::string b);
 int main() {
   bob_version0__(static_cast<js::number>(1), static_cast<js::number>(2));
   bob_version1__(js::string("Hello "), js::string("World!"));
-  return 0;
+  return 0; 
 }
 
 void bob_version0__(js::number a, js::number b){
