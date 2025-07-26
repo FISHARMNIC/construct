@@ -38,11 +38,12 @@ function trycompile(function)
 */
 
 import * as ESTree from '@babel/types';
-import { buildInfo, changeNestLevel, replaceObj, walkBody, walkBodyDummy } from './walk';
+import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
 import { CTemplateFunction, ctype } from './ctypes';
 import { cpp, enterDummyMode, exitDummyMode } from './cpp';
+import { fixxes } from './main';
 
 interface FunctionQueueElement {
     func: ESTree.Function; // @todo make this FunctionDeclaration
@@ -131,6 +132,14 @@ function evaluateSingle(funcInfo: FunctionQueueElement, changeNest: boolean = tr
     };
 }
 
+
+
+let namingCounter = 0;
+function template_newName(): string // @todo this is lazy. Make one for each template function
+{
+    return `_version${namingCounter++}__`;
+}
+
 function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[]
 {
     let fqe: FunctionQueueElement = {
@@ -148,14 +157,22 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[]
     return res.bInfo;
 }
 
+interface etf_robj {
+    returnType: ctype,
+    callExpr: string,
+    fnName: string,
+    fnDef: string,
+    fnBody: buildInfo[]
+}
+
 /*
  Note this function should not fail, since all Identifiers should be defined at call time (just like in JS)
 */
 /// @returns function type
-export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): ctype {
+export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): buildInfo {
     /*
     @todo:
-        * create temporary variables that are the names of the params
+        * -- DONE -- create temporary variables that are the names of the params
             -> Binding is the param in the function itself
             -> Just pass the funcInfo.params[N] so bindings work correctly
         * Generate the header and footer of the overload
@@ -166,30 +183,50 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
             * See if new call uses params already compiled for
                 -> Use those instead of generating new ones with the same types
     */
-    enterDummyMode();
-    changeNestLevel(1);
-
+    let parameter_genList: string[] = [];
+    
     // notes the info about the parameters 
     // treats them as variables for simplicity
     // note wont trigger redec erro since binding is the param
+    // note that this shouldn't be run in dummy mode since at this point everything should be known
+    // @todo !important! next dec will cause a redec error. Need to clean these after function is done
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
             cpp.variables.create2(param, param.name, value);
+            parameter_genList.push(`${value.info.type} ${param.name}`)
         }
         else {
             ASTerr_kill(param, `@todo unknown expected parameter type "${param.type}"`)
         }
     });
 
-    let evaluatedFunc = evaluateSingleTemplate_helper(funcInfo.func);
+    // enterDummyMode();
+    // changeNestLevel(1);
 
-    console.log(evaluatedFunc);
+    const evaluatedFunc: buildInfo[] = evaluateSingleTemplate_helper(funcInfo.func);
+    const parameter_genStr: string = parameter_genList.join(", ");
+    let returnType = cpp.types.VOID; // @todo not auto once returns implemented
+    const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
+
+    const callExpr = `${fnName}(${givenParams.map((v: buildInfo): string => v.content).join(", ")})`;
+    const fnDef = `${returnType} ${fnName}(${parameter_genStr})`;
+
+    buildInfoToStr
+    fixxes.pre.push(fnDef + ';');
+    fixxes.post.push(stringTobuildInfo(fnDef + "{"), ...evaluatedFunc, stringTobuildInfo("}"));
     console.log("DEBUG KILLING");
-    process.exit(0);
+    // process.exit(0);
 
-    changeNestLevel(-1);
-    exitDummyMode();
+    return {
+        content: callExpr,
+        info: {
+            type: returnType
+        }
+    };
+
+    // changeNestLevel(-1);
+    // exitDummyMode();
 
 }

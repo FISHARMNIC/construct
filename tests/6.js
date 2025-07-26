@@ -5,3 +5,4 @@ function bob(a,b)
 }
 
 bob(1,2);
+// bob("a", "b");

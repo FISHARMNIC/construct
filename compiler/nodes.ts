@@ -9,16 +9,17 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
-import { allFuncs, allTemplateFuncs, cpp, getFunctionDeclarationFor, ident2binding, inDummyMode } from './cpp';
+import { allFuncs, allTemplateFuncs, cpp, fnIdent2binding, ident2binding, inDummyMode } from './cpp';
 import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
-import { ast } from './main';
+import { ast, eslintScope } from './main';
 import { evaluateTemplateFunction } from './funcs';
+import { CTemplateFunction } from './ctypes';
 
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
         const kind = node.kind; // let, const, var
-        let myType = cpp.types.AUTO;
+        // let myType = cpp.types.;
 
         if (node.declarations.length != 1) {
             ASTerr_kill(node, "@todo multiple declarations not implemented");
@@ -44,7 +45,7 @@ export default {
                         let ret: buildInfo = {
                             content: compiled,
                             info: {
-                                type: myType
+                                type: value.info.type
                             }
                         };
 
@@ -257,17 +258,43 @@ export default {
 
                 const fnID: ESTree.Identifier = functionCalled;
 
-                /*
-                !HERE! @todo serious issue ident2binding isn't working here and I have no clue why
-                Maybe its time to finally add path ahh
-                */
-               
-               console.log(Array.from(allTemplateFuncs.values())[0]);
+                let params = expression.arguments;
+                let evaluatedArguments = params.map((value): buildInfo => {
+                    if(ESTree.isExpression(value))
+                    {
+                        return walk_requireSingle(value, `Expected single value in parameter`);
+                    }
+                    else
+                    {
+                        ASTerr_kill(value, `@todo unimplemented parameter type "${value.type}"`)
+                    }
+                })
+                
+                const binding = fnIdent2binding(fnID);
+                if(binding == undefined)
+                {
+                    // @todo maybe make this dont kill? - same thing as var use without linear control flow
+                    ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
+                }
+                else if(allTemplateFuncs.has(binding))
+                {
+                    const ctempfunc: CTemplateFunction = allTemplateFuncs.get(binding)!;
+                    const evaluated: buildInfo = evaluateTemplateFunction(ctempfunc, evaluatedArguments);
 
-                /// @ts-expect-error
-                true;
+                    return evaluated;
+                     
+                }
+                else
+                {
+                    ASTerr_kill(fnID, `@todo calling non-templated functions (functions without params) not implemented`);
+                }
 
-                ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
+                //console.log(Array.from(allTemplateFuncs.values())[0]);
+
+                //// @ts-expect-error
+                //true;
+
+                // ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
             }
         }
         else {

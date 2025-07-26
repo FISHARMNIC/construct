@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, enterDummyMode, exitDummyMode, tempStack } from './cpp';
+import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, cpp, enterDummyMode, exitDummyMode, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];
@@ -100,6 +100,16 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 // just extract contents of buildInfo
 export function buildInfoToStr(bInfo: buildInfo[]): string[] {
   return bInfo.map((value: buildInfo): string => value.content);
+}
+
+// use loosly when type doesn't matter
+export function stringTobuildInfo(str: string): buildInfo {
+  return {
+    content: str,
+    info: {
+      type: cpp.types.AUTO
+    }
+  };
 }
 
 // fully walk a single node, not a collection of statements

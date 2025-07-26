@@ -112,6 +112,25 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
     return undefined;
 }
 
+// @todo modified version of ident2binding. Gross. remove later
+export function fnIdent2binding(fnID: ESTree.Identifier): ESTree.Identifier | undefined {
+    for (const scope of eslintScope.scopes) {
+        for (const variable of scope.variables) {
+            for (const def of variable.defs) {
+                if (def.type === "FunctionName" && def.node.type === "FunctionDeclaration") {
+                    for (const ref of variable.scope.references) {
+                        if (ref.identifier === fnID)
+                            return def.node.id as ESTree.Identifier;
+                    }
+
+                }
+            }
+        }
+    }
+
+    return undefined;
+}
+
 // @todo also disgusting
 export function isGlobalVar(node: ESTree.Identifier): boolean {
     for (const s of eslintScope.scopes) {
@@ -162,6 +181,7 @@ export let cpp = {
     types:
     {
         NUMBER: "js::number",
+        VOID: "void",
         FUNCTION: "void*", // @todo use cpp function types
         STRING: "js::string",
         ARRAY: "ERROR_NOT_IMPLEMENTED",
@@ -320,7 +340,7 @@ export let cpp = {
                 });
 
 
-                let ostring = `auto ${name}()\n{\n`;
+                let ostring = `auto ${name}()\n{\n`; // @todo not "auto" once returns are implemented
 
                 let repObj: replaceObj = { ready: false, surroundings: [ostring, "\n}"] };
                 unevaledFuncs.push({ func: fn, evaluatedCode: repObj });

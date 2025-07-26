@@ -35,7 +35,10 @@ const INPUTFILE = __dirname + '/../tests/6.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, {ecmaVersion: 2020});
-
+export let fixxes: {pre: string[], post: buildInfo[]} = {
+    pre: [],
+    post: []
+};
 
 // @todo clean this up and put in other file or something
 // Overwrites console.log to display indentation
@@ -46,6 +49,26 @@ console.log = function(...args: any[])
         saveLog(...args);
     else
         saveLog("\t".repeat(nestLevel), ...args);
+}
+
+export function replaceLaters(bInfo: buildInfo[]): void
+{
+    bInfo.forEach((info: buildInfo): void => {
+        if (info.replace && info.replace.ready && info.replace.with) {
+            let repwith = buildInfoToStr(info.replace.with);
+            let build = "";
+            if (info.replace.surroundings) {
+                build += info.replace.surroundings[0];
+                build += repwith.join("\n");
+                build += info.replace.surroundings[1];
+            }
+            else {
+                build = repwith.join("\n");
+            }
+
+            info.content = build;
+        }
+    })
 }
 
 function begin(): void {
@@ -82,24 +105,10 @@ function begin(): void {
     ind++;
     output.pushFront({content: `int main() {\n`, info: {type: cpp.types.FUNCTION}});
     output.splice(ind, 0, {content: "return 0;\n}", info: {type: cpp.types.FUNCTION}});
+    output.push(...fixxes.post);
 
     // Some functions were evaluated later, so go ahead and replace their contents accoringly
-    output.forEach((info: buildInfo): void => {
-        if (info.replace && info.replace.ready && info.replace.with) {
-            let repwith = buildInfoToStr(info.replace.with);
-            let build = "";
-            if (info.replace.surroundings) {
-                build += info.replace.surroundings[0];
-                build += repwith.join("\n");
-                build += info.replace.surroundings[1];
-            }
-            else {
-                build = repwith.join("\n");
-            }
-
-            info.content = build;
-        }
-    })
+    replaceLaters(output);
 
     let output_str: string[] = buildInfoToStr(output);
 
@@ -113,6 +122,8 @@ function begin(): void {
 
     let ostr: string = pre;
 
+    ostr += fixxes.pre.join("\n") + "\n";
+
     allGlobalVars.forEach((variable) => {
 
         // @todo Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
@@ -120,7 +131,7 @@ function begin(): void {
         ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0") : ""};\n`; 
     })
 
-    ostr += output_str.join("\n");
+    ostr += "\n" + output_str.join("\n");
 
     // @todo integrate this into cpp.variables.create instead. This here is temporary
     // eslintScope.globalScope?.variables.forEach((variable): void => {
