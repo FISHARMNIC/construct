@@ -1,5 +1,3 @@
-!HERE! !IMPORTANT! See this
-
 # Parameters
 
 Parameter types are flexible and depend on the caller. This makes it tricky to compile.

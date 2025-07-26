@@ -1,5 +1,5 @@
 /*
-!HERE! !IMPORTANT! Alot of these are for function decs only, not arrows, etc. 
+!IMPORTANT! Alot of these are for function decs only, not arrows, etc. 
     -> Specify the required types as .FunctionDeclaration insteaf of just .Function when necessary
 
 !HERE! !IMPORTANT! Need to implement some type of "iffy" for returns, that finds all returns and compares their types
@@ -182,9 +182,9 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
         * -- DONE -- create temporary variables that are the names of the params
             -> Binding is the param in the function itself
             -> Just pass the funcInfo.params[N] so bindings work correctly
-        * Generate the header and footer of the overload
+        * -- DONE -- Generate the header and footer of the overload
             -> give name like <function>_version1__
-        * Compile code using those temporaries
+        * -- DONE -- Compile code using those temporaries
     @todo LATER:
             * Store the functions that have already been compiled with types A, B, etc...
             * See if new call uses params already compiled for

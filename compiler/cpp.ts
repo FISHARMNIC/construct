@@ -5,7 +5,7 @@
 
 THIS IS CURRENTLY IMPLEMENTED (needs to be tested)
 
-!HERE! !important! THIS NEEDS TO BE TESTED
+@todo ? THIS NEEDS TO BE TESTED -- maybe done ?
 
 Dummy mode should still create the variables temporarily
 If theres the function:

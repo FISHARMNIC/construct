@@ -245,17 +245,6 @@ export default {
                 };
             }
             else {
-                // @todo - implement call on non templated function
-                /* 
-                !HERE! !IMPORTANT!
-                @todo:
-                    * get binding of what callee is calling
-                    * if its a template function (allTemplateFuncs.has(binding)):
-                        -> Walk each param as expect single to get a buildInfo[]
-                        -> pass the buildInfo to evaluateTemplateFunction
-
-                */
-
                 const fnID: ESTree.Identifier = functionCalled;
 
                 let params = expression.arguments;
