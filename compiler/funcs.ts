@@ -206,7 +206,7 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
             parameter_genList.push(`${value.info.type} ${param.name}`)
         }
         else {
-            ASTerr_kill(param, `@todo unknown expected parameter type "${param.type}"`)
+            ASTerr_kill(param, `@todo unknown parameter type "${param.type}"`)
         }
     });
 
