@@ -1,5 +1,5 @@
 import * as ESTree from '@babel/types';
-import { exitDummyMode } from './cpp';
+import { exitDummyMode_raw } from './cpp';
 import { buildInfo } from './walk';
 
 /*
@@ -24,7 +24,7 @@ export interface ThrowInfo
 
 export function safeThrow(toThrow: any): never
 {
-    exitDummyMode(); // for catches
+    exitDummyMode_raw(); // for catches
     console.warn("\t-> throwing!");
     throw toThrow;
 }

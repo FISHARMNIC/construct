@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, cpp, enterDummyMode, exitDummyMode, tempStack } from './cpp';
+import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, cpp, enterDummyMode, enterDummyMode_raw, exitDummyMode, exitDummyMode_raw, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];
@@ -113,11 +113,12 @@ export function stringTobuildInfo(str: string): buildInfo {
 }
 
 // fully walk a single node, not a collection of statements
-export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
+// !warning dummyUnsafe never removes temporary dummy variables. Do NOT use this directly unless it is known that no variables/functions/etc will be created
+export function walk(node: ESTree.Node, dummyUnsafe: boolean = false): buildInfo[] {
 
-  if(dummy)
+  if(dummyUnsafe)
   {
-    enterDummyMode();
+    enterDummyMode_raw();
   }
 
   let build: buildInfo[] = [];
@@ -130,9 +131,9 @@ export function walk(node: ESTree.Node, dummy: boolean = false): buildInfo[] {
     ASTerr_kill(node, `Unable to handle node "${type}"`);
   }
 
-  if(dummy)
+  if(dummyUnsafe)
   {
-    exitDummyMode();
+    exitDummyMode_raw();
   }
 
   // used for revaling functions

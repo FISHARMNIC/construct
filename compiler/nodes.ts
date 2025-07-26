@@ -40,7 +40,7 @@ export default {
                         //console.log(value_in);
                         let value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
 
-                        let compiled = cpp.variables.create2(ident, name, value, kind === "const");
+                        let compiled = cpp.variables.create2(ident, name, value, {constant: kind === "const"});
 
                         let ret: buildInfo = {
                             content: compiled,

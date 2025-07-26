@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 86,
+    "end": 93,
     "loc": {
         "start": {
             "line": 1,
@@ -10,19 +10,19 @@
         },
         "end": {
             "line": 8,
-            "column": 17,
-            "index": 86
+            "column": 24,
+            "index": 93
         }
     },
     "range": [
         0,
-        86
+        93
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 86,
+        "end": 93,
         "loc": {
             "start": {
                 "line": 1,
@@ -31,13 +31,13 @@
             },
             "end": {
                 "line": 8,
-                "column": 17,
-                "index": 86
+                "column": 24,
+                "index": 93
             }
         },
         "range": [
             0,
-            86
+            93
         ],
         "sourceType": "module",
         "interpreter": null,
@@ -503,13 +503,52 @@
                             "value": 2
                         }
                     ]
+                }
+            },
+            {
+                "type": "ExpressionStatement",
+                "start": 69,
+                "end": 93,
+                "loc": {
+                    "start": {
+                        "line": 8,
+                        "column": 0,
+                        "index": 69
+                    },
+                    "end": {
+                        "line": 8,
+                        "column": 24,
+                        "index": 93
+                    }
                 },
-                "trailingComments": [
-                    {
-                        "type": "CommentLine",
-                        "value": " bob(\"a\", \"b\");",
+                "range": [
+                    69,
+                    93
+                ],
+                "expression": {
+                    "type": "CallExpression",
+                    "start": 69,
+                    "end": 92,
+                    "loc": {
+                        "start": {
+                            "line": 8,
+                            "column": 0,
+                            "index": 69
+                        },
+                        "end": {
+                            "line": 8,
+                            "column": 23,
+                            "index": 92
+                        }
+                    },
+                    "range": [
+                        69,
+                        92
+                    ],
+                    "callee": {
+                        "type": "Identifier",
                         "start": 69,
-                        "end": 86,
+                        "end": 72,
                         "loc": {
                             "start": {
                                 "line": 8,
@@ -518,12 +557,72 @@
                             },
                             "end": {
                                 "line": 8,
-                                "column": 17,
-                                "index": 86
-                            }
+                                "column": 3,
+                                "index": 72
+                            },
+                            "identifierName": "bob"
+                        },
+                        "range": [
+                            69,
+                            72
+                        ],
+                        "name": "bob"
+                    },
+                    "arguments": [
+                        {
+                            "type": "StringLiteral",
+                            "start": 73,
+                            "end": 81,
+                            "loc": {
+                                "start": {
+                                    "line": 8,
+                                    "column": 4,
+                                    "index": 73
+                                },
+                                "end": {
+                                    "line": 8,
+                                    "column": 12,
+                                    "index": 81
+                                }
+                            },
+                            "range": [
+                                73,
+                                81
+                            ],
+                            "extra": {
+                                "rawValue": "Hello ",
+                                "raw": "\"Hello \""
+                            },
+                            "value": "Hello "
+                        },
+                        {
+                            "type": "StringLiteral",
+                            "start": 83,
+                            "end": 91,
+                            "loc": {
+                                "start": {
+                                    "line": 8,
+                                    "column": 14,
+                                    "index": 83
+                                },
+                                "end": {
+                                    "line": 8,
+                                    "column": 22,
+                                    "index": 91
+                                }
+                            },
+                            "range": [
+                                83,
+                                91
+                            ],
+                            "extra": {
+                                "rawValue": "World!",
+                                "raw": "\"World!\""
+                            },
+                            "value": "World!"
                         }
-                    }
-                ]
+                    ]
+                }
             }
         ],
         "directives": [],
@@ -531,24 +630,5 @@
             "topLevelAwait": false
         }
     },
-    "comments": [
-        {
-            "type": "CommentLine",
-            "value": " bob(\"a\", \"b\");",
-            "start": 69,
-            "end": 86,
-            "loc": {
-                "start": {
-                    "line": 8,
-                    "column": 0,
-                    "index": 69
-                },
-                "end": {
-                    "line": 8,
-                    "column": 17,
-                    "index": 86
-                }
-            }
-        }
-    ]
+    "comments": []
 }

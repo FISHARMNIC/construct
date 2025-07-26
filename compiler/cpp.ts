@@ -72,12 +72,14 @@ function new_unique() {
 
 let dummyLevel: number = 0;
 
-export function enterDummyMode() {
+/// !warning! no cleanup nor tempstack
+export function enterDummyMode_raw() {
     dummyLevel++;
     console.log("[dummy] ENTERING to", dummyLevel);
 }
 
-export function exitDummyMode() {
+/// !warning! no cleanup nor tempstack
+export function exitDummyMode_raw() {
     if (dummyLevel > 0) {
         dummyLevel--;
         console.log("[dummy] EXITING to", dummyLevel);
@@ -248,7 +250,7 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, constant: boolean = false): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, {constant = false, forceNoForward = false} = {}): string {
 
             let type = value.info.type;
 
@@ -272,7 +274,8 @@ export let cpp = {
 
 
             // let possibleBinding =  eslintScope.acquire(node.);
-            if (nestLevel == 0) {
+            if (nestLevel == 0 && !forceNoForward) {
+                // likeDummy act
                 if (!inDummyMode())
                     allGlobalVars.push(cvar);
                 return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
@@ -287,6 +290,17 @@ export let cpp = {
             }
 
             return `${existingVar.name} = ${cpp.cast.static(existingVar.type, value.content)}`;
+        },
+        // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
+        remove(node: ESTree.Identifier): void {
+            if(allVars.has(node))
+            {
+                allVars.delete(node);
+            }
+            else
+            {
+                err(`[INTERNAL] cannot remove variable "${node.name}" since it doesn't exist`);
+            }
         },
 
         /// Returns null if no binding at all (variable isn't declared anywhere scopewise), returns undefined if variable is declared but hasn't been interp yet

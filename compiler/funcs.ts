@@ -42,7 +42,7 @@ import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildIn
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
 import { CTemplateFunction, ctype } from './ctypes';
-import { cpp, enterDummyMode, exitDummyMode } from './cpp';
+import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 
 interface FunctionQueueElement {
@@ -92,7 +92,7 @@ export function evaluateAllFunctions(): string[] {
     return [""];
 }
 
-function evaluateSingle(funcInfo: FunctionQueueElement, changeNest: boolean = true): evalInfo {
+function evaluateSingle(funcInfo: FunctionQueueElement, {changeNest = true, forceDummyOnly = false}: { changeNest?: boolean; forceDummyOnly?: boolean } = {}): evalInfo {
     if (changeNest)
         changeNestLevel(1);
 
@@ -108,7 +108,13 @@ function evaluateSingle(funcInfo: FunctionQueueElement, changeNest: boolean = tr
             console.log(`[funcs] -> SUCCESS on eval "${node.id?.name}"`);
 
             // if it gets here, it succeeded
-            output = walkBody(node.body.body);
+            if (forceDummyOnly) {
+                output = out.info;
+            }
+            else {
+                output = walkBody(node.body.body);
+            }
+
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
@@ -140,17 +146,18 @@ function template_newName(): string // @todo this is lazy. Make one for each tem
     return `_version${namingCounter++}__`;
 }
 
-function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[]
-{
+function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[] {
     let fqe: FunctionQueueElement = {
         func, evaluatedCode: {
             ready: false
         }
     };
 
-    let res = evaluateSingle(fqe, false);
-    if(!res.successfull)
-    {
+    /*
+    Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
+    */ 
+    let res = evaluateSingle(fqe, {changeNest: false, forceDummyOnly: true}); 
+    if (!res.successfull) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
 
@@ -183,8 +190,9 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
             * See if new call uses params already compiled for
                 -> Use those instead of generating new ones with the same types
     */
+
     let parameter_genList: string[] = [];
-    
+
     // notes the info about the parameters 
     // treats them as variables for simplicity
     // note wont trigger redec erro since binding is the param
@@ -194,7 +202,7 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
-            cpp.variables.create2(param, param.name, value);
+            cpp.variables.create2(param, param.name, value, {forceNoForward: true});
             parameter_genList.push(`${value.info.type} ${param.name}`)
         }
         else {
@@ -213,11 +221,19 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     const callExpr = `${fnName}(${givenParams.map((v: buildInfo): string => v.content).join(", ")})`;
     const fnDef = `${returnType} ${fnName}(${parameter_genStr})`;
 
-    buildInfoToStr
     fixxes.pre.push(fnDef + ';');
     fixxes.post.push(stringTobuildInfo(fnDef + "{"), ...evaluatedFunc, stringTobuildInfo("}"));
-    console.log("DEBUG KILLING");
-    // process.exit(0);
+
+    funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
+        const value: buildInfo = givenParams[i];
+        if (ESTree.isIdentifier(param)) {
+            cpp.variables.remove(param);
+            parameter_genList.push(`${value.info.type} ${param.name}`)
+        }
+        else {
+            ASTerr_kill(param, `@todo not sure how to get rid of param of type "${param.type}"`)
+        }
+    });
 
     return {
         content: callExpr,
