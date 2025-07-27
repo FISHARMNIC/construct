@@ -1,9 +1,11 @@
 /*
-!IMPORTANT! !HERE! Fails!
-return statement in bob isn't compiling
+@expects{{{
+aaaaa2
+aaaaaWorld!
+}}}
 
 Tests:
-    * Iffys in template functions
+    * Iffys in template functions -> "a" is a let
     * template functions
 */
 

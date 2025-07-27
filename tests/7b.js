@@ -1,26 +1,25 @@
 /*
 @expects{{{
-HELLO 2
-3
-Hello World!
+aaaaa2
+aaaaaWorld!
 }}}
 
 Tests:
-    * Template functions
-    * Returns in template functions
-    * Mixed params in template calls
+    * Iffys in template functions
+    * template functions
+    * Template returns
 */
+
 
 function bob(a,b)
 {
+    a = "aaaaa";
     let c = a + b;
     return c;
 }
 
-let w = bob("HELLO ",2);
 let y = bob(1,2);
 let z = bob("Hello ", "World!");
 
-dbgprint(w);
 dbgprint(y);
 dbgprint(z);

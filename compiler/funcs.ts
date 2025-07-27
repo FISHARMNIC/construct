@@ -32,7 +32,7 @@ function trycompile(function)
 
 import * as ESTree from '@babel/types';
 import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
-import { ASTerr_kill } from './ASTerr';
+import { ASTerr_kill, err } from './ASTerr';
 import './extensions';
 import { CFunction, CTemplateFunction, ctype, stackInfo } from './ctypes';
 import {cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
@@ -98,16 +98,12 @@ export function evaluateAllFunctions(): string[] {
  * @param changeNest Used to prevent marking as global code. Only set to true if parent function handles scope entrance
  * @param forceDummyOnly Used to prevent walking for real. Only use if don't want to actually create anything like scoped variables etc.
 */
-function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false } = {}): evalInfo {
+function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false } = {}): evalInfo {
 
     const beforeDeletefn = (obj: stackInfo, allReturnStatements: buildInfo[]): ctype => {
 
         const singleReturnType: ctype = typeList2type(allReturnStatements.map((v): ctype => v.info.type));
-        console.log(singleReturnType);
 
-        /*
-        @todo need to now use .replace or something to set return type and add explicit cast to all returns
-        */
         allReturnStatements.forEach((statement: buildInfo): void => {
             if (statement.info.returningData) {
                 statement.replace = {
@@ -119,6 +115,17 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
 
         // console.log("DEBUG KILLING", allReturnStatements);
         //process.exit(0);
+
+        if(!templateFn)
+        {
+            const name = (funcInfo.func as ESTree.FunctionDeclaration).id?.name;
+            if(!name)
+            {
+                err(`[INTERNAL] :: function has no name`);
+            }
+
+            fixxes.pre.push(cpp.functions.generateDef({name, return: singleReturnType}, []) + ';');
+        }
 
         return singleReturnType;
     }
@@ -164,16 +171,20 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates.get(funcInfo.func.id!);
             const normalMatch: CFunction | undefined = cpp.functions.allNormal.get(funcInfo.func.id!);
 
+            // console.log("-----", allReturnStatements, returnType);
             if (normalMatch) {
                 normalMatch.return = returnType;
             }
-            else if (!templateMatch) {
+            else if (!templateMatch || !(funcInfo.func.id)) {
                 // should never reach here
                 ASTerr_kill(funcInfo.func, `[INTERNAL] Critical failiure. Unknown function "${funcInfo.func.id?.name}"`);
             }
 
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
+
+            if(!templateFn)
+            funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({return: returnType, name: funcInfo.func.id?.name!}, []) + '{';
 
             succeeded = true;
         }
@@ -207,7 +218,7 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
     /*
     Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
     */
-    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true });
+    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true });
     if (!res.successfull) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
@@ -222,7 +233,7 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
  * @param givenParams Arguments given. Must already be walked with requireSingle
  * @returns 
  */
-export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): buildInfo {
+export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): buildInfo {
     /*
     @todo:
         * -- DONE -- create temporary variables that are the names of the params
@@ -239,7 +250,7 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
 
     let parameter_genList: string[] = [];
 
-    let paramTypes: ctype[] = []
+    let argumentTypes: ctype[] = []
 
     // notes the info about the parameters 
     // treats them as variables for simplicity
@@ -248,13 +259,14 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
+            // console.log(givenParams)
             cpp.variables.create2(param, param.name, value, { forceNoForward: true });
             // type may be iffy if param is reassigned
             const ptype: ctype = cpp.variables.all.get(param)!.type;
 
             // generates the parameter as in: <type> <name>
             parameter_genList.push(`${ptype} ${param.name}`);
-            paramTypes.push(ptype);
+            argumentTypes.push(ptype);
         }
         else {
             ASTerr_kill(param, `@todo unknown parameter type "${param.type}"`)
@@ -274,7 +286,8 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
     // generate the call expression as in: <function name>(<argument list>)
-    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(paramTypes[i], v)).join(", ")})`;
+    // @todo use cpp.functions._call
+    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(argumentTypes[i], v)).join(", ")})`;
     
     // generate the definition as in: <function name>(<parameter list>)
     // used for forward def and actual dec

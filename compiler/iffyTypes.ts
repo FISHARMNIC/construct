@@ -12,6 +12,11 @@ for now, just the basic types and the regular iffy
 */
 export function typeList2type(types: ctype[]): ctype
 {
+    if(types.length == 0)
+    {
+        return cpp.types.VOID;
+    }
+    
     const unique = new Set(types);
 
     if(unique.size == 1)

@@ -13,8 +13,8 @@ import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './c
 import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
-import { evaluateTemplateFunction } from './funcs';
-import { CTemplateFunction } from './ctypes';
+import { evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
+import { CFunction, CTemplateFunction } from './ctypes';
 
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
@@ -259,15 +259,33 @@ export default {
                 // @todo maybe make this dont kill? - same thing as var use without linear control flow
                 ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
             }
-            else if (cpp.functions.allTemplates.has(binding)) {
+            else if (cpp.functions.allTemplates.has(binding)) { // template function
                 const ctempfunc: CTemplateFunction = cpp.functions.allTemplates.get(binding)!;
-                const evaluated: buildInfo = evaluateTemplateFunction(ctempfunc, evaluatedArguments);
+                const evaluated: buildInfo = evaluateAndCallTemplateFunction(ctempfunc, evaluatedArguments);
 
                 return evaluated;
 
             }
-            else {
-                ASTerr_kill(fnID, `@todo calling non-templated functions (functions without params) not implemented`);
+            else if (cpp.functions.allNormal.has(binding)){ // regular function
+                const funcData: CFunction = cpp.functions.allNormal.get(binding)!;
+
+                if(-1 !== unevaledFuncs.findIndex((v): boolean => {
+                    return v.func === expression.callee
+                }))
+                {
+                    ASTerr_kill(fnID, `@todo unevaled function`);
+                    /*
+                    !HERE! !IMPORTANT! call evaluateAll, then make sure that its not in it anymore, if it is, then fail kill
+                    */
+                }
+                else
+                {
+                    return cpp.functions._call(funcData, [], []);
+                }
+            }
+            else
+            {
+                ASTerr_kill(fnID, `Unknown function "${fnID.name}"`);
             }
 
             //console.log(Array.from(allTemplateFuncs.values())[0]);
@@ -341,9 +359,10 @@ export default {
         }
 
         value.content = 'return ' + value.content;
+        console.log(`[retrn] ==> "${value.content}" as "${value.info.type}"`)
 
         const recent = tempStack.at(-1);
-        if(recent !== undefined && inDummyMode())
+        if(recent !== undefined/* && inDummyMode()*/)
         {
             recent.returnStatements?.push(value);
         }

@@ -50,7 +50,7 @@ In dummy mode:
 
 
 import * as ESTree from '@babel/types';
-import { buildInfo, nestLevel, replaceObj } from './walk';
+import { buildInfo, buildInfoToStr, nestLevel, replaceObj, stringTobuildInfo } from './walk';
 import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
@@ -385,15 +385,20 @@ export let cpp = {
                 // return ostring;
             }
         },
-        // get(node: ESTree.Identifier): CFunction | CTemplateFunction | undefined | null {
-        //     const binding = fnIdent2binding(node);
-        //     if(!binding)
-        //         return null;
-
-        //     let got =  allFuncs.get(binding);
-
-        //     if(!got)
-        //         return allTemplateFuncs.get(binding);
-        // }
+        _call(fn: CFunction,  givenParams: buildInfo[], argumentTypes: ctype[]): buildInfo
+        {
+            if(givenParams.length !== argumentTypes.length)
+            {
+                err(`Expected ${argumentTypes.length} arguments but given ${givenParams} when calling function "${fn.name}"`);
+            }
+            else
+            {
+                return stringTobuildInfo(`${fn.name}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(argumentTypes[i], v)).join(", ")})`, fn.return);
+            }
+        },
+        generateDef(fn: CFunction, argumentTypes: ctype[]): string
+        {
+            return `${fn.return} ${fn.name}(${argumentTypes.join(", ")})`;
+        }
     }
 }
