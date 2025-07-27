@@ -3,13 +3,18 @@
 ---
 * To run use `tsx main.ts` in compiler dir
 * Produces semi-readable c++
-* Currently implemented:
-    * string and number variables
-        * Simple variable assignment + reassignment
-        * **UPDATE** : Complex type resolution implemented
-    * four-function math with proper JS type coercion
-    * function declaration (no calling nor parameters, so essentially `main` is the only thing you can do with this)
-    * cout placeholder `dbgprint()`
+### Currently implemented:
+* Variables
+    * assignment + reassignment
+    * current types allowed:
+        * `string`
+        * `number`
+    * dynamic re-typing
+* four-function math with proper JS type coercion
+* functions
+    * parameters
+    * returning values
+    * calling
 
 ### Dependencies
 * npm
@@ -25,72 +30,65 @@
 ## Example conversion
 #### Input:
 ```JS
-// Global variables
-let a = 2;
-
-// Functions (no params no return yet)
-function bob() {
-    // Proper scope handling (this a != global a) 
-    let a = 1.23;
-    let b = "Hello";
-
-    dbgprint(a);
-    dbgprint(b);
+function bob(a,b)
+{
+    let c = a + b;
+    return c;
 }
 
-// Proper JS type coercion (only for the 4 main math functions for now)
-// note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
-// still works but forces c to be a "let" instead
-let b = ("10" + 10) * a;
-let c = 100;
+let a = bob("HELLO ",2);
+let b = bob(1,2);
+let c = bob("Hello ", "World!");
 
-// 100
+dbgprint(a);
+dbgprint(b);
 dbgprint(c);
-
-// Reassignment
-a = 10;
-c = b;
-
-// c = b = ("10" + 10) * 2 = "1010" * 2 = number 2020
-dbgprint(c);
-
-// Re-typing
-c = "Hello!";
-
-dbgprint(c);
-
 ```
 #### Becomes:
 ```C++
 // Compiled with Construct 
 
 #include "include/js.hpp"
-js::number a;
-js::number b;
-let c = static_cast<let>(0);
+js::string bob_version0__(js::string a, js::number b);
+js::number bob_version1__(js::number a, js::number b);
+js::string bob_version2__(js::string a, js::string b);
+js::string a ;
+js::number b ;
+js::string c ;
 
 int main() {
-  a = static_cast<js::number>(2);
-  b = static_cast<js::number>(
-      static_cast<js::string>(js::string("10") + static_cast<js::number>(10)) *
-      a);
-  c = static_cast<let>(static_cast<js::number>(100));
-  std::cout << c << std::endl;
-  a = static_cast<js::number>(10);
-  c = static_cast<let>(b);
-  std::cout << c << std::endl;
-  c = static_cast<let>(js::string("Hello!"));
+  a = (bob_version0__((js::string("HELLO ")), (static_cast<js::number>(2))));
+  b = (bob_version1__((static_cast<js::number>(1)),
+                      (static_cast<js::number>(2))));
+  c = (bob_version2__((js::string("Hello ")), (js::string("World!"))));
+  std::cout << a << std::endl;
+  std::cout << b << std::endl;
   std::cout << c << std::endl;
   return 0;
 }
-auto bob()
-{
-  js::number a = static_cast<js::number>(1.23);
-  js::string b = static_cast<js::string>(js::string("Hello"));
-  std::cout << a << std::endl;
-  std::cout << b << std::endl;
+
+js::string bob_version0__(js::string a, js::number b){
+  js::string c = ((a + b));
+  js::string d = (c);
+  d = ((js::string("returning: ") + c));
+  std::cout << d << std::endl;
+  return ((c));
+}
+js::number bob_version1__(js::number a, js::number b){
+  js::number c = ((a + b));
+  js::dynamic d = static_cast<js::dynamic>(c);
+  d = static_cast<js::dynamic>((js::string("returning: ") + c));
+  std::cout << d << std::endl;
+  return ((c));
+}
+js::string bob_version2__(js::string a, js::string b){
+  js::string c = ((a + b));
+  js::string d = (c);
+  d = ((js::string("returning: ") + c));
+  std::cout << d << std::endl;
+  return ((c));
 }
 ```
-`js::number` = alias for `double`  
-`js::string` = alias for `std::string`  
-`let` = WIP abuse of `std::variant` with overloads  
+`js::number`  = alias for `double`  
+`js::string`  = alias for `std::string`  
+`js::dynamic` = WIP abuse of `std::variant` with overloads  

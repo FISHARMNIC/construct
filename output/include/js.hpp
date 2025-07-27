@@ -16,4 +16,10 @@ namespace js
 #include "string.hpp"
 #include "let.hpp"
 
+namespace js
+{
+    typedef let dynamic;
+}
+  
+
 #endif // __JS_H__

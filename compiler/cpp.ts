@@ -187,7 +187,7 @@ export let cpp = {
         FUNCTION: "void*", // @todo use cpp function types
         STRING: "js::string",
         ARRAY: "ERROR_NOT_IMPLEMENTED",
-        IFFY: "let",
+        IFFY: "js::dynamic",
         AUTO: "auto", // only to be used by functions
         BOOLEAN: "boolean",
         // @todo null literals

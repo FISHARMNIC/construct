@@ -27,9 +27,8 @@ function bob() {
     dbgprint(b);
 }
 
-// Proper JS type coercion (only for the 4 main math functions for now)
-// note that flipping these two decs causes lookahead issues since c is reassigned to b, which won't be declared
-// still works but forces c to be a "let" instead
+// !IMPORTANT! !HERE! @todo flipping these two causes complex type evaluation fails because retries main and forces A to be redeclared
+// to fix: maybe either block same-scope reval or allow redec in dummy mode??
 let b = ("10" + 10) * a;
 let c = 100;
 

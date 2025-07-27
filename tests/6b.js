@@ -14,13 +14,17 @@ Tests:
 function bob(a,b)
 {
     let c = a + b;
+    let d = c;
+    d = "returning: " + c;
+    dbgprint(d);
+    
     return c;
 }
 
-let w = bob("HELLO ",2);
-let y = bob(1,2);
-let z = bob("Hello ", "World!");
+let a = bob("HELLO ",2);
+let b = bob(1,2);
+let c = bob("Hello ", "World!");
 
-dbgprint(w);
-dbgprint(y);
-dbgprint(z);
+dbgprint(a);
+dbgprint(b);
+dbgprint(c);
