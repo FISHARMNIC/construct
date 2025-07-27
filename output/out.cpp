@@ -2,27 +2,23 @@
 // Compiled with Construct 
 
 #include "include/js.hpp"
-
-js::number a ;
-js::number b ;
-let c = static_cast<let>(0);
+let bob_version0__(let a, js::number b);
+let bob_version1__(js::string a, js::string b);
 
 int main() {
-  a = (static_cast<js::number>(2));
-  b = (((js::string("10") + static_cast<js::number>(10)) * a));
-  c = static_cast<let>(static_cast<js::number>(100));
-  std::cout << c << std::endl;
-  a = (static_cast<js::number>(10));
-  c = static_cast<let>(b);
-  std::cout << c << std::endl;
-  c = static_cast<let>(js::string("Hello!"));
-  std::cout << c << std::endl;
+  bob_version0__(static_cast<let>(static_cast<js::number>(1)),
+                 (static_cast<js::number>(2)));
+  bob_version1__((js::string("Hello ")), (js::string("World!")));
   return 0;
 }
-auto bob()
-{
-  js::number a = (static_cast<js::number>(1.23));
-  js::string b = (js::string("Hello"));
-  std::cout << a << std::endl;
-  std::cout << b << std::endl;
+
+let bob_version0__(let a, js::number b){
+  a = static_cast<let>(js::string("aaaaa"));
+  let c = ((a + b));
+  std::cout << c << std::endl;
+}
+let bob_version1__(js::string a, js::string b){
+  a = (js::string("aaaaa"));
+  js::string c = ((a + b));
+  std::cout << c << std::endl;
 }

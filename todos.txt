@@ -1,0 +1,3 @@
+* Fix tests/7.js
+* Implement testing suite
+* Add calling regular un-templated functions

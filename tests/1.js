@@ -1,6 +1,8 @@
 /*
 @expects{{{
-
+100
+2020
+Hello!
 }}}
 
 Tests:

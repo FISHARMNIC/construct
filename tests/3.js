@@ -1,4 +1,8 @@
 /*
+@expects{{{
+5
+}}}
+
 Tests:
     * Variable encountered before declaration (in terms of top-to-bottom evaluation)
     * Function re-evaluation when ready

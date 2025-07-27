@@ -1,4 +1,10 @@
 /*
+@expects{{{
+100
+2020
+Hello!
+}}}
+
 Similar to Test1, but "a" is also a "let" since it is retyped
 */
 

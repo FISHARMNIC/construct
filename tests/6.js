@@ -1,4 +1,9 @@
 /*
+@expects{{{
+3
+Hello World!
+}}}
+
 Tests:
     * Template functions
 */

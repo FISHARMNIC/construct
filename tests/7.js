@@ -1,4 +1,9 @@
 /*
+@expects{{{
+3
+Hello World!
+}}}
+
 Tests:
     * Iffys in template functions
     * template functions

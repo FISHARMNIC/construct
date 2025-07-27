@@ -210,22 +210,6 @@ export let cpp = {
         static(to: ctype, value: string, valueType: ctype): string {
             let castTo = `static_cast<${to}>`;
             return cpp.cast.staticBinfo(to, {content: value, info: {type: valueType}});
-
-            /*
-            @todo this wasnt working propery because casting js::string(...) + js::number(...) to a string wouldnt do anything
-            Dont just wrap paras around it. wont fix it. i mean it.
-            Need to make second function that does this but expects buildInfo instead
-
-            */
-            // already being casted
-            // const alreadyCasts: boolean = value.slice(0, castTo.length) == castTo;
-            // const callsContructor: boolean = value.slice(0, to.length + 1) == `${to}(` && value.at(-1) == ")";
-            // if (alreadyCasts || callsContructor) {
-            //     return value;
-            // }
-            // else {
-                return `${castTo}(${value})`;
-            //}
         },
         number(value: string): string {
             return cpp.cast.static(cpp.types.NUMBER, value, cpp.types.AUTO);

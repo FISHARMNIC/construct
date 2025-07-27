@@ -1,4 +1,7 @@
 /*
+!IMPORTANT! !HERE! Fails!
+return statement in bob isn't compiling
+
 Tests:
     * Template functions
     * Returns in template functions
