@@ -26,6 +26,10 @@
     * clang-tidy and g++
     * c++20
 
+### Running
+* `tsx main` in compiler
+* modify `INPUTFILE` in that same file
+
 
 ## Example conversion
 #### Input:
