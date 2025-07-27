@@ -41,9 +41,10 @@ import * as ESTree from '@babel/types';
 import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
-import { CTemplateFunction, ctype } from './ctypes';
-import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
+import { CFunction, CTemplateFunction, ctype, stackInfo } from './ctypes';
+import { allVars, cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
+import { typeList2type } from './iffyTypes';
 
 interface FunctionQueueElement {
     func: ESTree.Function; // @todo make this FunctionDeclaration
@@ -53,7 +54,8 @@ interface FunctionQueueElement {
 
 interface evalInfo {
     bInfo: buildInfo[],
-    successfull: boolean
+    successfull: boolean,
+    returnType: ctype,
 };
 
 type FunctionQueue = FunctionQueueElement[];
@@ -92,18 +94,52 @@ export function evaluateAllFunctions(): string[] {
     return [""];
 }
 
-function evaluateSingle(funcInfo: FunctionQueueElement, {changeNest = true, forceDummyOnly = false}: { changeNest?: boolean; forceDummyOnly?: boolean } = {}): evalInfo {
+function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false }: { changeNest?: boolean; forceDummyOnly?: boolean } = {}): evalInfo {
+
+    const beforeDeletefn = (obj: stackInfo, allReturnStatements: buildInfo[]): ctype => {
+
+        const singleReturnType: ctype = typeList2type(allReturnStatements.map((v): ctype => v.info.type));
+        console.log(singleReturnType);
+
+        /*
+        @todo need to now use .replace or something to set return type and add explicit cast to all returns
+        */
+        allReturnStatements.forEach((statement: buildInfo): void => {
+            if (statement.info.returningData) {
+                statement.replace = {
+                    with: [stringTobuildInfo(`return(${cpp.cast.static(singleReturnType, statement.info.returningData)})`)],
+                    ready: true,
+                }
+            }
+        })
+
+        // console.log("DEBUG KILLING", allReturnStatements);
+        //process.exit(0);
+
+        return singleReturnType;
+    }
+
+
     if (changeNest)
         changeNestLevel(1);
 
     let succeeded = false;
     let output: buildInfo[] = [];
+    let returnType: ctype = cpp.types.VOID;
 
     if (ESTree.isFunctionDeclaration(funcInfo.func)) {
         let node = funcInfo.func as ESTree.FunctionDeclaration;
+        let allReturnStatements: buildInfo[] = [];
 
         console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
-        let out = walkBodyDummy(node.body.body);
+        let out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean, errorInfo): void => {
+            if (success && forceDummyOnly) {
+                allReturnStatements = obj.returnStatements;
+                returnType = beforeDeletefn(obj, allReturnStatements)
+            }
+        });
+
+
         if (out.success) {
             console.log(`[funcs] -> SUCCESS on eval "${node.id?.name}"`);
 
@@ -112,9 +148,35 @@ function evaluateSingle(funcInfo: FunctionQueueElement, {changeNest = true, forc
                 output = out.info;
             }
             else {
-                output = walkBody(node.body.body);
+                output = walkBody(node.body.body, {
+                    beforeDelete: (obj: stackInfo): void => {
+                        allReturnStatements = obj.returnStatements;
+                        returnType = beforeDeletefn(obj, allReturnStatements);
+                    }
+                }
+                );
             }
 
+            const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates.get(funcInfo.func.id!);
+            const normalMatch: CFunction | undefined = cpp.functions.all.get(funcInfo.func.id!);
+
+            // if(templateMatch)
+            // {
+            //     templateMatch.
+            // }
+            if(normalMatch)
+            {
+                normalMatch.return = returnType;
+            }
+            else if(!templateMatch)
+            {
+                // should never reach here
+                ASTerr_kill(funcInfo.func, `[INTERNAL] Critical failiure. Unknown function "${funcInfo.func.id?.name}"`);
+            }
+
+            // console.log();
+            // process.exit(0);
+            
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
@@ -134,7 +196,8 @@ function evaluateSingle(funcInfo: FunctionQueueElement, {changeNest = true, forc
 
     return {
         bInfo: output,
-        successfull: succeeded
+        successfull: succeeded,
+        returnType
     };
 }
 
@@ -146,7 +209,7 @@ function template_newName(): string // @todo this is lazy. Make one for each tem
     return `_version${namingCounter++}__`;
 }
 
-function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[] {
+function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
     let fqe: FunctionQueueElement = {
         func, evaluatedCode: {
             ready: false
@@ -155,13 +218,13 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): buildInfo[] {
 
     /*
     Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
-    */ 
-    let res = evaluateSingle(fqe, {changeNest: false, forceDummyOnly: true}); 
+    */
+    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true });
     if (!res.successfull) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
 
-    return res.bInfo;
+    return res;
 }
 
 interface etf_robj {
@@ -197,13 +260,16 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     // treats them as variables for simplicity
     // note wont trigger redec erro since binding is the param
     // note that this shouldn't be run in dummy mode since at this point everything should be known
-    // @todo !important! next dec will cause a redec error. Need to clean these after function is done
+    let paramTypes: ctype[] = []
+
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
-            cpp.variables.create2(param, param.name, value, {forceNoForward: true});
-            parameter_genList.push(`${value.info.type} ${param.name}`)
+            cpp.variables.create2(param, param.name, value, { forceNoForward: true });
+            const ptype: ctype = allVars.get(param)!.type;
+            parameter_genList.push(`${ptype} ${param.name}`);
+            paramTypes.push(ptype);
         }
         else {
             ASTerr_kill(param, `@todo unknown parameter type "${param.type}"`)
@@ -213,13 +279,14 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     // enterDummyMode();
     // changeNestLevel(1);
 
-    const evaluatedFunc: buildInfo[] = evaluateSingleTemplate_helper(funcInfo.func);
+    const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func);
+    const evaluatedFunc: buildInfo[] = evaluatedInfo.bInfo;
     const parameter_genStr: string = parameter_genList.join(", ");
-    let returnType = cpp.types.VOID; // @todo not auto once returns implemented
+
     const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
-    const callExpr = `${fnName}(${givenParams.map((v: buildInfo): string => v.content).join(", ")})`;
-    const fnDef = `${returnType} ${fnName}(${parameter_genStr})`;
+    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.static(paramTypes[i], v.content)).join(", ")})`;
+    const fnDef = `${evaluatedInfo.returnType} ${fnName}(${parameter_genStr})`;
 
     fixxes.pre.push(fnDef + ';');
     fixxes.post.push(stringTobuildInfo(fnDef + "{"), ...evaluatedFunc, stringTobuildInfo("}"));
@@ -238,7 +305,7 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     return {
         content: callExpr,
         info: {
-            type: returnType
+            type: evaluatedInfo.returnType
         }
     };
 

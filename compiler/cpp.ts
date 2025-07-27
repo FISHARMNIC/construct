@@ -201,7 +201,9 @@ export let cpp = {
             let castTo = `static_cast<${to}>`;
 
             // already being casted
-            if (value.slice(0, castTo.length) == castTo) {
+            const alreadyCasts: boolean = value.slice(0, castTo.length) == castTo;
+            const callsContructor: boolean = value.slice(0, to.length + 1) == `${to}(` && value.at(-1) == ")";
+            if (alreadyCasts || callsContructor) {
                 return value;
             }
             else {
@@ -316,6 +318,7 @@ export let cpp = {
     functions:
     {
         all: allFuncs,
+        allTemplates: allTemplateFuncs,
         createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
             let body = block.body;
 
@@ -379,6 +382,16 @@ export let cpp = {
 
                 // return ostring;
             }
-        }
+        },
+        // get(node: ESTree.Identifier): CFunction | CTemplateFunction | undefined | null {
+        //     const binding = fnIdent2binding(node);
+        //     if(!binding)
+        //         return null;
+
+        //     let got =  allFuncs.get(binding);
+
+        //     if(!got)
+        //         return allTemplateFuncs.get(binding);
+        // }
     }
 }

@@ -161,7 +161,8 @@ function begin(): void {
 
         if (e) {
             console.error(`ERROR: ${e.message}`);
-            return;
+            process.exit(1);
+            // return;
         }
         if (stderr) {
             console.log(`${stderr}`);
@@ -172,4 +173,4 @@ function begin(): void {
     });
 }
 
-begin()
+begin();

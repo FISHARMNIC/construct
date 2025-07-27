@@ -11,6 +11,7 @@ interface nodeInfo {
   type: ctype,              // what type is the node
   left?: buildInfo,         // info about what is on the left (not always provided)
   right?: buildInfo         // "
+  returningData?: string, // used only for return analysis
 }
 
 export interface replaceObj {
@@ -20,29 +21,29 @@ export interface replaceObj {
 }
 
 export interface buildInfo {
-  content: string;
-  info: nodeInfo;
-  defer?: boolean;      // dont place in the main function, for example like a function dec
-  replace?: replaceObj; // if this exists and so does .ready, then this build info .content should be replaces with .replace.with
-                        // used for fuction evaluation that may be pushed off until later
+  content: string,
+  info: nodeInfo,
+  defer?: boolean,     // dont place in the main function, for example like a function dec
+  replace?: replaceObj, // if this exists and so does .ready, then this build info .content should be replaces with .replace.with
+  // ^^^ used for fuction evaluation that may be pushed off until later
 }
 
 
 export let nestLevel = -1;
 
-export function changeNestLevel(by: number)
-{
+export function changeNestLevel(by: number) {
   nestLevel += by;
 }
 
 // Walk a block statement in dummy mode, as such that there is no side effects like variable creation
 // Used to verify if a function is compileable yet
-export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {
+export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined } {
 
   let lastObj: stackInfo = {
     funcs: [],
     vars: [],
     templateFuncs: [],
+    returnStatements: []
   };
 
   tempStack.push(lastObj);
@@ -52,11 +53,11 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   let out: buildInfo[] = [];
   let errInfo: ThrowInfo | undefined = undefined;
 
-    // console.log(">>>>>> in", nestLevel, nestLevel + 1);
+  // console.log(">>>>>> in", nestLevel, nestLevel + 1);
   nestLevel++;
 
   try {
-    out = walkBody(body, true, true);
+    out = walkBody(body, {dummy: true, unsafe: true});
     success = true;
   }
   catch (err) {
@@ -67,7 +68,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   // console.log(">>>>>> out", nestLevel, nestLevel - 1);
   nestLevel--;
 
-  if(beforeDelete)
+  if (beforeDelete)
     beforeDelete(lastObj, success, errInfo);
 
   ///  @todo make this more dynamic. Just instead of it being an Identifier[] also hold the delete function
@@ -116,8 +117,7 @@ export function stringTobuildInfo(str: string): buildInfo {
 // !warning dummyUnsafe never removes temporary dummy variables. Do NOT use this directly unless it is known that no variables/functions/etc will be created
 export function walk(node: ESTree.Node, dummyUnsafe: boolean = false): buildInfo[] {
 
-  if(dummyUnsafe)
-  {
+  if (dummyUnsafe) {
     enterDummyMode_raw();
   }
 
@@ -131,8 +131,7 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false): buildInfo
     ASTerr_kill(node, `Unable to handle node "${type}"`);
   }
 
-  if(dummyUnsafe)
-  {
+  if (dummyUnsafe) {
     exitDummyMode_raw();
   }
 
@@ -174,13 +173,22 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
 
 // walk a series of statement like those within the main file or the block statement of a fn
 // unsafe is only to be used by walkBodyDummy
-export function walkBody(body: ESTree.Statement[], dummy: boolean = false, unsafe: boolean = false): buildInfo[] {
+export function walkBody(body: ESTree.Statement[], {dummy = false, unsafe = false,  beforeDelete = (obj: stackInfo) => {}} = {}): buildInfo[] {
 
   //let output: string[] = [];
   let output: buildInfo[] = [];
 
-  if (!unsafe)
+  if (!unsafe) {
+    let lastObj: stackInfo = {
+      funcs: [],
+      vars: [],
+      templateFuncs: [],
+      returnStatements: []
+    };
+
+    tempStack.push(lastObj);
     nestLevel++;
+  }
 
   for (const statement of body) {
     let info: buildInfo[] = walk(statement, dummy);
@@ -198,7 +206,11 @@ export function walkBody(body: ESTree.Statement[], dummy: boolean = false, unsaf
   }
 
   if (!unsafe)
+  {
+    beforeDelete(tempStack.at(-1)!);
     nestLevel--;
+    tempStack.pop();
+  }
 
   return output;
 }

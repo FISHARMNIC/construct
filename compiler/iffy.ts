@@ -38,8 +38,9 @@ import * as ESTree from '@babel/types';
 import traverse from '@babel/traverse';
 import { buildInfo, walk_requireSingle, walkBodyDummy } from './walk';
 import { ast } from './main';
-import { ASTerr_kill, ASTwarn, ThrowInfo, ThrowInfoTypes } from './ASTerr';
+import { ASTerr_kill, ASTwarn, err, ThrowInfo, ThrowInfoTypes } from './ASTerr';
 import { ctype, stackInfo } from './ctypes';
+import { ident2binding } from './cpp';
 
 interface dummyWalkPauseOnSet_t {
     find: ESTree.Identifier | null,
@@ -59,6 +60,16 @@ function iffyDbgPrint(...args: any[]) {
 
 // @todo check that the ident is the binding itself. This is only meant for new variables
 export default function (ident: ESTree.Identifier, currentType: ctype): boolean {
+    const binding = ident2binding(ident);
+    if(binding === undefined)
+    {
+        ASTwarn(ident, `[INTERNAL] binding of "${ident.name}" is undefined!`);
+    }
+    else if(ident !== binding)
+    {
+        err(`[INTERNAL] iffy should only be given bindings. "${ident.name}" is not the original binding`, ident, ident2binding(ident))
+    }
+
     iffyDbgPrint(`[iffy ] START - checking for "${ident.name}" declared on line ${ident.loc?.start.line}`);
     // let returnInfo: ctype[] = [];
 

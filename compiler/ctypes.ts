@@ -1,4 +1,5 @@
 import * as ESTree from '@babel/types';
+import { buildInfo } from './walk';
 
 export type ctype = string;
 
@@ -23,5 +24,6 @@ export interface CTemplateFunction {
 export interface stackInfo {
     funcs: ESTree.Identifier[],
     templateFuncs: ESTree.Identifier[],
-    vars: ESTree.Identifier[]
+    vars: ESTree.Identifier[],
+    returnStatements: buildInfo[],
 }

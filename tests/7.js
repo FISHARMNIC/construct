@@ -1,11 +1,13 @@
 /*
 Tests:
-    * Template functions
+    * Iffys in template functions
+    * template functions
 */
 
 
 function bob(a,b)
 {
+    a = "aaaaa";
     let c = a + b;
     dbgprint(c);
 }

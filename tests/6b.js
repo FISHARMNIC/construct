@@ -1,8 +1,17 @@
+/*
+Tests:
+    * Template functions
+    * Returns in template functions
+*/
+
 function bob(a,b)
 {
     let c = a + b;
     return c;
 }
 
-bob(1,2);
-bob("Hello ", "World!");
+let y = bob(1,2);
+let z = bob("Hello ", "World!");
+
+dbgprint(y);
+dbgprint(z);

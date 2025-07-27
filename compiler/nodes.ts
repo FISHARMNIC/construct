@@ -7,9 +7,9 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 */
 
 import * as ESTree from '@babel/types';
-import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ThrowInfoTypes } from './ASTerr';
+import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
-import { allFuncs, allTemplateFuncs, cpp, fnIdent2binding, ident2binding, inDummyMode } from './cpp';
+import { allFuncs, allTemplateFuncs, cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
@@ -40,7 +40,7 @@ export default {
                         //console.log(value_in);
                         let value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
 
-                        let compiled = cpp.variables.create2(ident, name, value, {constant: kind === "const"});
+                        let compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const" });
 
                         let ret: buildInfo = {
                             content: compiled,
@@ -217,74 +217,73 @@ export default {
         }
     },
 
+    CallExpression(expression: ESTree.CallExpression, build: buildInfo[]): buildInfo {
+        if (ESTree.isV8IntrinsicIdentifier(expression.callee)) {
+            ASTerr_kill(expression, "Unable to handle callee of type V8IntrinsicIdentifier");
+        }
+
+        const functionCalled: ESTree.Expression = expression.callee;
+
+        if (!ESTree.isIdentifier(functionCalled))
+            ASTerr_kill(functionCalled, `@todo unable to call function of type ${functionCalled.type}`);
+
+        const fname: string = functionCalled.name;
+
+        /// debug
+        if (fname === "dbgprint") {
+            return {
+                // @ts-ignore
+                // @todo for will get compiler error if you dont just put a single item
+                // it expects an identifier
+                content: `std::cout << ${expression.arguments[0].name} << std::endl`,
+                info: {
+                    type: cpp.types.NUMBER
+                }
+            };
+        }
+        else {
+            const fnID: ESTree.Identifier = functionCalled;
+
+            let params = expression.arguments;
+            let evaluatedArguments = params.map((value): buildInfo => {
+                if (ESTree.isExpression(value)) {
+                    return walk_requireSingle(value, `Expected single value in parameter`);
+                }
+                else {
+                    ASTerr_kill(value, `@todo unimplemented parameter type "${value.type}"`)
+                }
+            })
+
+            const binding = fnIdent2binding(fnID);
+            if (binding == undefined) {
+                // @todo maybe make this dont kill? - same thing as var use without linear control flow
+                ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
+            }
+            else if (allTemplateFuncs.has(binding)) {
+                const ctempfunc: CTemplateFunction = allTemplateFuncs.get(binding)!;
+                const evaluated: buildInfo = evaluateTemplateFunction(ctempfunc, evaluatedArguments);
+
+                return evaluated;
+
+            }
+            else {
+                ASTerr_kill(fnID, `@todo calling non-templated functions (functions without params) not implemented`);
+            }
+
+            //console.log(Array.from(allTemplateFuncs.values())[0]);
+
+            //// @ts-expect-error
+            //true;
+
+            // ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
+        }
+    },
+
     ExpressionStatement(node: ESTree.ExpressionStatement, build: buildInfo[]): buildInfo {
         let expression = node.expression;
 
         if (ESTree.isCallExpression(expression)) {
-            if (ESTree.isV8IntrinsicIdentifier(expression.callee)) {
-                ASTerr_kill(expression, "Unable to handle callee of type V8IntrinsicIdentifier");
-            }
-
-            const functionCalled: ESTree.Expression = expression.callee;
-
-            if (!ESTree.isIdentifier(functionCalled))
-                ASTerr_kill(functionCalled, `@todo unable to call function of type ${functionCalled.type}`);
-
-            const fname: string = functionCalled.name;
-
-            /// debug
-            if (fname === "dbgprint") {
-                return {
-                    // @ts-ignore
-                    // @todo for will get compiler error if you dont just put a single item
-                    // it expects an identifier
-                    content: `std::cout << ${expression.arguments[0].name} << std::endl`,
-                    info: {
-                        type: cpp.types.NUMBER
-                    }
-                };
-            }
-            else {
-                const fnID: ESTree.Identifier = functionCalled;
-
-                let params = expression.arguments;
-                let evaluatedArguments = params.map((value): buildInfo => {
-                    if(ESTree.isExpression(value))
-                    {
-                        return walk_requireSingle(value, `Expected single value in parameter`);
-                    }
-                    else
-                    {
-                        ASTerr_kill(value, `@todo unimplemented parameter type "${value.type}"`)
-                    }
-                })
-                
-                const binding = fnIdent2binding(fnID);
-                if(binding == undefined)
-                {
-                    // @todo maybe make this dont kill? - same thing as var use without linear control flow
-                    ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
-                }
-                else if(allTemplateFuncs.has(binding))
-                {
-                    const ctempfunc: CTemplateFunction = allTemplateFuncs.get(binding)!;
-                    const evaluated: buildInfo = evaluateTemplateFunction(ctempfunc, evaluatedArguments);
-
-                    return evaluated;
-                     
-                }
-                else
-                {
-                    ASTerr_kill(fnID, `@todo calling non-templated functions (functions without params) not implemented`);
-                }
-
-                //console.log(Array.from(allTemplateFuncs.values())[0]);
-
-                //// @ts-expect-error
-                //true;
-
-                // ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
-            }
+            return this.CallExpression(expression, build);
         }
         else {
             if (expression.type in this) {
@@ -330,7 +329,25 @@ export default {
         }
     },
 
-    // ReturnStatement(node: ESTree.ReturnStatement, build: buildInfo[]): buildInfo {
+    ReturnStatement(node: ESTree.ReturnStatement, build: buildInfo[]): buildInfo {
 
-    // }
+        const returnsVoid: boolean = !node.argument;
+        let value: buildInfo = {content: '', info: {type: cpp.types.VOID}};
+        
+        if(!returnsVoid)
+        {
+            value = walk_requireSingle(node.argument!)
+            value.info.returningData = value.content;
+        }
+
+        value.content = 'return ' + value.content;
+
+        const recent = tempStack.at(-1);
+        if(recent !== undefined && inDummyMode())
+        {
+            recent.returnStatements?.push(value);
+        }
+        
+        return value;
+    }
 }
