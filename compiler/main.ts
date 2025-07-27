@@ -31,7 +31,7 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/6b.js';
+const INPUTFILE = __dirname + '/../tests/1.js';
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, {ecmaVersion: 2020});
@@ -110,7 +110,7 @@ function begin(): void {
     // Some functions were evaluated later, so go ahead and replace their contents accoringly
     replaceLaters(output);
 
-    let output_str: string[] = buildInfoToStr(output);
+    let output_str: string[] = buildInfoToStr(output).map((v: string): string => v + ';');
 
     // console.log(...output.map((value: buildInfo): any => {
     //     return {

@@ -1,4 +1,8 @@
 /*
+@expects{{{
+
+}}}
+
 Tests:
     * string and number types
     * Dynamic re-typing (iffy/let types)

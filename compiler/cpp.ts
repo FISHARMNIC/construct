@@ -201,14 +201,14 @@ export let cpp = {
             let castTo = `static_cast<${to}>`;
 
             // already being casted
-            const alreadyCasts: boolean = value.slice(0, castTo.length) == castTo;
-            const callsContructor: boolean = value.slice(0, to.length + 1) == `${to}(` && value.at(-1) == ")";
-            if (alreadyCasts || callsContructor) {
-                return value;
-            }
-            else {
+            // const alreadyCasts: boolean = value.slice(0, castTo.length) == castTo;
+            // const callsContructor: boolean = value.slice(0, to.length + 1) == `${to}(` && value.at(-1) == ")";
+            // if (alreadyCasts || callsContructor) {
+            //     return value;
+            // }
+            // else {
                 return `${castTo}(${value})`;
-            }
+            //}
         },
         number(value: string): string {
             return cpp.cast.static(cpp.types.NUMBER, value)
