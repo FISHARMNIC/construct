@@ -1,3 +1,3 @@
-* Fix tests/7.js
+* Fix tests/7.js --> see print  [vars ] creating: "c" as "js::number" : dummy? true    why is it dummy???? oh maybe becuase forceDummy
 * Implement testing suite
 * Add calling regular un-templated functions

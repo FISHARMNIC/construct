@@ -1,8 +1,6 @@
 /*
-@expects{{{
-3
-Hello World!
-}}}
+!IMPORTANT! !HERE! Fails!
+return statement in bob isn't compiling
 
 Tests:
     * Iffys in template functions
