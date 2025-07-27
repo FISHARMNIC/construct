@@ -36,8 +36,8 @@ function bob(a,b)
     return c;
 }
 
-let a = bob("HELLO ",2);
-let b = bob(1,2);
+let a = bob("HELLO ", 2);
+let b = bob(1, 2);
 let c = bob("Hello ", "World!");
 
 dbgprint(a);
