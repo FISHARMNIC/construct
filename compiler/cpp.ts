@@ -197,9 +197,26 @@ export let cpp = {
     },
     cast:
     {
-        static(to: ctype, value: string): string {
+        staticBinfo(to: ctype, value: buildInfo): string {
+            if(value.info.type == to)
+            {
+                return `(${value.content})`;
+            }
+            else
+            {
+                return `static_cast<${to}>(${value.content})`;
+            }
+        },
+        static(to: ctype, value: string, valueType: ctype): string {
             let castTo = `static_cast<${to}>`;
+            return cpp.cast.staticBinfo(to, {content: value, info: {type: valueType}});
 
+            /*
+            @todo this wasnt working propery because casting js::string(...) + js::number(...) to a string wouldnt do anything
+            Dont just wrap paras around it. wont fix it. i mean it.
+            Need to make second function that does this but expects buildInfo instead
+
+            */
             // already being casted
             // const alreadyCasts: boolean = value.slice(0, castTo.length) == castTo;
             // const callsContructor: boolean = value.slice(0, to.length + 1) == `${to}(` && value.at(-1) == ")";
@@ -211,7 +228,7 @@ export let cpp = {
             //}
         },
         number(value: string): string {
-            return cpp.cast.static(cpp.types.NUMBER, value)
+            return cpp.cast.static(cpp.types.NUMBER, value, cpp.types.AUTO);
         }
     },
     string:
@@ -281,10 +298,10 @@ export let cpp = {
                 // likeDummy act
                 if (!inDummyMode())
                     allGlobalVars.push(cvar);
-                return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
+                return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(type, value)}`);
             }
             else {
-                return (constant ? "const " : "") + type + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.static(type, value.content)}`);
+                return (constant ? "const " : "") + type + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(type, value)}`);
             }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
@@ -292,7 +309,7 @@ export let cpp = {
                 ASTerr_kill(node, `@todo unable to coerce ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
             }
 
-            return `${existingVar.name} = ${cpp.cast.static(existingVar.type, value.content)}`;
+            return `${existingVar.name} = ${cpp.cast.staticBinfo(existingVar.type, value)}`;
         },
         // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
         remove(node: ESTree.Identifier): void {

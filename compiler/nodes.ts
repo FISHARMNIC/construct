@@ -206,7 +206,7 @@ export default {
 
         // @todo return type based on types of left and right
         let cotype = coerce(node, left.info.type, right.info.type);
-        let str = cpp.cast.static(cotype, left.content + node.operator + right.content);
+        let str = cpp.cast.static(cotype, left.content + node.operator + right.content, cotype);
         return {
             content: str,
             info: {

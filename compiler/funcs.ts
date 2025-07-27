@@ -111,7 +111,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
         allReturnStatements.forEach((statement: buildInfo): void => {
             if (statement.info.returningData) {
                 statement.replace = {
-                    with: [stringTobuildInfo(`return(${cpp.cast.static(singleReturnType, statement.info.returningData)})`)],
+                    with: [stringTobuildInfo(`return(${cpp.cast.static(singleReturnType, statement.info.returningData, singleReturnType)})`)],
                     ready: true,
                 }
             }
@@ -274,7 +274,7 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
     // generate the call expression as in: <function name>(<argument list>)
-    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.static(paramTypes[i], v.content)).join(", ")})`;
+    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(paramTypes[i], v)).join(", ")})`;
     
     // generate the definition as in: <function name>(<parameter list>)
     // used for forward def and actual dec

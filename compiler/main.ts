@@ -110,7 +110,7 @@ function begin(): void {
     // Some functions were evaluated later, so go ahead and replace their contents accoringly
     replaceLaters(output);
 
-    let output_str: string[] = buildInfoToStr(output).map((v: string): string => v + ';');
+    let output_str: string[] = buildInfoToStr(output) //.map((v: string): string => v + ';');
 
     // console.log(...output.map((value: buildInfo): any => {
     //     return {
@@ -130,7 +130,7 @@ function begin(): void {
     cpp.variables.globals.forEach((variable) => {
         // @todo ? Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
         // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
-        ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0") : ""};\n`; 
+        ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0", cpp.types.NUMBER) : ""};\n`; 
     })
 
     // join the pre stuff with the actual compiled code
