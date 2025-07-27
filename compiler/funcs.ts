@@ -35,7 +35,7 @@ import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildIn
 import { ASTerr_kill, err } from './ASTerr';
 import './extensions';
 import { CFunction, CTemplateFunction, ctype, stackInfo } from './ctypes';
-import {cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
+import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
 
@@ -100,6 +100,8 @@ export function evaluateAllFunctions(): string[] {
 */
 function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false } = {}): evalInfo {
 
+    // this function is called by walkBodyDummy before all of the dummy vars and tempStack are deleted and the state is rolled back
+    // here, it extracts all returns which were stored in the tempStack, and casts them to the general type that supports all of them
     const beforeDeletefn = (obj: stackInfo, allReturnStatements: buildInfo[]): ctype => {
 
         const singleReturnType: ctype = typeList2type(allReturnStatements.map((v): ctype => v.info.type));
@@ -113,24 +115,21 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             }
         })
 
-        // console.log("DEBUG KILLING", allReturnStatements);
-        //process.exit(0);
-
-        if(!templateFn)
-        {
+        if (!templateFn) {
             const name = (funcInfo.func as ESTree.FunctionDeclaration).id?.name;
-            if(!name)
-            {
+            if (!name) {
                 err(`[INTERNAL] :: function has no name`);
             }
 
-            fixxes.pre.push(cpp.functions.generateDef({name, return: singleReturnType}, []) + ';');
+            // generate the forward definition for the function
+            // @todo this is messy because callAndEvaluateTemplateFunction does this internally
+            fixxes.pre.push(cpp.functions.generateDef({ name, return: singleReturnType }, []) + ';');
         }
 
         return singleReturnType;
     }
 
-
+    // Doesnt nest again if the parent is handeling the scope
     if (changeNest)
         changeNestLevel(1);
 
@@ -143,8 +142,11 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
         let allReturnStatements: buildInfo[] = [];
 
         console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
+
+        // try to evaluate the function
         let out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean, errorInfo): void => {
             if (success && forceDummyOnly) {
+                // If it succeddes, and the function is never to be walked normally, evaluate return types now (beforeDeleteFn)
                 allReturnStatements = obj.returnStatements;
                 returnType = beforeDeletefn(obj, allReturnStatements)
             }
@@ -159,6 +161,8 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
                 output = out.info;
             }
             else {
+                // if not only walking in dummy mode, walk for reals this time 
+                // @todo is this really needed? Can just leave in dummy mode? because local scope cant cause global effects? or what?
                 output = walkBody(node.body.body, {
                     beforeDelete: (obj: stackInfo): void => {
                         allReturnStatements = obj.returnStatements;
@@ -171,8 +175,9 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates.get(funcInfo.func.id!);
             const normalMatch: CFunction | undefined = cpp.functions.allNormal.get(funcInfo.func.id!);
 
-            // console.log("-----", allReturnStatements, returnType);
-            if (normalMatch) {
+            // Mark the functions return type if its a normal (non-template) function
+            // Template functions each have their own return type
+            if (normalMatch) { // could use !templateFn here too
                 normalMatch.return = returnType;
             }
             else if (!templateMatch || !(funcInfo.func.id)) {
@@ -183,8 +188,10 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
-            if(!templateFn)
-            funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({return: returnType, name: funcInfo.func.id?.name!}, []) + '{';
+            // generate the call expression
+            // @todo this is messy because callAndEvaluateTemplateFunction does this internally
+            if (!templateFn)
+                funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({ return: returnType, name: funcInfo.func.id?.name! }, []) + '{';
 
             succeeded = true;
         }
@@ -246,6 +253,7 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
             * Store the functions that have already been compiled with types A, B, etc...
             * See if new call uses params already compiled for
                 -> Use those instead of generating new ones with the same types
+            * Generate better names like bob_returns_number_takes_number_string
     */
 
     let parameter_genList: string[] = [];
@@ -279,19 +287,16 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
     // evaluate the template functions body
     const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func);
     const evaluatedFunc: buildInfo[] = evaluatedInfo.bInfo;
-    
-    // generate the parameter list as in: <type> <name>, <type> <name>, ...
-    const parameter_genStr: string = parameter_genList.join(", ");
 
     const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
     // generate the call expression as in: <function name>(<argument list>)
     // @todo use cpp.functions._call
-    const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(argumentTypes[i], v)).join(", ")})`;
-    
+    const callExpr = cpp.functions._call({ name: fnName, return: evaluatedInfo.returnType }, givenParams, argumentTypes);
+
     // generate the definition as in: <function name>(<parameter list>)
     // used for forward def and actual dec
-    const fnDef = `${evaluatedInfo.returnType} ${fnName}(${parameter_genStr})`;
+    const fnDef = cpp.functions.generateDef({name: fnName, return: evaluatedInfo.returnType}, parameter_genList);
 
     // forward def
     fixxes.pre.push(fnDef + ';');
@@ -311,10 +316,5 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
         }
     });
 
-    return {
-        content: callExpr,
-        info: {
-            type: evaluatedInfo.returnType
-        }
-    };
+    return callExpr;
 }

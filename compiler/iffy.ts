@@ -32,6 +32,7 @@ In the future, there will be more types of iffys/lets for speed optimization
         -> should this be a variant with let_simple and let_obj? or a 4-way variant of the types collapsed
 
 @todo !important! use typeList2type after marking all types, or make a generator version of it or something
+    -> current just if not all the same types, spit out a let
 */
 
 
