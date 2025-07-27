@@ -2,17 +2,10 @@
 !IMPORTANT! Alot of these are for function decs only, not arrows, etc. 
     -> Specify the required types as .FunctionDeclaration insteaf of just .Function when necessary
 
-!HERE! !IMPORTANT! Need to implement some type of "iffy" for returns, that finds all returns and compares their types
-    -> doesn't need to be done until the end, just use .replace to cast
-    -> maybe create macro like: RETURN_AS(js::number)(123) ===> return(static_cast<js::number>(123));
-    -> Also need to return what type the return needs to be
-
 slightly outdated, but mostly correct:
 
 Expects:
     * A list/queue of all function declarations / methods / etc
-    * All functions to be at the very end of the file
-    *       -> or NOT this can just be run every time a function is encountered, and at EOF
 
 Returns
     * A list of strings with the compiled code
@@ -42,14 +35,13 @@ import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildIn
 import { ASTerr_kill } from './ASTerr';
 import './extensions';
 import { CFunction, CTemplateFunction, ctype, stackInfo } from './ctypes';
-import { allVars, cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
+import {cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
 
 interface FunctionQueueElement {
-    func: ESTree.Function; // @todo make this FunctionDeclaration
-    evaluatedCode: replaceObj; //used for .replace
-    // id: number;
+    func: ESTree.Function;     // @todo make this FunctionDeclaration
+    evaluatedCode: replaceObj; // used for .replace
 };
 
 interface evalInfo {
@@ -63,12 +55,19 @@ type FunctionQueue = FunctionQueueElement[];
 export let unevaledFuncs: FunctionQueue = [];
 let alreadyTried: FunctionQueue = [];
 
-export function evaluateAllFunctions(): string[] {
+let namingCounter = 0;
+/**
+ * @returns A unique identifier
+ */
+function template_newName(): string // @todo this is lazy. Make one for each template function
+{
+    return `_version${namingCounter++}__`;
+}
 
-    // @todo dont need the queue id anymore, since using .replace? now in buildInfo
-    // let queue: FunctionQueue = unevaledFuncs.map((func: ESTree.Function, id: number): FunctionQueueElement => {
-    //     return { func, id, evaluatedCode: [] };
-    // })
+/**
+ * Attempts to evaluate all functions in the queue. If some fail, keep them in the queue for next time
+*/
+export function evaluateAllFunctions(): string[] {
 
     alreadyTried = [];
 
@@ -94,7 +93,12 @@ export function evaluateAllFunctions(): string[] {
     return [""];
 }
 
-function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false }: { changeNest?: boolean; forceDummyOnly?: boolean } = {}): evalInfo {
+/**
+ * Attempts to evaluate a single item from the function queue.  
+ * @param changeNest Used to prevent marking as global code. Only set to true if parent function handles scope entrance
+ * @param forceDummyOnly Used to prevent walking for real. Only use if don't want to actually create anything like scoped variables etc.
+*/
+function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false } = {}): evalInfo {
 
     const beforeDeletefn = (obj: stackInfo, allReturnStatements: buildInfo[]): ctype => {
 
@@ -158,25 +162,16 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             }
 
             const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates.get(funcInfo.func.id!);
-            const normalMatch: CFunction | undefined = cpp.functions.all.get(funcInfo.func.id!);
+            const normalMatch: CFunction | undefined = cpp.functions.allNormal.get(funcInfo.func.id!);
 
-            // if(templateMatch)
-            // {
-            //     templateMatch.
-            // }
-            if(normalMatch)
-            {
+            if (normalMatch) {
                 normalMatch.return = returnType;
             }
-            else if(!templateMatch)
-            {
+            else if (!templateMatch) {
                 // should never reach here
                 ASTerr_kill(funcInfo.func, `[INTERNAL] Critical failiure. Unknown function "${funcInfo.func.id?.name}"`);
             }
 
-            // console.log();
-            // process.exit(0);
-            
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
@@ -201,14 +196,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
     };
 }
 
-
-
-let namingCounter = 0;
-function template_newName(): string // @todo this is lazy. Make one for each template function
-{
-    return `_version${namingCounter++}__`;
-}
-
+// Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle. 
 function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
     let fqe: FunctionQueueElement = {
         func, evaluatedCode: {
@@ -227,18 +215,13 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
     return res;
 }
 
-interface etf_robj {
-    returnType: ctype,
-    callExpr: string,
-    fnName: string,
-    fnDef: string,
-    fnBody: buildInfo[]
-}
-
-/*
- Note this function should not fail, since all Identifiers should be defined at call time (just like in JS)
-*/
-/// @returns function type
+/**
+ * Instances and evaluates a template function (function with parameters). Should never fail since all declarations should be known at call time
+ * Same idea as c++ templates, but handled manually so that local types can be evaluated 
+ * @param funcInfo Function to evaluate
+ * @param givenParams Arguments given. Must already be walked with requireSingle
+ * @returns 
+ */
 export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): buildInfo {
     /*
     @todo:
@@ -256,18 +239,20 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
 
     let parameter_genList: string[] = [];
 
-    // notes the info about the parameters 
-    // treats them as variables for simplicity
-    // note wont trigger redec erro since binding is the param
-    // note that this shouldn't be run in dummy mode since at this point everything should be known
     let paramTypes: ctype[] = []
 
+    // notes the info about the parameters 
+    // treats them as variables for simplicity
+    // note that this shouldn't be run in dummy mode since at this point everything should be known
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
             cpp.variables.create2(param, param.name, value, { forceNoForward: true });
-            const ptype: ctype = allVars.get(param)!.type;
+            // type may be iffy if param is reassigned
+            const ptype: ctype = cpp.variables.all.get(param)!.type;
+
+            // generates the parameter as in: <type> <name>
             parameter_genList.push(`${ptype} ${param.name}`);
             paramTypes.push(ptype);
         }
@@ -279,18 +264,29 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
     // enterDummyMode();
     // changeNestLevel(1);
 
+    // evaluate the template functions body
     const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func);
     const evaluatedFunc: buildInfo[] = evaluatedInfo.bInfo;
+    
+    // generate the parameter list as in: <type> <name>, <type> <name>, ...
     const parameter_genStr: string = parameter_genList.join(", ");
 
     const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
+    // generate the call expression as in: <function name>(<argument list>)
     const callExpr = `${fnName}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.static(paramTypes[i], v.content)).join(", ")})`;
+    
+    // generate the definition as in: <function name>(<parameter list>)
+    // used for forward def and actual dec
     const fnDef = `${evaluatedInfo.returnType} ${fnName}(${parameter_genStr})`;
 
+    // forward def
     fixxes.pre.push(fnDef + ';');
+
+    // actual function declaration
     fixxes.post.push(stringTobuildInfo(fnDef + "{"), ...evaluatedFunc, stringTobuildInfo("}"));
 
+    // get rid of all of the parameters, since they were stored as variables
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
@@ -308,8 +304,4 @@ export function evaluateTemplateFunction(funcInfo: CTemplateFunction, givenParam
             type: evaluatedInfo.returnType
         }
     };
-
-    // changeNestLevel(-1);
-    // exitDummyMode();
-
 }

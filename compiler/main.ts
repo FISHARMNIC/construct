@@ -14,7 +14,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import parseAST from './parse';
 import { analyze } from 'eslint-scope';
-import { allGlobalVars, cpp } from './cpp';
+import { cpp } from './cpp';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
 import './extensions';
@@ -92,7 +92,7 @@ function begin(): void {
 
     // sorting defers to the back
     // Build infos marked as defer are things like functions etc.
-    // This is because they may use globals before they are declared, but c++ doesn't like that
+    // This is because in JS, they may use globals before they are declared, but c++ doesn't like that
     output.sort((a: buildInfo, b: buildInfo) => {
         if (a.defer && !b.defer) return 1;
         if (!a.defer && b.defer) return -1;
@@ -120,35 +120,21 @@ function begin(): void {
     //     }
     // }))
 
+    // start building the output with just the inclues
     let ostr: string = pre;
 
+    // add all of the prefixes. These are like function forward defs
     ostr += fixxes.pre.join("\n") + "\n";
 
-    allGlobalVars.forEach((variable) => {
-
-        // @todo Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
+    // Define all global variables
+    cpp.variables.globals.forEach((variable) => {
+        // @todo ? Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
         // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
         ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0") : ""};\n`; 
     })
 
+    // join the pre stuff with the actual compiled code
     ostr += "\n" + output_str.join("\n");
-
-    // @todo integrate this into cpp.variables.create instead. This here is temporary
-    // eslintScope.globalScope?.variables.forEach((variable): void => {
-    //     let idents = variable.identifiers;
-    //     if(idents.length != 1)
-    //     {
-    //         err(`@todo global identifier "${variable.name}" has multiple identifiers?`);
-    //     }
-    //     else
-    //     {
-    //         let binding = cpp.variables.get(variable.identifiers[0]);
-    //         if(binding !== null && binding !== undefined)
-    //         {
-    //             ostr = (`${binding.type} ${binding.name}\n`) + ostr;
-    //         }
-    //     }
-    // })
 
     fs.writeFileSync(OUTFILE, ostr, 'utf-8');
 

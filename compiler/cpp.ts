@@ -58,10 +58,10 @@ import './extensions';
 import { CFunction, CTemplateFunction, ctype, CVariable, stackInfo } from './ctypes';
 import iffy from './iffy';
 
-export let allVars = new Map<ESTree.Identifier, CVariable>();
-export let allGlobalVars: CVariable[] = [];
-export let allFuncs = new Map<ESTree.Identifier, CFunction>();
-export let allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
+let allVars = new Map<ESTree.Identifier, CVariable>();
+let allGlobalVars: CVariable[] = [];
+let allFuncs = new Map<ESTree.Identifier, CFunction>();
+let allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
 export let tempStack: stackInfo[] = [];
 // export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
 
@@ -223,6 +223,7 @@ export let cpp = {
     variables:
     {
         all: allVars,
+        globals: allGlobalVars,
         exists(node: ESTree.Identifier): boolean {
             const binding = ident2binding(node);
             return binding != undefined && allVars.has(binding);
@@ -317,7 +318,7 @@ export let cpp = {
     },
     functions:
     {
-        all: allFuncs,
+        allNormal: allFuncs,
         allTemplates: allTemplateFuncs,
         createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
             let body = block.body;

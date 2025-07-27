@@ -2,11 +2,15 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, allFuncs, allTemplateFuncs, allVars, cpp, enterDummyMode, enterDummyMode_raw, exitDummyMode, exitDummyMode_raw, tempStack } from './cpp';
+import { __dummyModeGlevel, cpp, enterDummyMode, enterDummyMode_raw, exitDummyMode, exitDummyMode_raw, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 
 // export let toReplace: replaceObj[] = [];
 
+/**
+ * Used in buildInfo to mark info about `buildInfo::content` like what type the compiled code should be
+ * Can also store extra info, like `returningData` which is only used in function calls
+ */
 interface nodeInfo {
   type: ctype,              // what type is the node
   left?: buildInfo,         // info about what is on the left (not always provided)
@@ -14,12 +18,20 @@ interface nodeInfo {
   returningData?: string, // used only for return analysis
 }
 
+/**
+ * @param ready Marks that the parent `buildInfo` is ready to be replaced with my `.with`
+ * @param surroundings [0] addes a prefix, [1] adds a suffix, for example a function definition wrapper: int main() {...}
+ */
 export interface replaceObj {
   ready: boolean,           // if the parenting build info is ready to be replaced
   with?: buildInfo[],       // what to replace with
-  surroundings?: string[]   // [0] addes a prefix, [1] adds a suffix, for example a function definition wrapper: int main() {...}
+  surroundings?: string[]
 }
 
+/**
+ * Used everywhere to store not only what string was compiled by `walk`, but also what type it is
+ * Also stores extra info, like if the node should be replaced with something later, if it should be deferred
+ */
 export interface buildInfo {
   content: string,
   info: nodeInfo,
@@ -28,15 +40,19 @@ export interface buildInfo {
   // ^^^ used for fuction evaluation that may be pushed off until later
 }
 
-
+// Used to know if code is global or not
 export let nestLevel = -1;
-
 export function changeNestLevel(by: number) {
   nestLevel += by;
 }
 
-// Walk a block statement in dummy mode, as such that there is no side effects like variable creation
-// Used to verify if a function is compileable yet
+/**
+ * Walks a block statement in dummy mode, as such that there is no side effects like variable creation
+ * Used to verify if a function is compileable yet
+ * @param body List of statements
+ * @param beforeDelete Run this callback before the stack information along with all local variables are deleted
+ * @returns Information about what was compiled, along with if it failed and why
+ */
 export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined } {
 
   let lastObj: stackInfo = {
@@ -57,7 +73,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   nestLevel++;
 
   try {
-    out = walkBody(body, {dummy: true, unsafe: true});
+    out = walkBody(body, { dummy: true, unsafe: true });
     success = true;
   }
   catch (err) {
@@ -75,17 +91,17 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 
   // clean up all temporary stuff
   lastObj.funcs.forEach((value: ESTree.Identifier): void => {
-    allFuncs.delete(value);
+    cpp.functions.allNormal.delete(value);
   });
 
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy variable", value.name);
-    allVars.delete(value);
+    cpp.variables.all.delete(value);
   });
 
   lastObj.templateFuncs.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy templateFunc", value.name);
-    allTemplateFuncs.delete(value);
+    cpp.functions.allTemplates.delete(value);
   });
 
   tempStack.pop();
@@ -98,23 +114,28 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   };
 }
 
-// just extract contents of buildInfo
+/** Maps buildInfo[] to a string array of its `.contents` 
+ */
 export function buildInfoToStr(bInfo: buildInfo[]): string[] {
   return bInfo.map((value: buildInfo): string => value.content);
 }
 
-// use loosly when type doesn't matter
-export function stringTobuildInfo(str: string): buildInfo {
+/** Converts a string to a buildInfo
+ *  Use loosly when type doesn't matter
+ * @param type what type to mark it as. defualts to `AUTO`
+ */
+export function stringTobuildInfo(str: string, type: ctype = cpp.types.AUTO): buildInfo {
   return {
     content: str,
-    info: {
-      type: cpp.types.AUTO
-    }
+    info: { type }
   };
 }
 
-// fully walk a single node, not a collection of statements
-// !warning dummyUnsafe never removes temporary dummy variables. Do NOT use this directly unless it is known that no variables/functions/etc will be created
+/**
+ * fully walk a single node, not a collection of statements
+ * @param dummyUnsafe walk in dummy mode !WARNING! never removes temporary dummy variables. 
+ * Do NOT use this directly unless it is known that no variables/functions/etc will be created. Meant to be used by things like `walkBodyDymmy`
+ */
 export function walk(node: ESTree.Node, dummyUnsafe: boolean = false): buildInfo[] {
 
   if (dummyUnsafe) {
@@ -160,7 +181,11 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false): buildInfo
   return build;
 }
 
-// Use to make sure that the return of a `walk` only has one item
+/**
+ * Use to make sure that the return of a `walk` only has one item
+ * @param err shows this error if the result is not a single item
+ * @param dummy !WARNING! see `dummyUnsafe` in `walk`
+ */
 export function walk_requireSingle(node: ESTree.Node, err: string = "Expected single value", dummy: boolean = false): buildInfo {
   let bInfo: buildInfo[] = walk(node, dummy);
 
@@ -171,9 +196,13 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
   return bInfo[0];
 }
 
-// walk a series of statement like those within the main file or the block statement of a fn
-// unsafe is only to be used by walkBodyDummy
-export function walkBody(body: ESTree.Statement[], {dummy = false, unsafe = false,  beforeDelete = (obj: stackInfo) => {}} = {}): buildInfo[] {
+/**
+ * walk a series of statement like those within the main file or the block statement of a fn
+ * @param dummy !WARNING! see `dummyUnsafe` in `walk`
+ * @param unsafe only to be used by walkBodyDummy. Forces no stack 
+ * @returns 
+ */
+export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = false, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
 
   //let output: string[] = [];
   let output: buildInfo[] = [];
@@ -205,8 +234,7 @@ export function walkBody(body: ESTree.Statement[], {dummy = false, unsafe = fals
     //output.push(...strinfo);
   }
 
-  if (!unsafe)
-  {
+  if (!unsafe) {
     beforeDelete(tempStack.at(-1)!);
     nestLevel--;
     tempStack.pop();

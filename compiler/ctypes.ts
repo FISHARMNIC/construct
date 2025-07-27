@@ -9,18 +9,26 @@ export interface CVariable {
     constant: boolean,
 }
 
+/**
+ * Regular function WITHOUT parameters
+ */
 export interface CFunction {
     return: ctype,
     name: string,
-    // parameters: ESTree.FunctionParameter[]
 }
 
+/**
+ * Function WITH parameters
+ */
 export interface CTemplateFunction {
     func: ESTree.Function,
     params: ESTree.FunctionParameter[],
     name: string,
 }
 
+/**
+ * Stores information about the current stack
+ */
 export interface stackInfo {
     funcs: ESTree.Identifier[],
     templateFuncs: ESTree.Identifier[],

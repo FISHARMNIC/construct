@@ -9,7 +9,7 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
-import { allFuncs, allTemplateFuncs, cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
+import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
@@ -259,8 +259,8 @@ export default {
                 // @todo maybe make this dont kill? - same thing as var use without linear control flow
                 ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
             }
-            else if (allTemplateFuncs.has(binding)) {
-                const ctempfunc: CTemplateFunction = allTemplateFuncs.get(binding)!;
+            else if (cpp.functions.allTemplates.has(binding)) {
+                const ctempfunc: CTemplateFunction = cpp.functions.allTemplates.get(binding)!;
                 const evaluated: buildInfo = evaluateTemplateFunction(ctempfunc, evaluatedArguments);
 
                 return evaluated;
@@ -333,7 +333,7 @@ export default {
 
         const returnsVoid: boolean = !node.argument;
         let value: buildInfo = {content: '', info: {type: cpp.types.VOID}};
-        
+
         if(!returnsVoid)
         {
             value = walk_requireSingle(node.argument!)
