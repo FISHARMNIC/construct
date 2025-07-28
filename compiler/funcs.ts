@@ -34,10 +34,11 @@ import * as ESTree from '@babel/types';
 import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill, err } from './ASTerr';
 import './extensions';
-import { CFunction, CTemplateFunction, ctype, stackInfo } from './ctypes';
+import { CFunction, CTemplateFunction, ctype, getType, stackInfo } from './ctypes';
 import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
+import { cleanup } from './cleanup';
 
 interface FunctionQueueElement {
     func: ESTree.Function;     // @todo make this FunctionDeclaration
@@ -52,10 +53,18 @@ interface evalInfo {
 
 type FunctionQueue = FunctionQueueElement[];
 
+
 export let unevaledFuncs: FunctionQueue = [];
 let alreadyTried: FunctionQueue = [];
-
 let namingCounter = 0;
+
+cleanup.funcs = function()
+{
+    unevaledFuncs = [];
+    alreadyTried = [];
+    namingCounter = 0;
+}
+
 /**
  * @returns A unique identifier
  */
@@ -172,8 +181,8 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
                 );
             }
 
-            const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates.get(funcInfo.func.id!);
-            const normalMatch: CFunction | undefined = cpp.functions.allNormal.get(funcInfo.func.id!);
+            const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates().get(funcInfo.func.id!);
+            const normalMatch: CFunction | undefined = cpp.functions.allNormal().get(funcInfo.func.id!);
 
             // Mark the functions return type if its a normal (non-template) function
             // Template functions each have their own return type
@@ -270,7 +279,7 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
             // console.log(givenParams)
             cpp.variables.create2(param, param.name, value, { forceNoForward: true });
             // type may be iffy if param is reassigned
-            const ptype: ctype = cpp.variables.all.get(param)!.type;
+            const ptype: ctype = getType(cpp.variables.all().get(param)!);
 
             // generates the parameter as in: <type> <name>
             parameter_genList.push(`${ptype} ${param.name}`);

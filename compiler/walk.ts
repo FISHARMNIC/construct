@@ -91,17 +91,17 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 
   // clean up all temporary stuff
   lastObj.funcs.forEach((value: ESTree.Identifier): void => {
-    cpp.functions.allNormal.delete(value);
+    cpp.functions.allNormal().delete(value);
   });
 
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy variable", value.name);
-    cpp.variables.all.delete(value);
+    cpp.variables.all().delete(value);
   });
 
   lastObj.templateFuncs.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy templateFunc", value.name);
-    cpp.functions.allTemplates.delete(value);
+    cpp.functions.allTemplates().delete(value);
   });
 
   tempStack.pop();

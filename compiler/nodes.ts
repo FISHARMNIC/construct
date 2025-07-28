@@ -10,11 +10,10 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
 import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
-import { dummyWalkPauseOnSet } from './iffy';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
 import { evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
-import { CFunction, CTemplateFunction } from './ctypes';
+import { CFunction, CTemplateFunction, getType } from './ctypes';
 
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
@@ -116,26 +115,26 @@ export default {
             let binding = ident2binding(left);
 
             // used when "iffy" is looking for reassignments
-            let lookingFor = dummyWalkPauseOnSet.at(-1);
-            if (lookingFor)
-                if (inDummyMode() && lookingFor.find == binding) {
-                    if (!lookingFor.location)
-                        ASTerr_kill(left, "Error");
+            // let lookingFor = dummyWalkPauseOnSet.at(-1);
+            // if (lookingFor)
+            //     if (inDummyMode() && lookingFor.find == binding) {
+            //         if (!lookingFor.location)
+            //             ASTerr_kill(left, "Error");
 
-                    if (lookingFor.location == left.loc) {
-                        console.log(`----- FOUND what iffy was looking for! : "${left.name}" -----`);
+            //         if (lookingFor.location == left.loc) {
+            //             console.log(`----- FOUND what iffy was looking for! : "${left.name}" -----`);
 
-                        let value = walk_requireSingle(node.right, "Assigning multiple values to a variable");
+            //             let value = walk_requireSingle(node.right, "Assigning multiple values to a variable");
 
-                        ASTinfo_throw({
-                            type: ThrowInfoTypes.IdentFound,
-                            contents: {
-                                bInfo: value
-                            }
-                        })
+            //             ASTinfo_throw({
+            //                 type: ThrowInfoTypes.IdentFound,
+            //                 contents: {
+            //                     bInfo: value
+            //                 }
+            //             })
 
-                    }
-                }
+            //         }
+            //     }
 
             let existingVar = cpp.variables.get(left);
             if (existingVar === undefined) // variable is declared elsewhere, but compiler hasn't looked at it yet
@@ -162,7 +161,7 @@ export default {
                 return {
                     content: reassignment,
                     info: {
-                        type: existingVar.type,
+                        type: getType(existingVar),
                     }
                 };
 
@@ -259,15 +258,15 @@ export default {
                 // @todo maybe make this dont kill? - same thing as var use without linear control flow
                 ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
             }
-            else if (cpp.functions.allTemplates.has(binding)) { // template function
-                const ctempfunc: CTemplateFunction = cpp.functions.allTemplates.get(binding)!;
+            else if (cpp.functions.allTemplates().has(binding)) { // template function
+                const ctempfunc: CTemplateFunction = cpp.functions.allTemplates().get(binding)!;
                 const evaluated: buildInfo = evaluateAndCallTemplateFunction(ctempfunc, evaluatedArguments);
 
                 return evaluated;
 
             }
-            else if (cpp.functions.allNormal.has(binding)){ // regular function
-                const funcData: CFunction = cpp.functions.allNormal.get(binding)!;
+            else if (cpp.functions.allNormal().has(binding)){ // regular function
+                const funcData: CFunction = cpp.functions.allNormal().get(binding)!;
 
                 if(-1 !== unevaledFuncs.findIndex((v): boolean => {
                     return v.func === expression.callee
@@ -338,7 +337,7 @@ export default {
             return {
                 content: binding.name,
                 info: {
-                    type: binding.type
+                    type: getType(binding)
                 }
             };
         }

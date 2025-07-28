@@ -71,6 +71,13 @@
         "valarray": "cpp",
         "variant": "cpp",
         "vector": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "__functional_03": "cpp",
+        "any": "cpp",
+        "deque": "cpp",
+        "memory_resource": "cpp",
+        "sstream": "cpp",
+        "stack": "cpp",
+        "format": "cpp"
     }
 }

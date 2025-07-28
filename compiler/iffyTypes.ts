@@ -16,7 +16,7 @@ export function typeList2type(types: ctype[]): ctype
     {
         return cpp.types.VOID;
     }
-    
+
     const unique = new Set(types);
 
     if(unique.size == 1)
@@ -26,4 +26,9 @@ export function typeList2type(types: ctype[]): ctype
 
     // @todo optimize for different iffy types
     return cpp.types.IFFY;
+}
+
+export function typeSet2type(types: Set<ctype>): ctype
+{
+    return typeList2type([...types]);
 }

@@ -55,22 +55,34 @@ import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
-import { CFunction, CTemplateFunction, ctype, CVariable, stackInfo } from './ctypes';
-import iffy from './iffy';
+import { CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
+import { typeLists } from './iffy';
+import { typeList2type, typeSet2type } from './iffyTypes';
+import { cleanup } from './cleanup';
 
-let allVars = new Map<ESTree.Identifier, CVariable>();
+// @todo make this nicer. shouldnt be allocated here then realloced in cleanup too
+let allVars: Map<ESTree.Identifier, CVariable> = new Map<ESTree.Identifier, CVariable>();
 let allGlobalVars: CVariable[] = [];
-let allFuncs = new Map<ESTree.Identifier, CFunction>();
-let allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
+let allFuncs: Map<ESTree.Identifier, CFunction> = new Map<ESTree.Identifier, CFunction>();
+let allTemplateFuncs: Map<ESTree.Identifier, CTemplateFunction> = new Map<ESTree.Identifier, CTemplateFunction>();
 export let tempStack: stackInfo[] = [];
-// export let dummyMode: boolean = false; // doesn't create variables etc. Used for looking ahead
-
+let dummyLevel: number = 0;
 let unique_label = 0;
+
 function new_unique() {
     return ++unique_label;
 }
 
-let dummyLevel: number = 0;
+cleanup.cpp = function()
+{
+    allVars = new Map<ESTree.Identifier, CVariable>();
+    allGlobalVars = [];
+    allFuncs = new Map<ESTree.Identifier, CFunction>();
+    allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
+    tempStack = [];
+    dummyLevel = 0;
+    unique_label = 0;
+}
 
 /// !warning! no cleanup nor tempstack
 export function enterDummyMode_raw() {
@@ -145,7 +157,7 @@ export function isGlobalVar(node: ESTree.Identifier): boolean {
 }
 
 // @todo also horrible. Really need to put path in the walker
-export function getWrapperFunc(retStatement: ESTree.ReturnStatement): ESTree.Function | null {
+export function getWrapperFunc(retStatement: ESTree.Node): ESTree.Function | ESTree.Program | null {
     const root: ESTree.Node = ast.program;
     const parents = new Map<ESTree.Node, ESTree.Node | null>();
 
@@ -170,8 +182,8 @@ export function getWrapperFunc(retStatement: ESTree.ReturnStatement): ESTree.Fun
 
     let curr: ESTree.Node | null | undefined = parents.get(retStatement);
     while (curr) {
-        if (ESTree.isFunctionDeclaration(curr) || ESTree.isFunctionExpression(curr) || ESTree.isArrowFunctionExpression(curr)) {
-            return curr as ESTree.Function;
+        if (ESTree.isFunctionDeclaration(curr) || ESTree.isFunctionExpression(curr) || ESTree.isArrowFunctionExpression(curr) || ESTree.isProgram(curr)) {
+            return curr;
         }
         curr = parents.get(curr);
     }
@@ -198,18 +210,16 @@ export let cpp = {
     cast:
     {
         staticBinfo(to: ctype, value: buildInfo): string {
-            if(value.info.type == to)
-            {
+            if (value.info.type == to) {
                 return `(${value.content})`;
             }
-            else
-            {
+            else {
                 return `static_cast<${to}>(${value.content})`;
             }
         },
         static(to: ctype, value: string, valueType: ctype): string {
             let castTo = `static_cast<${to}>`;
-            return cpp.cast.staticBinfo(to, {content: value, info: {type: valueType}});
+            return cpp.cast.staticBinfo(to, { content: value, info: { type: valueType } });
         },
         number(value: string): string {
             return cpp.cast.static(cpp.types.NUMBER, value, cpp.types.AUTO);
@@ -223,8 +233,8 @@ export let cpp = {
     },
     variables:
     {
-        all: allVars,
-        globals: allGlobalVars,
+        all: () => allVars,
+        globals: () => allGlobalVars,
         exists(node: ESTree.Identifier): boolean {
             const binding = ident2binding(node);
             return binding != undefined && allVars.has(binding);
@@ -254,23 +264,36 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, {constant = false, forceNoForward = false} = {}): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false } = {}): string {
 
-            let type = value.info.type;
+            let newType = value.info.type;
 
-            if (iffy(node, type)) {
-                type = cpp.types.IFFY;
+            let myTypeList: Set<ctype>;
+
+
+            if (typeLists.has(node)) {
+                // other passes
+                myTypeList = typeLists.get(node)!.add(newType);
+            }
+            else {
+                // first pass
+                myTypeList = new Set<ctype>;
+                myTypeList.add(newType);
+                typeLists.set(node, myTypeList);
             }
 
+            console.log(myTypeList);
+            let possibleType: ctype = typeSet2type(myTypeList);
+
             let cvar: CVariable = {
-                type, name, constant
+                possibleTypes: myTypeList, name, constant
             };
 
             if (allVars.has(node)) {
                 ASTerr_kill(node, `Identical variable "${name}" already declared`);
             }
 
-            console.log(`[vars ] creating: "${name}" as "${type}" : dummy? ${inDummyMode()}`);
+            console.log(`[vars ] creating: "${name}" as "${possibleType}" : dummy? ${inDummyMode()}`);
             allVars.add(node, 'vars', cvar);
 
             // process.exit(0);
@@ -282,27 +305,27 @@ export let cpp = {
                 // likeDummy act
                 if (!inDummyMode())
                     allGlobalVars.push(cvar);
-                return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(type, value)}`);
+                return name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(possibleType, value)}`);
             }
             else {
-                return (constant ? "const " : "") + type + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(type, value)}`);
+                return (constant ? "const " : "") + possibleType + " " + name + (value.content.length == 0 ? "" : ` = ${cpp.cast.staticBinfo(possibleType, value)}`);
             }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
-            if (value.info.type !== existingVar.type && existingVar.type !== cpp.types.IFFY) {
-                ASTerr_kill(node, `@todo unable to coerce ${existingVar.name} : ${existingVar.type} -> ${value.info.type}`);
+            const eType: ctype = getType(existingVar);
+
+            if (value.info.type !== eType && eType !== cpp.types.IFFY) {
+                ASTerr_kill(node, `@todo unable to coerce ${existingVar.name} : ${eType} -> ${value.info.type}`);
             }
 
-            return `${existingVar.name} = ${cpp.cast.staticBinfo(existingVar.type, value)}`;
+            return `${existingVar.name} = ${cpp.cast.staticBinfo(eType, value)}`;
         },
         // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
         remove(node: ESTree.Identifier): void {
-            if(allVars.has(node))
-            {
+            if (allVars.has(node)) {
                 allVars.delete(node);
             }
-            else
-            {
+            else {
                 err(`[INTERNAL] cannot remove variable "${node.name}" since it doesn't exist`);
             }
         },
@@ -319,8 +342,8 @@ export let cpp = {
     },
     functions:
     {
-        allNormal: allFuncs,
-        allTemplates: allTemplateFuncs,
+        allNormal: () => allFuncs,
+        allTemplates: () => allTemplateFuncs,
         createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
             let body = block.body;
 
@@ -385,19 +408,15 @@ export let cpp = {
                 // return ostring;
             }
         },
-        _call(fn: CFunction,  givenParams: buildInfo[], argumentTypes: ctype[]): buildInfo
-        {
-            if(givenParams.length !== argumentTypes.length)
-            {
+        _call(fn: CFunction, givenParams: buildInfo[], argumentTypes: ctype[]): buildInfo {
+            if (givenParams.length !== argumentTypes.length) {
                 err(`Expected ${argumentTypes.length} arguments but given ${givenParams} when calling function "${fn.name}"`);
             }
-            else
-            {
+            else {
                 return stringTobuildInfo(`${fn.name}(${givenParams.map((v: buildInfo, i: number): string => cpp.cast.staticBinfo(argumentTypes[i], v)).join(", ")})`, fn.return);
             }
         },
-        generateDef(fn: CFunction, argumentTypes: ctype[]): string
-        {
+        generateDef(fn: CFunction, argumentTypes: ctype[]): string {
             return `${fn.return} ${fn.name}(${argumentTypes.join(", ")})`;
         }
     }

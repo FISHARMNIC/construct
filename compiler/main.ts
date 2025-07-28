@@ -19,6 +19,8 @@ import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
 import './extensions';
 import { traverse } from '@babel/types';
+import { getType } from './ctypes';
+import { cleanAll, cleanup } from './cleanup';
 
 // dont include any other file. Make all inclusions under js.hpp
 // Theres some order dependent stuff (let overloads depending on string overloads) that I need to fix
@@ -31,28 +33,33 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/6b.js';
+const INPUTFILE = __dirname + '/../tests/simple/1.js';
 
 export const ast = parseAST(INPUTFILE);
-export const eslintScope = analyze(ast, {ecmaVersion: 2020});
-export let fixxes: {pre: string[], post: buildInfo[]} = {
+export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
+export let fixxes: { pre: string[], post: buildInfo[] } = {
     pre: [],
     post: []
 };
 
+cleanup.main = function () {
+    fixxes = {
+        pre: [],
+        post: []
+    };
+}
+
 // @todo clean this up and put in other file or something
 // Overwrites console.log to display indentation
 const saveLog = console.log;
-console.log = function(...args: any[])
-{
-    if(nestLevel <= 0)
+console.log = function (...args: any[]) {
+    if (nestLevel <= 0)
         saveLog(...args);
     else
         saveLog("\t".repeat(nestLevel), ...args);
 }
 
-export function replaceLaters(bInfo: buildInfo[]): void
-{
+export function replaceLaters(bInfo: buildInfo[]): void {
     bInfo.forEach((info: buildInfo): void => {
         if (info.replace && info.replace.ready && info.replace.with) {
             let repwith = buildInfoToStr(info.replace.with);
@@ -72,6 +79,8 @@ export function replaceLaters(bInfo: buildInfo[]): void
 }
 
 function begin(): void {
+
+    cleanAll();
 
     /// @ts-ignore
     console.log(chalk.green(`|| (construct) JS => Cpp\n|| Compiling: "${INPUTFILE}"`));
@@ -96,15 +105,15 @@ function begin(): void {
     output.sort((a: buildInfo, b: buildInfo) => {
         if (a.defer && !b.defer) return 1;
         if (!a.defer && b.defer) return -1;
-        return 0;                   
+        return 0;
     });
 
     // Main should wrap around all of the undeferred code, like the global code 
     let ind = output.findIndex((value: buildInfo): boolean => "defer" in value);
-    if(ind == -1) ind = output.length;
+    if (ind == -1) ind = output.length;
     ind++;
-    output.pushFront({content: `int main() {\n`, info: {type: cpp.types.FUNCTION}});
-    output.splice(ind, 0, {content: "return 0;\n}", info: {type: cpp.types.FUNCTION}});
+    output.pushFront({ content: `int main() {\n`, info: { type: cpp.types.FUNCTION } });
+    output.splice(ind, 0, { content: "return 0;\n}", info: { type: cpp.types.FUNCTION } });
     output.push(...fixxes.post);
 
     // Some functions were evaluated later, so go ahead and replace their contents accoringly
@@ -127,10 +136,11 @@ function begin(): void {
     ostr += fixxes.pre.join("\n") + "\n";
 
     // Define all global variables
-    cpp.variables.globals.forEach((variable) => {
+    cpp.variables.globals().forEach((variable) => {
+        // console.log("!!!!!", variable)
         // @todo ? Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
         // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
-        ostr += `${variable.type} ${variable.name} ${(variable.type == cpp.types.IFFY)? "= " + cpp.cast.static(cpp.types.IFFY, "0", cpp.types.NUMBER) : ""};\n`; 
+        ostr += `${getType(variable)} ${variable.name} ${(getType(variable) == cpp.types.IFFY) ? "= " + cpp.cast.static(cpp.types.IFFY, "0", cpp.types.NUMBER) : ""};\n`;
     })
 
     // join the pre stuff with the actual compiled code

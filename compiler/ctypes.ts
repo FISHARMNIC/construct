@@ -1,12 +1,18 @@
 import * as ESTree from '@babel/types';
 import { buildInfo } from './walk';
+import { typeSet2type } from './iffyTypes';
 
 export type ctype = string;
 
 export interface CVariable {
-    type: ctype,
+    possibleTypes: Set<ctype>,
     name: string,
     constant: boolean,
+}
+
+export function getType(variable: CVariable): ctype
+{
+    return typeSet2type(variable.possibleTypes);
 }
 
 /**
