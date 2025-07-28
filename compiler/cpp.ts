@@ -319,7 +319,7 @@ export let cpp = {
 
 
             /* 
-            @todo ISSUE is for template functions, evaluateSingle and callAndEvaluateTemplate function fully delete their variables and parameters
+            @todo !IMPORTANT! !HERE! ISSUE is for template functions, evaluateSingle and callAndEvaluateTemplate function fully delete their variables and parameters
 
             This results in re-typing not being looked over
 

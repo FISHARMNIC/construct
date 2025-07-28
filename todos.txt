@@ -1,2 +1,2 @@
-* Fix issue described in tests/1.js
 * Implement testing suite
+* See !IMPORTANT! in cpp.js
