@@ -39,7 +39,7 @@ for(const file of dirList)
         console.log(chalk.yellow(f('RUN', {extra: file})));
 
         try {
-            const stdout = execSync(main + file, { encoding: 'utf8', stdio: 'pipe' });
+            execSync(main + file, { encoding: 'utf8', stdio: 'pipe' });
         }
         catch(err)
         {
@@ -49,7 +49,7 @@ for(const file of dirList)
             console.log(stdout, stderr);
 
             // @ts-expect-error
-            console.log(chalk.red(f('FAIL', {rightSide: true})));
+            console.log(chalk.red(f('FAIL', {rightSide: false})));
 
             process.exit(1);
         }
