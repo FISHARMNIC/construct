@@ -39,7 +39,7 @@ import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
 import { cleanup } from './cleanup';
-import { getTemplateTypeListFromUniqueID, TypeList_t, typeLists } from './iffy';
+import { getTemplateTypeListFromUniqueID, TypeList_t, normalTypeLists } from './iffy';
 
 interface FunctionQueueElement {
     func: ESTree.Function;     // @todo make this FunctionDeclaration
@@ -110,7 +110,7 @@ export function evaluateAllFunctions(): string[] {
  * @param changeNest Used to prevent marking as global code. Only set to true if parent function handles scope entrance
  * @param forceDummyOnly Used to prevent walking for real. Only use if don't want to actually create anything like scoped variables etc.
 */
-function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false, useTypeList = typeLists } = {}): evalInfo {
+function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false, useTypeList = normalTypeLists } = {}): evalInfo {
 
     // this function is called by walkBodyDummy before all of the dummy vars and tempStack are deleted and the state is rolled back
     // here, it extracts all returns which were stored in the tempStack, and casts them to the general type that supports all of them
@@ -232,7 +232,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
     };
 }
 
-// Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle. 
+// Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle.
 function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeList_t): evalInfo {
     let fqe: FunctionQueueElement = {
         func, evaluatedCode: {
@@ -271,13 +271,16 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
             * Store the functions that have already been compiled with types A, B, etc...
             * See if new call uses params already compiled for
                 -> Use those instead of generating new ones with the same types
-            * Generate better names like bob_returns_number_takes_number_string
+            * DO NOT DO: generate better names like bob_returns_number_takes_number_string
+                -> using template ID system to track their identifier
+                - actually maybe can do but dont mess with getID
     */
 
     let parameter_genList: string[] = [];
 
     let argumentTypes: ctype[] = [];
 
+    // See comments in iffy.ts on why the typelists are segregated for template functions
     const myID: number = template_getUniqueID();
     let scopedTypeList = getTemplateTypeListFromUniqueID(myID);
 

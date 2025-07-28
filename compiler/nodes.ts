@@ -16,6 +16,13 @@ import { evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
 import { CFunction, CTemplateFunction, getType } from './ctypes';
 import { TypeList_t } from './iffy';
 
+/**
+ * Each of these functions is passed:
+ * @param node information about the corresponding node
+ * @param build !DEPRECATED! list of what else has been built in the same `walk` prior to this node.
+ * @param useTypeList if doing something like creating new variables, use this as the typelist for that.
+ * S\ee why this is needed in `iffy.ts`
+ */
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[], useTypeList: TypeList_t): buildInfo {
         const kind = node.kind; // let, const, var
@@ -107,7 +114,7 @@ export default {
         }
     },
 
-    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[], useTypeList: TypeList_t): buildInfo {
+    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[]): buildInfo {
         let left = node.left;
         if (!ESTree.isIdentifier(left)) {
             ASTerr_kill(left, "@todo LHS of assignment is not an identifier");

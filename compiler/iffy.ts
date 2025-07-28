@@ -31,9 +31,21 @@ import { getWrapperFunc, ident2binding } from './cpp';
 
 export type TypeList_t = Map<ESTree.Identifier, Set<ctype>>;
 // no cleanup for this
-export let typeLists: TypeList_t = new Map<ESTree.Identifier, Set<ctype>>;
+
+/*
+normalTypeLists is to be used by everything that is compiled once (not including dummy)
+    -> normal functions, variables, etc.
+
+Template functions are instanced multiple times, resulting in their local variables' identifiers being mashed together
+    -> So templateTypeLists are segregated by template ID
+*/
+export let normalTypeLists: TypeList_t = new Map<ESTree.Identifier, Set<ctype>>;
 export let templateTypeLists: TypeList_t[] = [];
 
+/**
+ * Given a template id, which is gotten by calling `template_getUniqueID`, get the appropriate type list to use
+ * See comments above on why this is needed
+ */
 export function getTemplateTypeListFromUniqueID(id: number): TypeList_t
 {
     if(templateTypeLists.length == id)

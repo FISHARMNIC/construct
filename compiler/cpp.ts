@@ -56,7 +56,7 @@ import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
 import { addType, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
-import { typeLists } from './iffy';
+import { normalTypeLists } from './iffy';
 import { typeList2type, typeSet2type } from './iffyTypes';
 import { cleanup } from './cleanup';
 
@@ -263,7 +263,7 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = typeLists } = {}): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists } = {}): string {
 
             let newType = value.info.type;
 
@@ -317,20 +317,6 @@ export let cpp = {
             let newType = value.info.type;
             addType(existingVar, newType);
 
-
-            /* 
-            @todo !IMPORTANT! !HERE! ISSUE is for template functions, evaluateSingle and callAndEvaluateTemplate function fully delete their variables and parameters
-
-            This results in re-typing not being looked over
-
-            Issue is they can't just keep them, because next instance of the template will reuse their type information, even though they are different instances
-
-            Need to create like a special interface for them like CTemplateVariable and it stores the template number (need to store this too) that they are tied to
-
-            issue can be seen with 6b.js
-
-            */
-
             console.log(`[resgn] "${existingVar.name}" = "${value.content}" as "${newType}"`);
             console.log(`[resgn] \t--> "${existingVar.name}" is now a "${getType(existingVar)}"`);
 
@@ -350,7 +336,7 @@ export let cpp = {
 
             if (removeTypeLists) {
                 console.log(`[tlist ] REMOVING "${node.name}"`)
-                removed &&= typeLists.delete(node);
+                removed &&= normalTypeLists.delete(node);
             }
 
             if (!removed && !allowUndefined) {

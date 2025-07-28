@@ -4,7 +4,7 @@ import nodes from './nodes';
 /// @ts-ignore
 import { __dummyModeGlevel, cpp, enterDummyMode, enterDummyMode_raw, exitDummyMode, exitDummyMode_raw, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
-import { TypeList_t, typeLists } from './iffy';
+import { TypeList_t, normalTypeLists } from './iffy';
 
 // export let toReplace: replaceObj[] = [];
 
@@ -54,7 +54,7 @@ export function changeNestLevel(by: number) {
  * @param beforeDelete Run this callback before the stack information along with all local variables are deleted
  * @returns Information about what was compiled, along with if it failed and why
  */
-export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void, useTypeList: TypeList_t = typeLists): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {
+export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void, useTypeList: TypeList_t = normalTypeLists): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -137,7 +137,7 @@ export function stringTobuildInfo(str: string, type: ctype = cpp.types.AUTO): bu
  * @param dummyUnsafe walk in dummy mode !WARNING! never removes temporary dummy variables. 
  * Do NOT use this directly unless it is known that no variables/functions/etc will be created. Meant to be used by things like `walkBodyDymmy`
  */
-export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeList: TypeList_t = typeLists): buildInfo[] {
+export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeList: TypeList_t = normalTypeLists): buildInfo[] {
 
   if (dummyUnsafe) {
     enterDummyMode_raw();
@@ -156,28 +156,6 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeLis
   if (dummyUnsafe) {
     exitDummyMode_raw();
   }
-
-  // used for revaling functions
-  // build.forEach((info: buildInfo): void => {
-  //   // console.log("REPLACEEEEE", info.replace)
-  //   if(info.replace && info.replace.ready && info.replace.with)
-  //   {
-  //     let repwith = buildInfoToStr(info.replace.with);
-  //     let build = "";
-  //     if(info.replace.surroundings)
-  //     {
-  //       build += info.replace.surroundings[0];
-  //       build += repwith.join("\n");
-  //       build += info.replace.surroundings[1];
-  //     }
-  //     else
-  //     {
-  //       build = repwith.join("\n");
-  //     }
-
-  //     info.content = build;
-  //   }
-  // })
 
   return build;
 }
@@ -203,7 +181,7 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
  * @param unsafe only to be used by walkBodyDummy. Forces no stack 
  * @returns 
  */
-export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = false, useTypeList = typeLists, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
+export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = false, useTypeList = normalTypeLists, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
 
   //let output: string[] = [];
   let output: buildInfo[] = [];
