@@ -327,6 +327,8 @@ export let cpp = {
 
             Need to create like a special interface for them like CTemplateVariable and it stores the template number (need to store this too) that they are tied to
 
+            issue can be seen with 6b.js
+            
             */
 
             console.log(`[resgn] "${existingVar.name}" = "${value.content}" as "${newType}"`);
