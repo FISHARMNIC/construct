@@ -14,9 +14,10 @@ import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
 import { evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
 import { CFunction, CTemplateFunction, getType } from './ctypes';
+import { TypeList_t } from './iffy';
 
 export default {
-    VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[]): buildInfo {
+    VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[], useTypeList: TypeList_t): buildInfo {
         const kind = node.kind; // let, const, var
         // let myType = cpp.types.;
 
@@ -39,7 +40,7 @@ export default {
                         //console.log(value_in);
                         let value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
 
-                        let compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const" });
+                        let compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const", useTypeList });
 
                         let ret: buildInfo = {
                             content: compiled,
@@ -106,7 +107,7 @@ export default {
         }
     },
 
-    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[]): buildInfo {
+    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[], useTypeList: TypeList_t): buildInfo {
         let left = node.left;
         if (!ESTree.isIdentifier(left)) {
             ASTerr_kill(left, "@todo LHS of assignment is not an identifier");

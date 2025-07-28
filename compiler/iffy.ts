@@ -29,6 +29,26 @@ import { ASTerr_kill, ASTwarn, err, ThrowInfo, ThrowInfoTypes } from './ASTerr';
 import { ctype, stackInfo } from './ctypes';
 import { getWrapperFunc, ident2binding } from './cpp';
 
-
+export type TypeList_t = Map<ESTree.Identifier, Set<ctype>>;
 // no cleanup for this
-export let typeLists: Map<ESTree.Identifier, Set<ctype>> = new Map<ESTree.Identifier, Set<ctype>>;
+export let typeLists: TypeList_t = new Map<ESTree.Identifier, Set<ctype>>;
+export let templateTypeLists: TypeList_t[] = [];
+
+export function getTemplateTypeListFromUniqueID(id: number): TypeList_t
+{
+    if(templateTypeLists.length == id)
+    {
+        const newMap = new Map<ESTree.Identifier, Set<ctype>>;
+        templateTypeLists.push(newMap);
+        return newMap;
+    }
+    else if(id > templateTypeLists.length)
+    {
+        // id should grow linearly such that it should never be greater than this array
+        err("[INTERNAL] typelist ordering failiure");
+    }
+    else
+    {
+        return templateTypeLists[id];
+    }
+}

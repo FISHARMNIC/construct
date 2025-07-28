@@ -21,10 +21,10 @@ function bob(a,b)
     return c;
 }
 
-// let x = bob("HELLO ",2);
+let x = bob("HELLO ",2);
 let y = bob(1,2);
-// let z = bob("Hello ", "World!");
+let z = bob("Hello ", "World!");
 
-// dbgprint(x);
+dbgprint(x);
 dbgprint(y);
-// dbgprint(z);
+dbgprint(z);

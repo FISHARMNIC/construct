@@ -263,22 +263,22 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false } = {}): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = typeLists } = {}): string {
 
             let newType = value.info.type;
 
             let myTypeList: Set<ctype>;
 
-            if (typeLists.has(node)) {
+            if (useTypeList.has(node)) {
                 console.log(`[n var] 2+ PASS : "${name}"`);
                 // other passes
-                myTypeList = typeLists.get(node)!;
+                myTypeList = useTypeList.get(node)!;
             }
             else {
                 // first pass
                 console.log(`[n var] FIRST PASS : "${name}"`);
                 myTypeList = new Set<ctype>;
-                typeLists.set(node, myTypeList);
+                useTypeList.set(node, myTypeList);
             }
 
             let cvar: CVariable = {
@@ -328,7 +328,7 @@ export let cpp = {
             Need to create like a special interface for them like CTemplateVariable and it stores the template number (need to store this too) that they are tied to
 
             issue can be seen with 6b.js
-            
+
             */
 
             console.log(`[resgn] "${existingVar.name}" = "${value.content}" as "${newType}"`);
@@ -345,10 +345,11 @@ export let cpp = {
             return `${existingVar.name} = ${cpp.cast.staticBinfo(eType, value)}`;
         },
         // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
-        remove(node: ESTree.Identifier, {removeTypeLists = true, allowUndefined = true} = {}): void {
+        remove(node: ESTree.Identifier, {removeTypeLists = false, allowUndefined = true} = {}): void {
             let removed: boolean = allVars.delete(node);
 
             if (removeTypeLists) {
+                console.log(`[tlist ] REMOVING "${node.name}"`)
                 removed &&= typeLists.delete(node);
             }
 

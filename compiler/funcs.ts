@@ -39,6 +39,7 @@ import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
 import { cleanup } from './cleanup';
+import { getTemplateTypeListFromUniqueID, TypeList_t, typeLists } from './iffy';
 
 interface FunctionQueueElement {
     func: ESTree.Function;     // @todo make this FunctionDeclaration
@@ -58,19 +59,21 @@ export let unevaledFuncs: FunctionQueue = [];
 let alreadyTried: FunctionQueue = [];
 let namingCounter = 0;
 
-cleanup.funcs = function()
-{
+cleanup.funcs = function () {
     unevaledFuncs = [];
     alreadyTried = [];
     namingCounter = 0;
 }
 
+function template_getUniqueID(): number {
+    return namingCounter++;
+}
 /**
  * @returns A unique identifier
  */
-function template_newName(): string // @todo this is lazy. Make one for each template function
+function template_newName(uniqueID: number): string // @todo this is lazy. Make one for each template function
 {
-    return `_version${namingCounter++}__`;
+    return `_version${uniqueID}__`;
 }
 
 /**
@@ -107,7 +110,7 @@ export function evaluateAllFunctions(): string[] {
  * @param changeNest Used to prevent marking as global code. Only set to true if parent function handles scope entrance
  * @param forceDummyOnly Used to prevent walking for real. Only use if don't want to actually create anything like scoped variables etc.
 */
-function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false } = {}): evalInfo {
+function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, forceDummyOnly = false, templateFn = false, useTypeList = typeLists } = {}): evalInfo {
 
     // this function is called by walkBodyDummy before all of the dummy vars and tempStack are deleted and the state is rolled back
     // here, it extracts all returns which were stored in the tempStack, and casts them to the general type that supports all of them
@@ -135,10 +138,10 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             fixxes.pre.push(cpp.functions.generateDef({ name, return: singleReturnType }, []) + ';');
         }
         else {
-        obj.vars.forEach((variable: ESTree.Identifier): void => {
-            cpp.variables.remove(variable);
-        })
-    }
+            // obj.vars.forEach((variable: ESTree.Identifier): void => {
+            //     cpp.variables.remove(variable);
+            // })
+        }
 
         return singleReturnType;
     }
@@ -164,7 +167,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
                 allReturnStatements = obj.returnStatements;
                 returnType = beforeDeletefn(obj, allReturnStatements)
             }
-        });
+        }, useTypeList);
 
 
         if (out.success) {
@@ -178,11 +181,12 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
                 // if not only walking in dummy mode, walk for reals this time 
                 // @todo is this really needed? Can just leave in dummy mode? because local scope cant cause global effects? or what?
                 output = walkBody(node.body.body, {
+                    useTypeList,
                     beforeDelete: (obj: stackInfo): void => {
                         allReturnStatements = obj.returnStatements;
                         returnType = beforeDeletefn(obj, allReturnStatements);
                     }
-                }
+                },
                 );
             }
 
@@ -229,7 +233,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
 }
 
 // Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle. 
-function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
+function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeList_t): evalInfo {
     let fqe: FunctionQueueElement = {
         func, evaluatedCode: {
             ready: false
@@ -239,7 +243,7 @@ function evaluateSingleTemplate_helper(func: ESTree.Function): evalInfo {
     /*
     Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
     */
-    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true });
+    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true, useTypeList });
     if (!res.successfull) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
@@ -272,7 +276,10 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
 
     let parameter_genList: string[] = [];
 
-    let argumentTypes: ctype[] = []
+    let argumentTypes: ctype[] = [];
+
+    const myID: number = template_getUniqueID();
+    let scopedTypeList = getTemplateTypeListFromUniqueID(myID);
 
     // notes the info about the parameters 
     // treats them as variables for simplicity
@@ -282,7 +289,7 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
         if (ESTree.isIdentifier(param)) {
             // no need to read the return since its not actually a variable
             // console.log(givenParams)
-            cpp.variables.create2(param, param.name, value, { forceNoForward: true });
+            cpp.variables.create2(param, param.name, value, { forceNoForward: true, useTypeList: scopedTypeList });
             // type may be iffy if param is reassigned
             const ptype: ctype = getType(cpp.variables.all().get(param)!);
 
@@ -299,10 +306,10 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
     // changeNestLevel(1);
 
     // evaluate the template functions body
-    const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func);
+    const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func, scopedTypeList);
     const evaluatedFunc: buildInfo[] = evaluatedInfo.bInfo;
 
-    const fnName = funcInfo.name + template_newName(); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
+    const fnName = funcInfo.name + template_newName(myID); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
 
     // generate the call expression as in: <function name>(<argument list>)
     // @todo use cpp.functions._call
@@ -310,7 +317,7 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
 
     // generate the definition as in: <function name>(<parameter list>)
     // used for forward def and actual dec
-    const fnDef = cpp.functions.generateDef({name: fnName, return: evaluatedInfo.returnType}, parameter_genList);
+    const fnDef = cpp.functions.generateDef({ name: fnName, return: evaluatedInfo.returnType }, parameter_genList);
 
     // forward def
     fixxes.pre.push(fnDef + ';');
