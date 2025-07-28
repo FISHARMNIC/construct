@@ -6,6 +6,7 @@ aaaaaWorld!
 
 Tests:
     * Iffys in template functions
+        -> bob_0 takes dynamic as first param since a is passed as an int but given string later
     * template functions
     * Template returns
 */

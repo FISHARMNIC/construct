@@ -12,7 +12,7 @@ import { buildInfo, walk_requireSingle } from './walk';
 import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
-import { evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
+import { evaluateAllFunctions, evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
 import { CFunction, CTemplateFunction, getType } from './ctypes';
 import { TypeList_t } from './iffy';
 
@@ -275,20 +275,20 @@ export default {
             }
             else if (cpp.functions.allNormal().has(binding)){ // regular function
                 const funcData: CFunction = cpp.functions.allNormal().get(binding)!;
+                const findIndex = () => unevaledFuncs.findIndex((v): boolean => {
+                    const id = (v.func as ESTree.FunctionDeclaration).id
+                    return id === binding
+                })
+                if(findIndex() !== -1)
+                {
+                    evaluateAllFunctions(); // @todo don't need to do all. Just add new param that lets it just find one, and returns success or not
+                    if(findIndex() !== -1) // see comment above on how this could be opt
+                    {
+                        ASTerr_kill(fnID, `Was not able to evaluate function "${funcData.name}" at call time`);
+                    }
+                }
 
-                if(-1 !== unevaledFuncs.findIndex((v): boolean => {
-                    return v.func === expression.callee
-                }))
-                {
-                    ASTerr_kill(fnID, `@todo unevaled function`);
-                    /*
-                    !HERE! !IMPORTANT! call evaluateAll, then make sure that its not in it anymore, if it is, then fail kill
-                    */
-                }
-                else
-                {
                     return cpp.functions._call(funcData, [], []);
-                }
             }
             else
             {
