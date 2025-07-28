@@ -35,7 +35,9 @@ const pre = `
 const OUTFILE = __dirname + "/../output/out.cpp";
 const FIXFILE = __dirname + "/../output/sh/fix.sh";
 
-const INPUTFILE = __dirname + '/../tests/9.js';
+const DEFAULT_FILE = '9.js';
+
+const INPUTFILE = __dirname + `/../tests/${process.argv[2] ?? DEFAULT_FILE}`;
 
 export const ast = parseAST(INPUTFILE);
 export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
