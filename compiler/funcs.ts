@@ -134,6 +134,11 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             // @todo this is messy because callAndEvaluateTemplateFunction does this internally
             fixxes.pre.push(cpp.functions.generateDef({ name, return: singleReturnType }, []) + ';');
         }
+        else {
+        obj.vars.forEach((variable: ESTree.Identifier): void => {
+            cpp.variables.remove(variable);
+        })
+    }
 
         return singleReturnType;
     }

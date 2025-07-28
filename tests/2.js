@@ -5,6 +5,13 @@
 Hello!
 }}}
 
+@types{{{
+global a as IFFY
+global b as IFFY
+global c as IFFY
+}}}
+
+
 Similar to Test1, but "a" is also a "let" since it is retyped
 */
 

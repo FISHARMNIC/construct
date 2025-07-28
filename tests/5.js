@@ -2,6 +2,13 @@
 @expects{{{
 5
 }}}
+
+@types{{{
+global a as NUMBER
+global:bob q as NUMBER
+}}}
+
+
 Tests:
     * No side-effects in dummy mode - Shouldn't re-type "a"
     * Function re-evalutation

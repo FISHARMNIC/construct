@@ -10,6 +10,13 @@ export interface CVariable {
     constant: boolean,
 }
 
+export function addType(variable: CVariable, type: ctype): void
+{
+    variable.possibleTypes.add(type);
+
+    // @todo store the types that changed here for faster difference resolving before next pass
+    // cant just force do it. need to check that its actually new first or else whats the point of this function
+}
 export function getType(variable: CVariable): ctype
 {
     return typeSet2type(variable.possibleTypes);

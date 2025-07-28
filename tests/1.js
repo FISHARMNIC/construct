@@ -5,6 +5,12 @@
 Hello!
 }}}
 
+@types{{{
+global a as NUMBER
+global b as NUMBER
+global c as IFFY
+}}}
+
 Tests:
     * string and number types
     * Dynamic re-typing (iffy/let types)

@@ -55,7 +55,7 @@ import { ast, eslintScope } from './main';
 import { ASTerr_kill, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
-import { CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
+import { addType, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
 import { typeLists } from './iffy';
 import { typeList2type, typeSet2type } from './iffyTypes';
 import { cleanup } from './cleanup';
@@ -73,8 +73,7 @@ function new_unique() {
     return ++unique_label;
 }
 
-cleanup.cpp = function()
-{
+cleanup.cpp = function () {
     allVars = new Map<ESTree.Identifier, CVariable>();
     allGlobalVars = [];
     allFuncs = new Map<ESTree.Identifier, CFunction>();
@@ -270,24 +269,27 @@ export let cpp = {
 
             let myTypeList: Set<ctype>;
 
-
             if (typeLists.has(node)) {
+                console.log(`[n var] 2+ PASS : "${name}"`);
                 // other passes
-                myTypeList = typeLists.get(node)!.add(newType);
+                myTypeList = typeLists.get(node)!;
             }
             else {
                 // first pass
+                console.log(`[n var] FIRST PASS : "${name}"`);
                 myTypeList = new Set<ctype>;
-                myTypeList.add(newType);
                 typeLists.set(node, myTypeList);
             }
-
-            console.log(myTypeList);
-            let possibleType: ctype = typeSet2type(myTypeList);
 
             let cvar: CVariable = {
                 possibleTypes: myTypeList, name, constant
             };
+
+            addType(cvar, newType);
+
+            console.log(myTypeList);
+            let possibleType: ctype = typeSet2type(myTypeList);
+
 
             if (allVars.has(node)) {
                 ASTerr_kill(node, `Identical variable "${name}" already declared`);
@@ -312,20 +314,43 @@ export let cpp = {
             }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
+            let newType = value.info.type;
+            addType(existingVar, newType);
+
+
+            /* 
+            @todo ISSUE is for template functions, evaluateSingle and callAndEvaluateTemplate function fully delete their variables and parameters
+
+            This results in re-typing not being looked over
+
+            Issue is they can't just keep them, because next instance of the template will reuse their type information, even though they are different instances
+
+            Need to create like a special interface for them like CTemplateVariable and it stores the template number (need to store this too) that they are tied to
+
+            */
+
+            console.log(`[resgn] "${existingVar.name}" = "${value.content}" as "${newType}"`);
+            console.log(`[resgn] \t--> "${existingVar.name}" is now a "${getType(existingVar)}"`);
+
             const eType: ctype = getType(existingVar);
 
             if (value.info.type !== eType && eType !== cpp.types.IFFY) {
                 ASTerr_kill(node, `@todo unable to coerce ${existingVar.name} : ${eType} -> ${value.info.type}`);
             }
 
+            // console.log("-----",         cpp.cast.staticBinfo(eType, value))
+
             return `${existingVar.name} = ${cpp.cast.staticBinfo(eType, value)}`;
         },
         // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
-        remove(node: ESTree.Identifier): void {
-            if (allVars.has(node)) {
-                allVars.delete(node);
+        remove(node: ESTree.Identifier, {removeTypeLists = true, allowUndefined = true} = {}): void {
+            let removed: boolean = allVars.delete(node);
+
+            if (removeTypeLists) {
+                removed &&= typeLists.delete(node);
             }
-            else {
+
+            if (!removed && !allowUndefined) {
                 err(`[INTERNAL] cannot remove variable "${node.name}" since it doesn't exist`);
             }
         },

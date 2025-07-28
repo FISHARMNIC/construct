@@ -96,7 +96,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
 
   lastObj.vars.forEach((value: ESTree.Identifier): void => {
     console.log("[dummy] deleting dummy variable", value.name);
-    cpp.variables.all().delete(value);
+    cpp.variables.remove(value);
   });
 
   lastObj.templateFuncs.forEach((value: ESTree.Identifier): void => {
