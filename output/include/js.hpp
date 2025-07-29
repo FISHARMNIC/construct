@@ -18,8 +18,18 @@ namespace js
 
 namespace js
 {
-    typedef let dynamic;
+    typedef let dynamic; // @todo make upper case
 }
+
+#include "array.hpp"
+
+namespace js
+{
+    template <typename T>
+    using array = Array<T>;
+}
+
+// #define cast__ static_cast
   
 
 #endif // __JS_H__

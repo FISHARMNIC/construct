@@ -1,2 +1,4 @@
 * Implement testing suite
 * Test to see how 1b does with new system
+* cannot use static cast on js::array.
+    -> so add a tag that when casting to an array, force call constructor directly instead

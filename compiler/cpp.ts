@@ -197,14 +197,17 @@ export let cpp = {
         VOID: "void",
         FUNCTION: "void*", // @todo use cpp function types
         STRING: "js::string",
-        ARRAY: "ERROR_NOT_IMPLEMENTED",
+        // @todo just mark types as literals or classes
+        // if classes, dont call static_cast
+        ARRAY: (of: ctype) => `js::array<${of}>`,
         IFFY: "js::dynamic",
         AUTO: "auto", // only to be used by functions
         BOOLEAN: "boolean",
         // @todo null literals
         LATER: function () {
             return `__TYPE_${new_unique()}__` // @todo use macros to replace later
-        }
+        },
+        isArray: (type: ctype) => type.slice(0,9) === `js::array`
     },
     cast:
     {
@@ -212,7 +215,12 @@ export let cpp = {
             if (value.info.type == to) {
                 return `(${value.content})`;
             }
-            else {
+            else if(cpp.types.isArray(to))
+            {
+                return `${to}(${value.content})`
+            }
+            else
+            {
                 return `static_cast<${to}>(${value.content})`;
             }
         },
@@ -432,6 +440,27 @@ export let cpp = {
         },
         generateDef(fn: CFunction, argumentTypes: ctype[]): string {
             return `${fn.return} ${fn.name}(${argumentTypes.join(", ")})`;
+        }
+    },
+    array:
+    {
+        create(values: buildInfo[]): buildInfo
+        {
+            const allTypes: ctype[] = values.map((v: buildInfo) => v.info.type);
+            const itemType: ctype = typeList2type(allTypes);
+            const arrayType: ctype = cpp.types.ARRAY(itemType);
+
+            const initializerList: string = `{${values.map((value: buildInfo): string => cpp.cast.staticBinfo(itemType, value))}}`;
+
+            const init: string = cpp.cast.static(arrayType, initializerList, cpp.types.AUTO);
+            
+            return {
+                content: init,
+                info: {
+                    type: arrayType
+                }
+            }
+            
         }
     }
 }

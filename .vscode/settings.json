@@ -78,6 +78,7 @@
         "memory_resource": "cpp",
         "sstream": "cpp",
         "stack": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "__memory": "cpp"
     }
 }

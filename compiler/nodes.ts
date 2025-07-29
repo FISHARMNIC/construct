@@ -379,6 +379,27 @@ export default {
 
     ArrayExpression(node: ESTree.ArrayExpression): buildInfo {
         console.log(node);
-        process.exit(1);
+
+        const unparsedElements = node.elements;
+        let arrayElements: buildInfo[] = [];
+
+        unparsedElements.forEach((element): void => {
+            if(ESTree.isExpression(element))
+            {
+                arrayElements.push(walk_requireSingle(element, "Expected single element in array"));
+            }
+            else if(ESTree.isSpreadElement(element))
+            {
+                ASTerr_kill(node, `@todo array spread not implemented`);
+            }
+            else
+            {
+                ASTerr_kill(node, `@todo value in array is null?`);
+            }
+        })
+
+        let instance: buildInfo = cpp.array.create(arrayElements);
+
+        return instance;
     }
 }
