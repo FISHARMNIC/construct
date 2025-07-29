@@ -55,7 +55,7 @@ import { ast, eslintScope } from './main';
 import { ASTerr_kill, ASTerr_throw, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
-import { addType, bInfoIsList, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
+import { addType, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
 import { normalTypeLists } from './iffy';
 import { typeList2type, typeSet2type } from './iffyTypes';
 import { cleanup } from './cleanup';
@@ -199,15 +199,16 @@ export let cpp = {
         STRING: "js::string",
         // @todo just mark types as literals or classes
         // if classes, dont call static_cast
-        ARRAY: (of: ctype) => `js::array<${of}>`,
+        __RAW_ARRAY: "js::array",
+        ARRAY: (of: ctype) => `${cpp.types.__RAW_ARRAY}<${of}>`,
         IFFY: "js::dynamic",
         AUTO: "auto", // only to be used by functions
         BOOLEAN: "boolean",
         // @todo null literals
-        LATER: function () {
-            return `__TYPE_${new_unique()}__` // @todo use macros to replace later
-        },
-        isArray: (type: ctype) => type.slice(0, 9) === `js::array`
+        // LATER: function () {
+        //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later
+        // },
+        isArray: (type: ctype) => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY
     },
     cast:
     {
@@ -269,7 +270,7 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists} = {}): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists } = {}): string {
 
             let newType = value.info.type;
 
@@ -288,7 +289,7 @@ export let cpp = {
             }
 
             let cvar: CVariable = {
-                possibleTypes: myTypeList, name, constant, isList: bInfoIsList(value)
+                possibleTypes: myTypeList, name, constant, // isList: bInfoIsList(value)
             };
 
             addType(cvar, newType);
@@ -379,10 +380,9 @@ export let cpp = {
             {
                 ASTerr_kill(node, `LHS of assignment "${node.name}" is never declared`);
             }
-            else
-            {
+            else {
                 return existingVar;
-            } 
+            }
         }
     },
     functions:
@@ -467,6 +467,16 @@ export let cpp = {
     },
     array:
     {
+        itemType(arr: CVariable): ctype {
+            let t = getType(arr);
+            if (cpp.types.isArray(t)) {
+                return t.slice(t.indexOf("<") + 1, t.lastIndexOf(">"));
+            }
+            else
+            {
+                err(`[INTERNAL] value is not an array`);
+            }
+        },
         instance(values: buildInfo[]): buildInfo {
             const allTypes: ctype[] = values.map((v: buildInfo) => v.info.type);
             const itemType: ctype = typeList2type(allTypes);
@@ -480,7 +490,6 @@ export let cpp = {
                 content: init,
                 info: {
                     type: arrayType,
-                    isList: true
                 }
             }
 
@@ -489,14 +498,17 @@ export let cpp = {
             const valueType: ctype = value.info.type;
             addType(base, cpp.types.ARRAY(valueType));
 
+            // console.log(value)
+            // process.exit(2)
+
             let assignment: string = `${base.name}[${index.content}] = ${value.content}`;
 
-            
+
             return {
                 content: assignment,
                 info: {
                     type: typeSet2type(base.possibleTypes),
-                    isList: true,
+                    // isList: true,
                 }
             }
         }

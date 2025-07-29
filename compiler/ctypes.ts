@@ -9,7 +9,7 @@ export interface CVariable {
     possibleTypes: Set<ctype>,
     name: string,
     constant: boolean,
-    isList: boolean //@todo change this to store if its a variable, function, list, etc
+    // isList: boolean //@todo change this to store if its a variable, function, list, etc
 }
 
 export function addType(variable: CVariable, type: ctype): void
@@ -29,10 +29,10 @@ export function getType(variable: CVariable): ctype
     return typeSet2type(variable.possibleTypes);
 }
 
-export function bInfoIsList(bInfo: buildInfo): boolean
-{
-    return(bInfo.info.isList ?? false);
-}
+// export function bInfoIsList(bInfo: buildInfo): boolean
+// {
+//     return(bInfo.info.isList ?? false);
+// }
 /**
  * Regular function WITHOUT parameters
  */

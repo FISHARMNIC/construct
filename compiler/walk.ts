@@ -17,7 +17,7 @@ interface nodeInfo {
   left?: buildInfo,         // info about what is on the left (not always provided)
   right?: buildInfo         // "
   returningData?: string, // used only for return analysis
-  isList?: boolean,
+  // isList?: boolean,
 }
 
 /**

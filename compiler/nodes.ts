@@ -13,7 +13,7 @@ import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './c
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
 import { evaluateAllFunctions, evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
-import { CFunction, CTemplateFunction, getType } from './ctypes';
+import { CFunction, CTemplateFunction, ctype, getType } from './ctypes';
 import { TypeList_t } from './iffy';
 
 /**
@@ -116,11 +116,9 @@ export default {
 
     MemberExpression(node: ESTree.MemberExpression): buildInfo {
 
-        err(`@todo MemberExpression needs to be reworked`);
+        // err(`@todo MemberExpression needs to be reworked`);
 
-        // @ todo !HERE! !IMPORTANT! this is super messy because its duplicated in AssignmentExpression
-        // need have buildInfo store 2 things, its type, like "variable" "list" "function" and its binding
-        // ORRRRR just evaluate the binding from there and dont need to store any of that
+        // @todo !HERE! !IMPORTANT! just evaluate the binding from there and dont need to store any of that
         if (!node.computed) {
                 ASTerr_kill(node, `@todo dot property access not implemented`);
             }
@@ -137,11 +135,12 @@ export default {
 
                 let existingVar = cpp.variables.getSafe(base);
 
+                let type: ctype = cpp.array.itemType(existingVar);
+
                 return {
-                    content: `${base}[${index}]`,
+                    content: `${existingVar.name}[${index.content}]`,
                     info: {
-                        type: getType(existingVar),
-                        isList: false
+                        type
                     }
                 }
             }
