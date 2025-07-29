@@ -1,10 +1,20 @@
-* Implement testing suite
-* Test to see how 1b does with new system
-* cannot use static cast on js::array.
-    -> so add a tag that when casting to an array, force call constructor directly instead
+* iffy doesn't support array types
+* Need to make a second iffy that takes everything
+* The more segregation, the faster
+* Is it possible to template dynamic such that the possible types can be given? like:
+    -> would need multiple iffys, one that templates 2 types
+    -> one that templates 3,
+    -> and one that templates everything
+    -> !IMPORTANT! How would adding two different types of these templates work?
+        -> like a dynamic with string and number + a dynamic with array and number
+        -> make methods templates too?
+
+let a = 1       -> js::dynamic<js::number, js::string> a = js::dynamic<js::number, js::string>(1);
+a = "hello"     -> a = js::dynamic<js::number, js::string>("hello");
+
+
 
 * serious issue
     -> everywhere where im just checking .isIdentifier needs to be walked
-    -> big todo
-    -> dont need for assignment expression and some stuff idk implement as it goes tbh
-    -> need to pass cvariable
+
+
