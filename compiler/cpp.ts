@@ -52,10 +52,10 @@ In dummy mode:
 import * as ESTree from '@babel/types';
 import { buildInfo, buildInfoToStr, nestLevel, replaceObj, stringTobuildInfo } from './walk';
 import { ast, eslintScope } from './main';
-import { ASTerr_kill, err } from './ASTerr';
+import { ASTerr_kill, ASTerr_throw, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import './extensions';
-import { addType, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
+import { addType, bInfoIsList, CFunction, CTemplateFunction, ctype, CVariable, getType, stackInfo } from './ctypes';
 import { normalTypeLists } from './iffy';
 import { typeList2type, typeSet2type } from './iffyTypes';
 import { cleanup } from './cleanup';
@@ -207,7 +207,7 @@ export let cpp = {
         LATER: function () {
             return `__TYPE_${new_unique()}__` // @todo use macros to replace later
         },
-        isArray: (type: ctype) => type.slice(0,9) === `js::array`
+        isArray: (type: ctype) => type.slice(0, 9) === `js::array`
     },
     cast:
     {
@@ -215,12 +215,10 @@ export let cpp = {
             if (value.info.type == to) {
                 return `(${value.content})`;
             }
-            else if(cpp.types.isArray(to))
-            {
+            else if (cpp.types.isArray(to)) {
                 return `${to}(${value.content})`
             }
-            else
-            {
+            else {
                 return `static_cast<${to}>(${value.content})`;
             }
         },
@@ -271,7 +269,7 @@ export let cpp = {
             }
         },
         */
-        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists } = {}): string {
+        create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists} = {}): string {
 
             let newType = value.info.type;
 
@@ -290,7 +288,7 @@ export let cpp = {
             }
 
             let cvar: CVariable = {
-                possibleTypes: myTypeList, name, constant
+                possibleTypes: myTypeList, name, constant, isList: bInfoIsList(value)
             };
 
             addType(cvar, newType);
@@ -339,7 +337,7 @@ export let cpp = {
             return `${existingVar.name} = ${cpp.cast.staticBinfo(eType, value)}`;
         },
         // permanently removes a variables. Do not use for temps etc. Only for "fake" variables like template parameters
-        remove(node: ESTree.Identifier, {removeTypeLists = false, allowUndefined = true} = {}): void {
+        remove(node: ESTree.Identifier, { removeTypeLists = false, allowUndefined = true } = {}): void {
             let removed: boolean = allVars.delete(node);
 
             if (removeTypeLists) {
@@ -360,6 +358,31 @@ export let cpp = {
                 return null;
 
             return allVars.get(binding);
+        },
+
+        getSafe(node: ESTree.Identifier): CVariable {
+            let existingVar = cpp.variables.get(node);
+            if (existingVar === undefined) // variable is declared elsewhere, but compiler hasn't looked at it yet
+            {
+                /* 
+                @todo this is where a throw (ASTerr normal) should be used 
+                
+                In the future, on function decs, they should only walk the body/blockStatement as a dummy in an attempt to compile
+                If fail (like this for example, where it uses a var declared later), then catch and hold off until the function is called,
+                then try to revaluate the function (again in dummy mode)
+                If success, reval not in dummy mode for reals this time
+ 
+                */
+                ASTerr_throw(node, `@todo assignment to "${node.name}" before it is declared`);
+            }
+            else if (existingVar === null) // variable is not declared anywhere
+            {
+                ASTerr_kill(node, `LHS of assignment "${node.name}" is never declared`);
+            }
+            else
+            {
+                return existingVar;
+            } 
         }
     },
     functions:
@@ -444,8 +467,7 @@ export let cpp = {
     },
     array:
     {
-        create(values: buildInfo[]): buildInfo
-        {
+        instance(values: buildInfo[]): buildInfo {
             const allTypes: ctype[] = values.map((v: buildInfo) => v.info.type);
             const itemType: ctype = typeList2type(allTypes);
             const arrayType: ctype = cpp.types.ARRAY(itemType);
@@ -453,14 +475,30 @@ export let cpp = {
             const initializerList: string = `{${values.map((value: buildInfo): string => cpp.cast.staticBinfo(itemType, value))}}`;
 
             const init: string = cpp.cast.static(arrayType, initializerList, cpp.types.AUTO);
-            
+
             return {
                 content: init,
                 info: {
-                    type: arrayType
+                    type: arrayType,
+                    isList: true
                 }
             }
+
+        },
+        modify(node: ESTree.Identifier, base: CVariable, index: buildInfo, value: buildInfo): buildInfo {
+            const valueType: ctype = value.info.type;
+            addType(base, cpp.types.ARRAY(valueType));
+
+            let assignment: string = `${base.name}[${index.content}] = ${value.content}`;
+
             
+            return {
+                content: assignment,
+                info: {
+                    type: typeSet2type(base.possibleTypes),
+                    isList: true,
+                }
+            }
         }
     }
 }

@@ -2,3 +2,9 @@
 * Test to see how 1b does with new system
 * cannot use static cast on js::array.
     -> so add a tag that when casting to an array, force call constructor directly instead
+
+* serious issue
+    -> everywhere where im just checking .isIdentifier needs to be walked
+    -> big todo
+    -> dont need for assignment expression and some stuff idk implement as it goes tbh
+    -> need to pass cvariable

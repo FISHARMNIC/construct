@@ -7,7 +7,7 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 */
 
 import * as ESTree from '@babel/types';
-import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, ThrowInfoTypes } from './ASTerr';
+import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, err, ThrowInfoTypes } from './ASTerr';
 import { buildInfo, walk_requireSingle } from './walk';
 import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { coerce } from './typeco';
@@ -39,7 +39,7 @@ export default {
                     ASTerr_kill(node, "@todo non-simple variable declaration (destructuring?) not implemented");
                 }
                 else {
-                    const name = (ident as ESTree.Identifier).name;
+                    const name = ident.name;
 
                     const value_in: ESTree.Expression | null | undefined = dec.init;
 
@@ -114,14 +114,64 @@ export default {
         }
     },
 
+    MemberExpression(node: ESTree.MemberExpression): buildInfo {
+
+        err(`@todo MemberExpression needs to be reworked`);
+
+        // @ todo !HERE! !IMPORTANT! this is super messy because its duplicated in AssignmentExpression
+        // need have buildInfo store 2 things, its type, like "variable" "list" "function" and its binding
+        // ORRRRR just evaluate the binding from there and dont need to store any of that
+        if (!node.computed) {
+                ASTerr_kill(node, `@todo dot property access not implemented`);
+            }
+            else if (!ESTree.isIdentifier(node.object)) {
+                // just need to walk
+                ASTerr_kill(node.object, `@todo complex base type not supported yet`);
+            }
+            else {
+                let base: ESTree.Identifier = node.object as ESTree.Identifier;
+                let index: buildInfo = walk_requireSingle(node.property);
+
+                // @todo note i dont know how its going to work with prototype etc
+                // @todo eventually all methods will have to be implemented as a part of the class
+
+                let existingVar = cpp.variables.getSafe(base);
+
+                return {
+                    content: `${base}[${index}]`,
+                    info: {
+                        type: getType(existingVar),
+                        isList: false
+                    }
+                }
+            }
+    },
+
     AssignmentExpression(node: ESTree.AssignmentExpression): buildInfo {
         let left = node.left;
-        if (!ESTree.isIdentifier(left)) {
-            ASTerr_kill(left, "@todo LHS of assignment is not an identifier");
-        }
-        else {
-            let binding = ident2binding(left);
+        let rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
 
+        if (ESTree.isMemberExpression(left)) { // a[X] or a.X
+            if (!left.computed) {
+                ASTerr_kill(left, `@todo dot property access not implemented`);
+            }
+            else if (!ESTree.isIdentifier(left.object)) {
+                // just need to walk
+                ASTerr_kill(left.object, `@todo complex base type not supported yet`);
+            }
+            else {
+                let base: ESTree.Identifier = left.object;
+                let index: buildInfo = walk_requireSingle(left.property);
+
+                // @todo note i dont know how its going to work with prototype etc
+                // @todo eventually all methods will have to be implemented as a part of the class
+
+                let existingVar = cpp.variables.getSafe(base);
+
+                return cpp.array.modify(base, existingVar, index, rval);
+            }
+        }
+        else if (ESTree.isIdentifier(left)) {
             // used when "iffy" is looking for reassignments
             // let lookingFor = dummyWalkPauseOnSet.at(-1);
             // if (lookingFor)
@@ -144,36 +194,21 @@ export default {
             //         }
             //     }
 
-            let existingVar = cpp.variables.get(left);
-            if (existingVar === undefined) // variable is declared elsewhere, but compiler hasn't looked at it yet
-            {
-                /* 
-                @todo this is where a throw (ASTerr normal) should be used 
-                
-                In the future, on function decs, they should only walk the body/blockStatement as a dummy in an attempt to compile
-                If fail (like this for example, where it uses a var declared later), then catch and hold off until the function is called,
-                then try to revaluate the function (again in dummy mode)
-                If success, reval not in dummy mode for reals this time
+            let existingVar = cpp.variables.getSafe(left);
 
-                */
-                ASTerr_throw(left, `@todo assignment to "${left.name}" before it is declared`);
-            }
-            else if (existingVar === null) // variable is not declared anywhere
-            {
-                ASTerr_kill(left, `LHS of assignment "${left.name}" is never declared`);
-            }
-            else {
-                let rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
-                let reassignment: string = cpp.variables.reassign(left, existingVar, rval);
+            let reassignment: string = cpp.variables.reassign(left, existingVar, rval);
 
-                return {
-                    content: reassignment,
-                    info: {
-                        type: getType(existingVar),
-                    }
-                };
+            return {
+                content: reassignment,
+                info: {
+                    type: getType(existingVar),
+                }
+            };
 
-            }
+
+        }
+        else {
+            ASTerr_kill(left, `@todo unable to handle LHS of assignment as "${left.type}"`);
         }
 
     },
@@ -232,6 +267,7 @@ export default {
         const functionCalled: ESTree.Expression = expression.callee;
 
         if (!ESTree.isIdentifier(functionCalled))
+            // @todo just do a walk
             ASTerr_kill(functionCalled, `@todo unable to call function of type ${functionCalled.type}`);
 
         const fname: string = functionCalled.name;
@@ -273,25 +309,23 @@ export default {
                 return evaluated;
 
             }
-            else if (cpp.functions.allNormal().has(binding)){ // regular function
+            else if (cpp.functions.allNormal().has(binding)) { // regular function
                 const funcData: CFunction = cpp.functions.allNormal().get(binding)!;
                 const findIndex = () => unevaledFuncs.findIndex((v): boolean => {
                     const id = (v.func as ESTree.FunctionDeclaration).id
                     return id === binding
                 })
-                if(findIndex() !== -1)
-                {
+                if (findIndex() !== -1) {
                     evaluateAllFunctions(); // @todo don't need to do all. Just add new param that lets it just find one, and returns success or not
-                    if(findIndex() !== -1) // see comment above on how this could be opt
+                    if (findIndex() !== -1) // see comment above on how this could be opt
                     {
                         ASTerr_kill(fnID, `Was not able to evaluate function "${funcData.name}" at call time`);
                     }
                 }
 
-                    return cpp.functions._call(funcData, [], []);
+                return cpp.functions._call(funcData, [], []);
             }
-            else
-            {
+            else {
                 ASTerr_kill(fnID, `Unknown function "${fnID.name}"`);
             }
 
@@ -357,10 +391,9 @@ export default {
     ReturnStatement(node: ESTree.ReturnStatement): buildInfo {
 
         const returnsVoid: boolean = !node.argument;
-        let value: buildInfo = {content: '', info: {type: cpp.types.VOID}};
+        let value: buildInfo = { content: '', info: { type: cpp.types.VOID } };
 
-        if(!returnsVoid)
-        {
+        if (!returnsVoid) {
             value = walk_requireSingle(node.argument!)
             value.info.returningData = value.content;
         }
@@ -369,11 +402,10 @@ export default {
         console.log(`[retrn] ==> "${value.content}" as "${value.info.type}"`)
 
         const recent = tempStack.at(-1);
-        if(recent !== undefined/* && inDummyMode()*/)
-        {
+        if (recent !== undefined/* && inDummyMode()*/) {
             recent.returnStatements?.push(value);
         }
-        
+
         return value;
     },
 
@@ -384,21 +416,18 @@ export default {
         let arrayElements: buildInfo[] = [];
 
         unparsedElements.forEach((element): void => {
-            if(ESTree.isExpression(element))
-            {
+            if (ESTree.isExpression(element)) {
                 arrayElements.push(walk_requireSingle(element, "Expected single element in array"));
             }
-            else if(ESTree.isSpreadElement(element))
-            {
+            else if (ESTree.isSpreadElement(element)) {
                 ASTerr_kill(node, `@todo array spread not implemented`);
             }
-            else
-            {
+            else {
                 ASTerr_kill(node, `@todo value in array is null?`);
             }
         })
 
-        let instance: buildInfo = cpp.array.create(arrayElements);
+        let instance: buildInfo = cpp.array.instance(arrayElements);
 
         return instance;
     }

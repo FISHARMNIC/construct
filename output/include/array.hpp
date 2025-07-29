@@ -31,14 +31,14 @@ struct Array
         reference = std::make_shared<std::vector<T>>(list);
     }
 
-    const T& operator[](js::number index_dbl) const
+    T& operator[](js::number index_dbl)
     {
-        int64_t index = static_cast<int64_t>(index_dbl);
-        
-        return reference->at(index);
+        size_t index = static_cast<size_t>(index_dbl);
+
+        return (*reference).at(index);
     }
 
-    const T& operator[](js::dynamic& index_dyn) const
+    T& operator[](js::dynamic& index_dyn)
     {
         const JSvalue value = index_dyn.value;
         assert(std::holds_alternative<js::number>(value));
