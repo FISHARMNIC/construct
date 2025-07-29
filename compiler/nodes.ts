@@ -114,7 +114,7 @@ export default {
         }
     },
 
-    AssignmentExpression(node: ESTree.AssignmentExpression, build: buildInfo[]): buildInfo {
+    AssignmentExpression(node: ESTree.AssignmentExpression): buildInfo {
         let left = node.left;
         if (!ESTree.isIdentifier(left)) {
             ASTerr_kill(left, "@todo LHS of assignment is not an identifier");
@@ -179,7 +179,7 @@ export default {
     },
 
     // @todo create function forward decs
-    FunctionDeclaration(node: ESTree.FunctionDeclaration, build: buildInfo[]): buildInfo {
+    FunctionDeclaration(node: ESTree.FunctionDeclaration): buildInfo {
         let id = node.id;
         if (id == undefined || id == null) {
             ASTerr_kill(node, "[INTERNAL] Function has no ID");
@@ -207,7 +207,7 @@ export default {
         }
     },
 
-    BinaryExpression(node: ESTree.BinaryExpression, build: buildInfo[]): buildInfo {
+    BinaryExpression(node: ESTree.BinaryExpression): buildInfo {
         let left = walk_requireSingle(node.left, "Unsure what to do with binary expression (got multiple values, expected 1)");
         let right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
 
@@ -224,7 +224,7 @@ export default {
         }
     },
 
-    CallExpression(expression: ESTree.CallExpression, build: buildInfo[]): buildInfo {
+    CallExpression(expression: ESTree.CallExpression): buildInfo {
         if (ESTree.isV8IntrinsicIdentifier(expression.callee)) {
             ASTerr_kill(expression, "Unable to handle callee of type V8IntrinsicIdentifier");
         }
@@ -320,7 +320,7 @@ export default {
         }
     },
 
-    NumericLiteral(node: ESTree.NumericLiteral, build: buildInfo[]): buildInfo {
+    NumericLiteral(node: ESTree.NumericLiteral): buildInfo {
         return {
             content: cpp.cast.number(node.value.toString()),
             info: {
@@ -329,7 +329,7 @@ export default {
         };
     },
 
-    StringLiteral(node: ESTree.StringLiteral, build: buildInfo[]): buildInfo {
+    StringLiteral(node: ESTree.StringLiteral): buildInfo {
         return {
             content: cpp.string.fromCstr(node.value.toString()),
             info: {
@@ -338,7 +338,7 @@ export default {
         };
     },
 
-    Identifier(node: ESTree.Identifier, build: buildInfo[]): buildInfo {
+    Identifier(node: ESTree.Identifier): buildInfo {
         let binding = cpp.variables.get(node);
         // if is variable
         if (binding) {
@@ -354,7 +354,7 @@ export default {
         }
     },
 
-    ReturnStatement(node: ESTree.ReturnStatement, build: buildInfo[]): buildInfo {
+    ReturnStatement(node: ESTree.ReturnStatement): buildInfo {
 
         const returnsVoid: boolean = !node.argument;
         let value: buildInfo = {content: '', info: {type: cpp.types.VOID}};
@@ -375,5 +375,10 @@ export default {
         }
         
         return value;
+    },
+
+    ArrayExpression(node: ESTree.ArrayExpression): buildInfo {
+        console.log(node);
+        process.exit(1);
     }
 }

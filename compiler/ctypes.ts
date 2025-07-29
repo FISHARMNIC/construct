@@ -1,6 +1,7 @@
 import * as ESTree from '@babel/types';
 import { buildInfo } from './walk';
 import { typeSet2type } from './iffyTypes';
+import { newTypeInformation } from './main';
 
 export type ctype = string;
 
@@ -12,6 +13,11 @@ export interface CVariable {
 
 export function addType(variable: CVariable, type: ctype): void
 {
+    if(!variable.possibleTypes.has(type))
+    {
+        newTypeInformation();
+    }
+
     variable.possibleTypes.add(type);
 
     // @todo store the types that changed here for faster difference resolving before next pass

@@ -177,30 +177,36 @@ function begin(justWalk: boolean = false): void {
     }
 }
 
-let nothingChanged: boolean = true;
+// let nothingChanged: boolean = true;
+let somethingChanged: boolean = true;
+
+export function newTypeInformation()
+{
+    somethingChanged = true;
+}
+
 let i: number = 0;
-while (nothingChanged) {
-    let typeLists_old: Map<ESTree.Identifier, Set<string>> = new Map([...normalTypeLists.entries()].map((e) => [e[0], new Set<string>(e[1])]))
+while (somethingChanged) {
+    // let typeLists_old: Map<ESTree.Identifier, Set<string>> = new Map([...normalTypeLists.entries()].map((e) => [e[0], new Set<string>(e[1])]))
     console.log(`------------ WALKING ITERATION: ${i++} ------------`);
+    somethingChanged = false;
     begin(true);
 
-    // @todo horribly inneficient to scan every single identifier. Instead track what changed in addType
+    // nothingChanged = -1 != [...normalTypeLists.entries()].findIndex((value: [ESTree.Identifier, Set<string>]) => {
+    //     // true if something changed
+    //     const [ident, set] = value;
+    //     const oldSet = typeLists_old.get(ident);
+    //     if(!oldSet || set.size !== oldSet.size)
+    //     {
+    //         return true;
+    //     }
 
-    nothingChanged = -1 != [...normalTypeLists.entries()].findIndex((value: [ESTree.Identifier, Set<string>]) => {
-        // true if something changed
-        const [ident, set] = value;
-        const oldSet = typeLists_old.get(ident);
-        if(!oldSet || set.size !== oldSet.size)
-        {
-            return true;
-        }
+    //     for (const item of set) {
+    //         if (!oldSet.has(item)) return true;
+    //     }
 
-        for (const item of set) {
-            if (!oldSet.has(item)) return true;
-        }
-
-        return false;
-    });
+    //     return false;
+    // });
 }
 
 console.log(`------- BUILDING FINAL! TOOK ${i++} PASSES --------`)
