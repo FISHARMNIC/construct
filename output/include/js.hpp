@@ -7,6 +7,8 @@
 #include <string>
 #include <inttypes.h>
 
+struct let;
+
 namespace js
 {
     typedef double number;
@@ -14,13 +16,6 @@ namespace js
 }
 
 #include "string.hpp"
-#include "let.hpp"
-
-namespace js
-{
-    typedef let dynamic; // @todo make upper case
-}
-
 #include "array.hpp"
 
 namespace js
@@ -29,7 +24,17 @@ namespace js
     using array = Array<T>;
 }
 
-// #define cast__ static_cast
-  
+using JSvalue = std::variant<js::number, js::string /*,js::array<let>*/>;
+
+
+#include "let.hpp"
+
+namespace js
+{
+    typedef let dynamic; // @todo make upper case
+}
+
+#include "array2.hpp"
+
 
 #endif // __JS_H__

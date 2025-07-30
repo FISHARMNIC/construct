@@ -3,8 +3,6 @@
 
 #include "js.hpp"
 
-using JSvalue = std::variant<js::number, js::string>;
-
 /// @todo make `let` part of js namespace
 struct let
 {

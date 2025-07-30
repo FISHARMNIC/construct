@@ -1,4 +1,16 @@
 * iffy doesn't support array types
+
+Once an array is switched to a variable, it forces each item to be iffy to, and marks it as an iffy containing an iffy array
+    -> as it becomes a js::dynamic with js::array<js::dynamic>
+    -> js::dynamic needs to support js::array<js::dynamic>
+        -> also solved nesteds
+
+* serious issue
+    -> everywhere where im just checking .isIdentifier needs to be walked
+
+
+OLD DONT DO (started in iffy-cpp-changes branch)
+-------
 * Need to make a second iffy that takes everything
 * The more segregation, the faster
 * Is it possible to template dynamic such that the possible types can be given? like:
@@ -11,10 +23,4 @@
 
 let a = 1       -> js::dynamic<js::number, js::string> a = js::dynamic<js::number, js::string>(1);
 a = "hello"     -> a = js::dynamic<js::number, js::string>("hello");
-
-
-
-* serious issue
-    -> everywhere where im just checking .isIdentifier needs to be walked
-
 

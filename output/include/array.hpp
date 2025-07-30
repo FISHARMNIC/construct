@@ -38,13 +38,7 @@ struct Array
         return (*reference).at(index);
     }
 
-    T& operator[](js::dynamic& index_dyn)
-    {
-        const JSvalue value = index_dyn.value;
-        assert(std::holds_alternative<js::number>(value));
-
-        return std::get<js::number>(value);
-    }
+    T& operator[](let& index_dyn);
 };
 
 

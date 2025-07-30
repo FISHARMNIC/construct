@@ -474,7 +474,7 @@ export let cpp = {
             }
             else
             {
-                err(`[INTERNAL] value is not an array`);
+                err(`[INTERNAL] value is not an array`, arr.possibleTypes);
             }
         },
         instance(values: buildInfo[]): buildInfo {
