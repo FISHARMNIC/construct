@@ -5,7 +5,6 @@
 @todo need to implement special type "undefined"
 */
 
-
 #include "../include/js.hpp"
 
 #include <inttypes.h>
@@ -13,7 +12,6 @@
 #include <memory>
 #include <initializer_list>
 #include <vector>
-#include <variant>
 #include <assert.h>
 
 template <typename T>
@@ -21,26 +19,44 @@ struct Array
 {
     std::shared_ptr<std::vector<T>> reference;
 
-    Array()
-    {
-        reference = std::make_shared<std::vector<T>>(std::initializer_list<T>{});
-    }
-    
-    Array(std::initializer_list<T> list)
-    {
-        reference = std::make_shared<std::vector<T>>(list);
-    }
+    Array();
 
-    T& operator[](js::number index_dbl)
-    {
-        size_t index = static_cast<size_t>(index_dbl);
+    Array(std::initializer_list<T> list);
 
-        return (*reference).at(index);
-    }
+    T &operator[](js::number index_dbl);
 
-    T& operator[](let& index_dyn);
+    T &operator[](let &index_dyn);
+
+    js::string _toString();
+
+    // @todo none of this is scalable and breaks as soon as i add any other operator to either dynamic or string
+    // maybe some sort of trickery to generate these automatically maybe make a script or something
+
+    // template <typename O>
+    // js::string operator+(O other);
+
+    // template <typename O>
+    // js::string operator-(O other);
+
+    // template <typename O>
+    // js::string operator*(O other);
+
+    // template <typename O>
+    // js::string operator/(O other);
 };
 
+// #define ARR_OPOO(op) \
+// template <typename T>\
+// template <typename O>\
+// js::string Array<T>::operator op (O other)\
+// {\
+//     return this->_toString() op toString(other);\
+// }\
+
+// ARR_OPOO(+)
+// ARR_OPOO(-)
+// ARR_OPOO(*)
+// ARR_OPOO(/)
 
 template <typename T>
 std::ostream &operator<<(std::ostream &os, Array<T> const &me)
@@ -49,9 +65,9 @@ std::ostream &operator<<(std::ostream &os, Array<T> const &me)
 
     size_t i = 0;
 
-    std::vector<T>& vec = *me.reference;
+    std::vector<T> &vec = *me.reference;
 
-    for(; i < vec.size() - 1; i++)
+    for (; i < vec.size() - 1; i++)
     {
         std::cout << vec[i] << ", ";
     }

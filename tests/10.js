@@ -4,4 +4,4 @@ a[1] = a[0];
 
 dbgprint(a);
 
-a = "hello";
+// a = "hello";

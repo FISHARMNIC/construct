@@ -84,6 +84,14 @@ std::ostream &operator<<(std::ostream &os, let const &me);
         return result;                              \
     }
 
+/*
+
+Todo modify these and other overloads
+-> for "+" array is converted to string
+
+
+*/
+
 LET_OPOO_OT(+)
 
 LET_OPOO_OT(-)
