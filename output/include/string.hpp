@@ -5,6 +5,8 @@
 #define STR_NUM const js::string &left, js::number right
 #define STR_STR const js::string &left, const js::string &right
 
+// @todo use +=/-=/*= etc operators instead
+
 js::string operator+(NUM_STR);
 js::string operator+(STR_NUM);
 

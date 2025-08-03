@@ -28,35 +28,7 @@ struct Array
     T &operator[](let &index_dyn);
 
     js::string _toString();
-
-    // @todo none of this is scalable and breaks as soon as i add any other operator to either dynamic or string
-    // maybe some sort of trickery to generate these automatically maybe make a script or something
-
-    // template <typename O>
-    // js::string operator+(O other);
-
-    // template <typename O>
-    // js::string operator-(O other);
-
-    // template <typename O>
-    // js::string operator*(O other);
-
-    // template <typename O>
-    // js::string operator/(O other);
 };
-
-// #define ARR_OPOO(op) \
-// template <typename T>\
-// template <typename O>\
-// js::string Array<T>::operator op (O other)\
-// {\
-//     return this->_toString() op toString(other);\
-// }\
-
-// ARR_OPOO(+)
-// ARR_OPOO(-)
-// ARR_OPOO(*)
-// ARR_OPOO(/)
 
 template <typename T>
 std::ostream &operator<<(std::ostream &os, Array<T> const &me)

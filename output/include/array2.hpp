@@ -29,7 +29,7 @@ T &Array<T>::operator[](js::number index_dbl)
 template <typename T>
 T &Array<T>::operator[](let &index_dyn)
 {
-    const JSvalue value = index_dyn.value;
+    const JSvalue& value = index_dyn.value;
     assert(std::holds_alternative<js::number>(value));
 
     return std::get<js::number>(value);

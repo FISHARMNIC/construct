@@ -2,7 +2,7 @@
 #include "../include/string.hpp"
 #include <variant>
 
-let::let(int n) : value(static_cast<js::number>(n)) {}
+let::let() : value(static_cast<js::number>(0)) {}
 let::let(js::number n) : value(n) {}
 let::let(js::string s) : value(s) {}
 let::let(const char *s) : value(js::string(s)) {}
@@ -17,8 +17,3 @@ std::ostream &operator<<(std::ostream &os, let const &me)
 
     return os;
 }
-
-LET_OPOO(+)
-LET_OPOO(-)
-LET_OPOO(*)
-LET_OPOO(/)

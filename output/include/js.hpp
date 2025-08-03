@@ -24,6 +24,14 @@ namespace js
     using array = Array<T>;
 }
 
+// must match order below
+// @todo horrible system. use templates later
+enum JSvalues
+{
+    number,
+    string
+};
+
 using JSvalue = std::variant<js::number, js::string /*,js::array<let>*/>;
 
 
@@ -35,6 +43,7 @@ namespace js
 }
 
 #include "array2.hpp"
+#include "overloads.hpp"
 
 
 #endif // __JS_H__
