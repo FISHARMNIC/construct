@@ -1,9 +1,13 @@
 /*
-@expects{{{
+@expects
+returning: HELLO 2
+returning: 3
+returning: Hello World!
 HELLO 2
 3
 Hello World!
-}}}
+
+@end
 
 Tests:
     * Template functions

@@ -1,7 +1,8 @@
 /*
-@expects{{{
-10
-}}}
+@expects
+hi
+
+@end
 
 Tests:
     * Normal calls and returns

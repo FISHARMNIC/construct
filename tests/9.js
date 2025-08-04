@@ -1,4 +1,9 @@
 /*
+@expects
+10
+
+@end
+
 Tests:
     * function revaluation. bob cannot be compiled until after "a" is declared
 */

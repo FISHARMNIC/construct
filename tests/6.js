@@ -1,8 +1,9 @@
 /*
-@expects{{{
+@expects
 3
 Hello World!
-}}}
+
+@end
 
 @templates{{{
 bob takes [NUMBER, NUMBER] returns VOID

@@ -1,7 +1,8 @@
 /*
-@expects{{{
+@expects
 1
-}}}
+
+@end
 
 @types{{{
 global a as NUMBER

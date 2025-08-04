@@ -1,8 +1,9 @@
 /*
-@expects{{{
+@expects
 aaaaa2
 aaaaaWorld!
-}}}
+
+@end
 
 Tests:
     * Iffys in template functions -> "a" is a let

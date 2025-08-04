@@ -1,9 +1,10 @@
 /*
-@expects{{{
+@expects
 2020
 1.23
 Hello
-}}}
+
+@end
 
 Tests:
     * string and number types

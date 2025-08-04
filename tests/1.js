@@ -1,9 +1,10 @@
 /*
-@expects{{{
+@expects
 100
 2020
 Hello!
-}}}
+
+@end
 
 @types{{{
 global a as NUMBER
