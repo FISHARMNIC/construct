@@ -214,12 +214,15 @@ export let cpp = {
     {
         staticBinfo(to: ctype, value: buildInfo): string {
             if (value.info.type == to) {
+                console.log(`[cast ] |OMIT| ${to} : "${value.content}"`);
                 return `(${value.content})`;
             }
             else if (cpp.types.isArray(to)) {
+                console.log(`[cast ] |ARAY| ${to} : "${value.content}"`);
                 return `${to}(${value.content})`
             }
             else {
+                console.log(`[cast ] |SUCC| ${to} : "${value.content}"`);
                 return `static_cast<${to}>(${value.content})`;
             }
         },

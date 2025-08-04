@@ -5,12 +5,17 @@
 
 js::dynamic a = static_cast<js::dynamic>(0);
 js::dynamic b = static_cast<js::dynamic>(0);
+js::dynamic c = static_cast<js::dynamic>(0);
 
 int main() {
+  a = static_cast<js::dynamic>(static_cast<js::number>(2));
+  b = (((js::string("10") + static_cast<js::number>(10)) * a));
+  c = static_cast<js::dynamic>(static_cast<js::number>(100));
+  std::cout << c << std::endl;
   a = static_cast<js::dynamic>(static_cast<js::number>(10));
-  a = static_cast<js::dynamic>(js::string("hello"));
-  b = static_cast<js::dynamic>(static_cast<js::number>(123));
-  b = static_cast<js::dynamic>(js::string(" world"));
-  a = ((a + js::string(" bananas")));
+  c = (b);
+  std::cout << c << std::endl;
+  a = static_cast<js::dynamic>(js::string("Hello!"));
+  std::cout << a << std::endl;
   return 0;
 }
