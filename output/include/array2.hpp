@@ -3,6 +3,7 @@
 
 #include <variant>
 #include <initializer_list>
+#include <limits>
 
 #include "js.hpp"
 
@@ -54,6 +55,22 @@ js::string Array<T>::_toString()
     }
 
     return output + toString(arr[i]);
+}
+
+template <typename T>
+js::number Array<T>::_toNumber()
+{
+    const auto& list = *reference;
+    const size_t size = list.size();
+    if(size == 1)
+    {
+        return toNumber(list[0]);
+    }
+    else
+    {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
 }
 
 #endif // __ARRAY2_H__

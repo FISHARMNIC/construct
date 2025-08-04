@@ -80,6 +80,7 @@
         "sstream": "cpp",
         "stack": "cpp",
         "format": "cpp",
-        "__memory": "cpp"
+        "__memory": "cpp",
+        "iostream": "cpp"
     }
 }

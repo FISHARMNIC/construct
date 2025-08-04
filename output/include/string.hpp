@@ -7,6 +7,8 @@
 
 // @todo use +=/-=/*= etc operators instead
 
+double stod_noexep(const std::string& s);
+
 js::string operator+(NUM_STR);
 js::string operator+(STR_NUM);
 

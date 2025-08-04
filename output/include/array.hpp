@@ -28,6 +28,8 @@ struct Array
     T &operator[](let &index_dyn);
 
     js::string _toString();
+
+    js::number _toNumber();
 };
 
 template <typename T>

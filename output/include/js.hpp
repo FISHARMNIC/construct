@@ -44,6 +44,7 @@ namespace js
 }
 
 #include "toString.hpp"
+#include "toNumber.hpp"
 
 #include "array2.hpp"
 

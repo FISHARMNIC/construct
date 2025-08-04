@@ -1,13 +1,12 @@
 #include "../include/js.hpp"
 
-#include <fmt/core.h>
 /*
 
 String overloads for basic math
 
 */
 
-static double stod_noexep(const std::string& s) {
+double stod_noexep(const std::string& s) {
         const char* cstr = s.c_str();
         char* eptr = nullptr;
         js::number converted = std::strtod(cstr, &eptr);
@@ -23,14 +22,12 @@ static double stod_noexep(const std::string& s) {
 
 js::string operator+(NUM_STR)
 {
-    js::string formatted = fmt::format("{}", left);
-    return formatted + right;
+    return toString(left) + right;
 }
 
 js::string operator+(STR_NUM)
 {
-    js::string formatted = fmt::format("{}", right);
-    return left + formatted;
+    return left + toString(right);
 }
 
 js::number operator-(STR_STR)
