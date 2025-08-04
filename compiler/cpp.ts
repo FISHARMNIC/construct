@@ -294,7 +294,7 @@ export let cpp = {
 
             addType(cvar, newType);
 
-            console.log(myTypeList);
+            // console.log(myTypeList);
             let possibleType: ctype = typeSet2type(myTypeList);
 
 

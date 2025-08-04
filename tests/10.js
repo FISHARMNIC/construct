@@ -2,6 +2,8 @@ let a = [1,2,3];
 
 a[1] = a[0];
 
-dbgprint(a);
+let b = a + "HI";
+
+dbgprint(b);
 
 // a = "hello";

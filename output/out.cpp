@@ -3,13 +3,14 @@
 
 #include "include/js.hpp"
 
-js::array<js::number> a ;
+js::dynamic a = static_cast<js::dynamic>(0);
+js::dynamic b = static_cast<js::dynamic>(0);
 
 int main() {
-  a = (js::array<js::number>({(static_cast<js::number>(1)),
-                              (static_cast<js::number>(2)),
-                              (static_cast<js::number>(3))}));
-  a[static_cast<js::number>(1)] = a[static_cast<js::number>(0)];
-  std::cout << a << std::endl;
+  a = static_cast<js::dynamic>(static_cast<js::number>(10));
+  a = static_cast<js::dynamic>(js::string("hello"));
+  b = static_cast<js::dynamic>(static_cast<js::number>(123));
+  b = static_cast<js::dynamic>(js::string(" world"));
+  a = ((a + js::string(" bananas")));
   return 0;
 }

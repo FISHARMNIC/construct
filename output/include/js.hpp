@@ -29,10 +29,11 @@ namespace js
 enum JSvalues
 {
     number,
-    string
+    string,
+    dynamicArray
 };
 
-using JSvalue = std::variant<js::number, js::string /*,js::array<let>*/>;
+using JSvalue = std::variant<js::number, js::string,js::array<let>>;
 
 
 #include "let.hpp"
@@ -42,7 +43,10 @@ namespace js
     typedef let dynamic; // @todo make upper case
 }
 
+#include "toString.hpp"
+
 #include "array2.hpp"
+
 #include "overloads.hpp"
 
 

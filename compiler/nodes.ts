@@ -409,7 +409,7 @@ export default {
     },
 
     ArrayExpression(node: ESTree.ArrayExpression): buildInfo {
-        console.log(node);
+        // console.log(node);
 
         const unparsedElements = node.elements;
         let arrayElements: buildInfo[] = [];

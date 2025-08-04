@@ -7,8 +7,9 @@
 struct let
 {
     JSvalue value;
-    
+
     explicit let();
+    explicit let(int n);
     explicit let(js::number n);
     explicit let(js::string s);
     explicit let(const char *s);

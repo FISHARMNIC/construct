@@ -43,18 +43,23 @@ let truthStatements =
 
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
 {
+
+    let operator: string = node.operator;
+
+    // console.log(`[tcoer] <${leftType}> ${operator} <${rightType}>`);
+
     if(leftType === cpp.types.IFFY || rightType === cpp.types.IFFY)
     {
         return cpp.types.IFFY; 
     }
 
-    let operator: string = node.operator;
-
     if(operator in truthStatements)
     {
         if(leftType in truthStatements[operator] && rightType in truthStatements[operator][leftType])
         {
-            return truthStatements[operator][leftType][rightType];
+            const returnType = truthStatements[operator][leftType][rightType];
+            console.log(`[tcoer] <${leftType}> ${operator} <${rightType}> ==> <${returnType}>`);
+            return returnType;
         }
         else
         {

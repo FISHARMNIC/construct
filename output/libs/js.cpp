@@ -3,6 +3,7 @@
 #include <variant>
 
 let::let() : value(static_cast<js::number>(0)) {}
+let::let(int n) : value(static_cast<js::number>(n)) {}
 let::let(js::number n) : value(n) {}
 let::let(js::string s) : value(s) {}
 let::let(const char *s) : value(js::string(s)) {}
