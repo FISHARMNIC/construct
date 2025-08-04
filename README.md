@@ -1,23 +1,35 @@
 # Javascript ==> C++ compiler
 ### Highly WIP
 ---
-* To run use `tsx main.ts` in compiler dir
-* Produces semi-readable c++
+
+### Running
+* (optional) run tester first to make sure it works properly on your computer
+  * cd in `/tester`
+  * run `tsx test.ts`
+* cd into `/compiler`
+* run `tsx main.ts <file in /tests directory>`
+* Example: `tsx main.ts 6b.js`
+
 ### Currently implemented:
+* Produces semi-readable c++
 * Variables
-    * assignment + reassignment
+    * assignment and reassignment
     * current types allowed:
         * `string`
         * `number`
+        * `array<number | string>`
     * dynamic re-typing
+      * Re-typing to-and-from array types is not implemented yet
 * four-function math with proper JS type coercion
 * functions
     * parameters
+      * Array types not tested yet
     * returning values
     * calling
 
 ### Dependencies
 * npm
+    * NodeJS
     * tsx or just ts and compile to js
     * Babel traverse and types
     * ESlint
@@ -26,27 +38,26 @@
     * clang-tidy and g++
     * c++20
 
-### Running
-* `tsx main` in compiler
-* modify `INPUTFILE` in that same file
-
-
 ## Example conversion
 #### Input:
 ```JS
 function bob(a,b)
 {
     let c = a + b;
+    let d = c;
+    d = "returning: " + c;
+    dbgprint(d);
+
     return c;
 }
 
-let a = bob("HELLO ", 2);
-let b = bob(1, 2);
-let c = bob("Hello ", "World!");
+let x = bob("HELLO ",2);
+let y = bob(1,2);
+let z = bob("Hello ", "World!");
 
-dbgprint(a);
-dbgprint(b);
-dbgprint(c);
+dbgprint(x);
+dbgprint(y);
+dbgprint(z);
 ```
 #### Becomes:
 ```C++
@@ -56,18 +67,18 @@ dbgprint(c);
 js::string bob_version0__(js::string a, js::number b);
 js::number bob_version1__(js::number a, js::number b);
 js::string bob_version2__(js::string a, js::string b);
-js::string a ;
-js::number b ;
-js::string c ;
+js::string x ;
+js::number y ;
+js::string z ;
 
 int main() {
-  a = (bob_version0__((js::string("HELLO ")), (static_cast<js::number>(2))));
-  b = (bob_version1__((static_cast<js::number>(1)),
+  x = (bob_version0__((js::string("HELLO ")), (static_cast<js::number>(2))));
+  y = (bob_version1__((static_cast<js::number>(1)),
                       (static_cast<js::number>(2))));
-  c = (bob_version2__((js::string("Hello ")), (js::string("World!"))));
-  std::cout << a << std::endl;
-  std::cout << b << std::endl;
-  std::cout << c << std::endl;
+  z = (bob_version2__((js::string("Hello ")), (js::string("World!"))));
+  std::cout << x << std::endl;
+  std::cout << y << std::endl;
+  std::cout << z << std::endl;
   return 0;
 }
 

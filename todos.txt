@@ -1,3 +1,5 @@
+Test array parameters and returns
+
 @ TODO HERE
 Once an array is switched to a variable, it forces each item to be iffy to, and marks it as an iffy containing an iffy array
     -> as it becomes a js::dynamic with js::array<js::dynamic>
