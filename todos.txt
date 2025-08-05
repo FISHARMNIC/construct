@@ -1,17 +1,16 @@
 Test array parameters and returns
 
-@ TODO HERE
+@ TODO !HERE! !IMPORTANT!
+    -> add inverted overload for operator+ with dynamic + other
+
+
+@ TODO !HERE!
 Once an array is switched to a variable, it forces each item to be iffy to, and marks it as an iffy containing an iffy array
     -> as it becomes a js::dynamic with js::array<js::dynamic>
     -> js::dynamic needs to support js::array<js::dynamic>
         -> also solved nesteds
 
-@ TODO
-Need to add definitions in typeco for arrays
--> almost always a number
--> should switch to a function that when given two types and the operator it just returns what type
--> + is the only outlier, everything else ends up being a number
--> anything with dynamic in it is dynamic
+
 
 * serious issue
     -> everywhere where im just checking .isIdentifier needs to be walked

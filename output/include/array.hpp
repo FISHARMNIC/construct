@@ -17,6 +17,7 @@
 template <typename T>
 struct Array
 {
+    using valueType = T;
     std::shared_ptr<std::vector<T>> reference;
 
     Array();

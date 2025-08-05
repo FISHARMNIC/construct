@@ -30,8 +30,3 @@ js::string toString(js::dynamic _value)
         },
         _value.value);
 }
-
-js::string toString(js::array<js::dynamic> value)
-{
-    return value._toString();
-}
