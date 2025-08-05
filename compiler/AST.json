@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 136,
+    "end": 472,
     "loc": {
         "start": {
             "line": 1,
@@ -9,20 +9,20 @@
             "index": 0
         },
         "end": {
-            "line": 9,
-            "column": 30,
-            "index": 136
+            "line": 18,
+            "column": 12,
+            "index": 472
         }
     },
     "range": [
         0,
-        136
+        472
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 136,
+        "end": 472,
         "loc": {
             "start": {
                 "line": 1,
@@ -30,769 +30,450 @@
                 "index": 0
             },
             "end": {
-                "line": 9,
-                "column": 30,
-                "index": 136
+                "line": 18,
+                "column": 12,
+                "index": 472
             }
         },
         "range": [
             0,
-            136
+            472
         ],
         "sourceType": "module",
         "interpreter": null,
         "body": [
             {
                 "type": "VariableDeclaration",
-                "start": 0,
-                "end": 11,
+                "start": 155,
+                "end": 173,
                 "loc": {
                     "start": {
-                        "line": 1,
+                        "line": 10,
                         "column": 0,
-                        "index": 0
+                        "index": 155
                     },
                     "end": {
-                        "line": 1,
-                        "column": 11,
-                        "index": 11
+                        "line": 10,
+                        "column": 18,
+                        "index": 173
                     }
                 },
                 "range": [
-                    0,
-                    11
+                    155,
+                    173
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 4,
-                        "end": 10,
+                        "start": 159,
+                        "end": 172,
                         "loc": {
                             "start": {
-                                "line": 1,
+                                "line": 10,
                                 "column": 4,
-                                "index": 4
+                                "index": 159
                             },
                             "end": {
-                                "line": 1,
-                                "column": 10,
-                                "index": 10
+                                "line": 10,
+                                "column": 17,
+                                "index": 172
                             }
                         },
                         "range": [
-                            4,
-                            10
+                            159,
+                            172
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 4,
-                            "end": 5,
+                            "start": 159,
+                            "end": 160,
                             "loc": {
                                 "start": {
-                                    "line": 1,
+                                    "line": 10,
                                     "column": 4,
-                                    "index": 4
+                                    "index": 159
                                 },
                                 "end": {
-                                    "line": 1,
+                                    "line": 10,
                                     "column": 5,
-                                    "index": 5
+                                    "index": 160
                                 },
                                 "identifierName": "a"
                             },
                             "range": [
-                                4,
-                                5
+                                159,
+                                160
                             ],
                             "name": "a"
                         },
                         "init": {
-                            "type": "NumericLiteral",
-                            "start": 8,
-                            "end": 10,
+                            "type": "ArrayExpression",
+                            "start": 163,
+                            "end": 172,
                             "loc": {
                                 "start": {
-                                    "line": 1,
+                                    "line": 10,
                                     "column": 8,
-                                    "index": 8
+                                    "index": 163
                                 },
                                 "end": {
-                                    "line": 1,
-                                    "column": 10,
-                                    "index": 10
-                                }
-                            },
-                            "range": [
-                                8,
-                                10
-                            ],
-                            "extra": {
-                                "rawValue": 10,
-                                "raw": "10"
-                            },
-                            "value": 10
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            {
-                "type": "ExpressionStatement",
-                "start": 12,
-                "end": 24,
-                "loc": {
-                    "start": {
-                        "line": 2,
-                        "column": 0,
-                        "index": 12
-                    },
-                    "end": {
-                        "line": 2,
-                        "column": 12,
-                        "index": 24
-                    }
-                },
-                "range": [
-                    12,
-                    24
-                ],
-                "expression": {
-                    "type": "AssignmentExpression",
-                    "start": 12,
-                    "end": 23,
-                    "loc": {
-                        "start": {
-                            "line": 2,
-                            "column": 0,
-                            "index": 12
-                        },
-                        "end": {
-                            "line": 2,
-                            "column": 11,
-                            "index": 23
-                        }
-                    },
-                    "range": [
-                        12,
-                        23
-                    ],
-                    "operator": "=",
-                    "left": {
-                        "type": "Identifier",
-                        "start": 12,
-                        "end": 13,
-                        "loc": {
-                            "start": {
-                                "line": 2,
-                                "column": 0,
-                                "index": 12
-                            },
-                            "end": {
-                                "line": 2,
-                                "column": 1,
-                                "index": 13
-                            },
-                            "identifierName": "a"
-                        },
-                        "range": [
-                            12,
-                            13
-                        ],
-                        "name": "a"
-                    },
-                    "right": {
-                        "type": "StringLiteral",
-                        "start": 16,
-                        "end": 23,
-                        "loc": {
-                            "start": {
-                                "line": 2,
-                                "column": 4,
-                                "index": 16
-                            },
-                            "end": {
-                                "line": 2,
-                                "column": 11,
-                                "index": 23
-                            }
-                        },
-                        "range": [
-                            16,
-                            23
-                        ],
-                        "extra": {
-                            "rawValue": "hello",
-                            "raw": "\"hello\""
-                        },
-                        "value": "hello"
-                    }
-                }
-            },
-            {
-                "type": "VariableDeclaration",
-                "start": 25,
-                "end": 37,
-                "loc": {
-                    "start": {
-                        "line": 3,
-                        "column": 0,
-                        "index": 25
-                    },
-                    "end": {
-                        "line": 3,
-                        "column": 12,
-                        "index": 37
-                    }
-                },
-                "range": [
-                    25,
-                    37
-                ],
-                "declarations": [
-                    {
-                        "type": "VariableDeclarator",
-                        "start": 29,
-                        "end": 36,
-                        "loc": {
-                            "start": {
-                                "line": 3,
-                                "column": 4,
-                                "index": 29
-                            },
-                            "end": {
-                                "line": 3,
-                                "column": 11,
-                                "index": 36
-                            }
-                        },
-                        "range": [
-                            29,
-                            36
-                        ],
-                        "id": {
-                            "type": "Identifier",
-                            "start": 29,
-                            "end": 30,
-                            "loc": {
-                                "start": {
-                                    "line": 3,
-                                    "column": 4,
-                                    "index": 29
-                                },
-                                "end": {
-                                    "line": 3,
-                                    "column": 5,
-                                    "index": 30
-                                },
-                                "identifierName": "b"
-                            },
-                            "range": [
-                                29,
-                                30
-                            ],
-                            "name": "b"
-                        },
-                        "init": {
-                            "type": "NumericLiteral",
-                            "start": 33,
-                            "end": 36,
-                            "loc": {
-                                "start": {
-                                    "line": 3,
-                                    "column": 8,
-                                    "index": 33
-                                },
-                                "end": {
-                                    "line": 3,
-                                    "column": 11,
-                                    "index": 36
-                                }
-                            },
-                            "range": [
-                                33,
-                                36
-                            ],
-                            "extra": {
-                                "rawValue": 123,
-                                "raw": "123"
-                            },
-                            "value": 123
-                        }
-                    }
-                ],
-                "kind": "let"
-            },
-            {
-                "type": "ExpressionStatement",
-                "start": 38,
-                "end": 51,
-                "loc": {
-                    "start": {
-                        "line": 4,
-                        "column": 0,
-                        "index": 38
-                    },
-                    "end": {
-                        "line": 4,
-                        "column": 13,
-                        "index": 51
-                    }
-                },
-                "range": [
-                    38,
-                    51
-                ],
-                "expression": {
-                    "type": "AssignmentExpression",
-                    "start": 38,
-                    "end": 50,
-                    "loc": {
-                        "start": {
-                            "line": 4,
-                            "column": 0,
-                            "index": 38
-                        },
-                        "end": {
-                            "line": 4,
-                            "column": 12,
-                            "index": 50
-                        }
-                    },
-                    "range": [
-                        38,
-                        50
-                    ],
-                    "operator": "=",
-                    "left": {
-                        "type": "Identifier",
-                        "start": 38,
-                        "end": 39,
-                        "loc": {
-                            "start": {
-                                "line": 4,
-                                "column": 0,
-                                "index": 38
-                            },
-                            "end": {
-                                "line": 4,
-                                "column": 1,
-                                "index": 39
-                            },
-                            "identifierName": "b"
-                        },
-                        "range": [
-                            38,
-                            39
-                        ],
-                        "name": "b"
-                    },
-                    "right": {
-                        "type": "StringLiteral",
-                        "start": 42,
-                        "end": 50,
-                        "loc": {
-                            "start": {
-                                "line": 4,
-                                "column": 4,
-                                "index": 42
-                            },
-                            "end": {
-                                "line": 4,
-                                "column": 12,
-                                "index": 50
-                            }
-                        },
-                        "range": [
-                            42,
-                            50
-                        ],
-                        "extra": {
-                            "rawValue": " world",
-                            "raw": "\" world\""
-                        },
-                        "value": " world"
-                    }
-                }
-            },
-            {
-                "type": "ExpressionStatement",
-                "start": 52,
-                "end": 71,
-                "loc": {
-                    "start": {
-                        "line": 5,
-                        "column": 0,
-                        "index": 52
-                    },
-                    "end": {
-                        "line": 5,
-                        "column": 19,
-                        "index": 71
-                    }
-                },
-                "range": [
-                    52,
-                    71
-                ],
-                "expression": {
-                    "type": "AssignmentExpression",
-                    "start": 52,
-                    "end": 70,
-                    "loc": {
-                        "start": {
-                            "line": 5,
-                            "column": 0,
-                            "index": 52
-                        },
-                        "end": {
-                            "line": 5,
-                            "column": 18,
-                            "index": 70
-                        }
-                    },
-                    "range": [
-                        52,
-                        70
-                    ],
-                    "operator": "=",
-                    "left": {
-                        "type": "Identifier",
-                        "start": 52,
-                        "end": 53,
-                        "loc": {
-                            "start": {
-                                "line": 5,
-                                "column": 0,
-                                "index": 52
-                            },
-                            "end": {
-                                "line": 5,
-                                "column": 1,
-                                "index": 53
-                            },
-                            "identifierName": "a"
-                        },
-                        "range": [
-                            52,
-                            53
-                        ],
-                        "name": "a"
-                    },
-                    "right": {
-                        "type": "BinaryExpression",
-                        "start": 56,
-                        "end": 70,
-                        "loc": {
-                            "start": {
-                                "line": 5,
-                                "column": 4,
-                                "index": 56
-                            },
-                            "end": {
-                                "line": 5,
-                                "column": 18,
-                                "index": 70
-                            }
-                        },
-                        "range": [
-                            56,
-                            70
-                        ],
-                        "left": {
-                            "type": "Identifier",
-                            "start": 56,
-                            "end": 57,
-                            "loc": {
-                                "start": {
-                                    "line": 5,
-                                    "column": 4,
-                                    "index": 56
-                                },
-                                "end": {
-                                    "line": 5,
-                                    "column": 5,
-                                    "index": 57
-                                },
-                                "identifierName": "a"
-                            },
-                            "range": [
-                                56,
-                                57
-                            ],
-                            "name": "a"
-                        },
-                        "operator": "+",
-                        "right": {
-                            "type": "StringLiteral",
-                            "start": 60,
-                            "end": 70,
-                            "loc": {
-                                "start": {
-                                    "line": 5,
-                                    "column": 8,
-                                    "index": 60
-                                },
-                                "end": {
-                                    "line": 5,
-                                    "column": 18,
-                                    "index": 70
-                                }
-                            },
-                            "range": [
-                                60,
-                                70
-                            ],
-                            "extra": {
-                                "rawValue": " bananas",
-                                "raw": "\" bananas\""
-                            },
-                            "value": " bananas"
-                        }
-                    }
-                }
-            },
-            {
-                "type": "ExpressionStatement",
-                "start": 72,
-                "end": 91,
-                "loc": {
-                    "start": {
-                        "line": 6,
-                        "column": 0,
-                        "index": 72
-                    },
-                    "end": {
-                        "line": 6,
-                        "column": 19,
-                        "index": 91
-                    }
-                },
-                "range": [
-                    72,
-                    91
-                ],
-                "expression": {
-                    "type": "AssignmentExpression",
-                    "start": 72,
-                    "end": 90,
-                    "loc": {
-                        "start": {
-                            "line": 6,
-                            "column": 0,
-                            "index": 72
-                        },
-                        "end": {
-                            "line": 6,
-                            "column": 18,
-                            "index": 90
-                        }
-                    },
-                    "range": [
-                        72,
-                        90
-                    ],
-                    "operator": "=",
-                    "left": {
-                        "type": "Identifier",
-                        "start": 72,
-                        "end": 73,
-                        "loc": {
-                            "start": {
-                                "line": 6,
-                                "column": 0,
-                                "index": 72
-                            },
-                            "end": {
-                                "line": 6,
-                                "column": 1,
-                                "index": 73
-                            },
-                            "identifierName": "a"
-                        },
-                        "range": [
-                            72,
-                            73
-                        ],
-                        "name": "a"
-                    },
-                    "right": {
-                        "type": "BinaryExpression",
-                        "start": 76,
-                        "end": 90,
-                        "loc": {
-                            "start": {
-                                "line": 6,
-                                "column": 4,
-                                "index": 76
-                            },
-                            "end": {
-                                "line": 6,
-                                "column": 18,
-                                "index": 90
-                            }
-                        },
-                        "range": [
-                            76,
-                            90
-                        ],
-                        "left": {
-                            "type": "StringLiteral",
-                            "start": 76,
-                            "end": 86,
-                            "loc": {
-                                "start": {
-                                    "line": 6,
-                                    "column": 4,
-                                    "index": 76
-                                },
-                                "end": {
-                                    "line": 6,
-                                    "column": 14,
-                                    "index": 86
-                                }
-                            },
-                            "range": [
-                                76,
-                                86
-                            ],
-                            "extra": {
-                                "rawValue": "chicken ",
-                                "raw": "\"chicken \""
-                            },
-                            "value": "chicken "
-                        },
-                        "operator": "+",
-                        "right": {
-                            "type": "Identifier",
-                            "start": 89,
-                            "end": 90,
-                            "loc": {
-                                "start": {
-                                    "line": 6,
+                                    "line": 10,
                                     "column": 17,
-                                    "index": 89
-                                },
-                                "end": {
-                                    "line": 6,
-                                    "column": 18,
-                                    "index": 90
-                                },
-                                "identifierName": "b"
+                                    "index": 172
+                                }
                             },
                             "range": [
-                                89,
-                                90
+                                163,
+                                172
                             ],
-                            "name": "b"
+                            "elements": [
+                                {
+                                    "type": "NumericLiteral",
+                                    "start": 164,
+                                    "end": 165,
+                                    "loc": {
+                                        "start": {
+                                            "line": 10,
+                                            "column": 9,
+                                            "index": 164
+                                        },
+                                        "end": {
+                                            "line": 10,
+                                            "column": 10,
+                                            "index": 165
+                                        }
+                                    },
+                                    "range": [
+                                        164,
+                                        165
+                                    ],
+                                    "extra": {
+                                        "rawValue": 1,
+                                        "raw": "1"
+                                    },
+                                    "value": 1
+                                },
+                                {
+                                    "type": "StringLiteral",
+                                    "start": 167,
+                                    "end": 171,
+                                    "loc": {
+                                        "start": {
+                                            "line": 10,
+                                            "column": 12,
+                                            "index": 167
+                                        },
+                                        "end": {
+                                            "line": 10,
+                                            "column": 16,
+                                            "index": 171
+                                        }
+                                    },
+                                    "range": [
+                                        167,
+                                        171
+                                    ],
+                                    "extra": {
+                                        "rawValue": "Hi",
+                                        "raw": "\"Hi\""
+                                    },
+                                    "value": "Hi"
+                                }
+                            ]
                         }
                     }
-                }
+                ],
+                "kind": "let",
+                "trailingComments": [
+                    {
+                        "type": "CommentLine",
+                        "value": " will fail since first need to implement converting array to dynamic array",
+                        "start": 176,
+                        "end": 252,
+                        "loc": {
+                            "start": {
+                                "line": 12,
+                                "column": 0,
+                                "index": 176
+                            },
+                            "end": {
+                                "line": 12,
+                                "column": 76,
+                                "index": 252
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " also need to make sure reference is kept though -> as in deep copy",
+                        "start": 253,
+                        "end": 322,
+                        "loc": {
+                            "start": {
+                                "line": 13,
+                                "column": 0,
+                                "index": 253
+                            },
+                            "end": {
+                                "line": 13,
+                                "column": 69,
+                                "index": 322
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " so this array needs to be make a dynamic array not just casted",
+                        "start": 323,
+                        "end": 388,
+                        "loc": {
+                            "start": {
+                                "line": 14,
+                                "column": 0,
+                                "index": 323
+                            },
+                            "end": {
+                                "line": 14,
+                                "column": 65,
+                                "index": 388
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " maybe use.replaceWith or something?",
+                        "start": 389,
+                        "end": 427,
+                        "loc": {
+                            "start": {
+                                "line": 15,
+                                "column": 0,
+                                "index": 389
+                            },
+                            "end": {
+                                "line": 15,
+                                "column": 38,
+                                "index": 427
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " let a = [1, \"Hi\", [1,2,3]];",
+                        "start": 428,
+                        "end": 458,
+                        "loc": {
+                            "start": {
+                                "line": 16,
+                                "column": 0,
+                                "index": 428
+                            },
+                            "end": {
+                                "line": 16,
+                                "column": 30,
+                                "index": 458
+                            }
+                        }
+                    }
+                ],
+                "leadingComments": [
+                    {
+                        "type": "CommentBlock",
+                        "value": "\n@expects\n[1, Hi]\n\n@end\n\n@todo !HERE! !IMPORTANT! Should print \"Hi\" in single quotes as well as any string in arr\nconsole.log([1, \"Hi\"]) == [1, 'Hi']\n",
+                        "start": 0,
+                        "end": 154,
+                        "loc": {
+                            "start": {
+                                "line": 1,
+                                "column": 0,
+                                "index": 0
+                            },
+                            "end": {
+                                "line": 9,
+                                "column": 2,
+                                "index": 154
+                            }
+                        }
+                    }
+                ]
             },
             {
                 "type": "ExpressionStatement",
-                "start": 93,
-                "end": 105,
+                "start": 460,
+                "end": 472,
                 "loc": {
                     "start": {
-                        "line": 8,
+                        "line": 18,
                         "column": 0,
-                        "index": 93
+                        "index": 460
                     },
                     "end": {
-                        "line": 8,
+                        "line": 18,
                         "column": 12,
-                        "index": 105
+                        "index": 472
                     }
                 },
                 "range": [
-                    93,
-                    105
+                    460,
+                    472
                 ],
                 "expression": {
                     "type": "CallExpression",
-                    "start": 93,
-                    "end": 104,
+                    "start": 460,
+                    "end": 471,
                     "loc": {
                         "start": {
-                            "line": 8,
+                            "line": 18,
                             "column": 0,
-                            "index": 93
+                            "index": 460
                         },
                         "end": {
-                            "line": 8,
+                            "line": 18,
                             "column": 11,
-                            "index": 104
+                            "index": 471
                         }
                     },
                     "range": [
-                        93,
-                        104
+                        460,
+                        471
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 93,
-                        "end": 101,
+                        "start": 460,
+                        "end": 468,
                         "loc": {
                             "start": {
-                                "line": 8,
+                                "line": 18,
                                 "column": 0,
-                                "index": 93
+                                "index": 460
                             },
                             "end": {
-                                "line": 8,
+                                "line": 18,
                                 "column": 8,
-                                "index": 101
+                                "index": 468
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            93,
-                            101
+                            460,
+                            468
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 102,
-                            "end": 103,
+                            "start": 469,
+                            "end": 470,
                             "loc": {
                                 "start": {
-                                    "line": 8,
+                                    "line": 18,
                                     "column": 9,
-                                    "index": 102
+                                    "index": 469
                                 },
                                 "end": {
-                                    "line": 8,
+                                    "line": 18,
                                     "column": 10,
-                                    "index": 103
+                                    "index": 470
                                 },
                                 "identifierName": "a"
                             },
                             "range": [
-                                102,
-                                103
+                                469,
+                                470
                             ],
                             "name": "a"
                         }
                     ]
                 },
-                "trailingComments": [
+                "leadingComments": [
                     {
                         "type": "CommentLine",
-                        "value": " @todo test set iffy to iffy",
-                        "start": 106,
-                        "end": 136,
+                        "value": " will fail since first need to implement converting array to dynamic array",
+                        "start": 176,
+                        "end": 252,
                         "loc": {
                             "start": {
-                                "line": 9,
+                                "line": 12,
                                 "column": 0,
-                                "index": 106
+                                "index": 176
                             },
                             "end": {
-                                "line": 9,
+                                "line": 12,
+                                "column": 76,
+                                "index": 252
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " also need to make sure reference is kept though -> as in deep copy",
+                        "start": 253,
+                        "end": 322,
+                        "loc": {
+                            "start": {
+                                "line": 13,
+                                "column": 0,
+                                "index": 253
+                            },
+                            "end": {
+                                "line": 13,
+                                "column": 69,
+                                "index": 322
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " so this array needs to be make a dynamic array not just casted",
+                        "start": 323,
+                        "end": 388,
+                        "loc": {
+                            "start": {
+                                "line": 14,
+                                "column": 0,
+                                "index": 323
+                            },
+                            "end": {
+                                "line": 14,
+                                "column": 65,
+                                "index": 388
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " maybe use.replaceWith or something?",
+                        "start": 389,
+                        "end": 427,
+                        "loc": {
+                            "start": {
+                                "line": 15,
+                                "column": 0,
+                                "index": 389
+                            },
+                            "end": {
+                                "line": 15,
+                                "column": 38,
+                                "index": 427
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentLine",
+                        "value": " let a = [1, \"Hi\", [1,2,3]];",
+                        "start": 428,
+                        "end": 458,
+                        "loc": {
+                            "start": {
+                                "line": 16,
+                                "column": 0,
+                                "index": 428
+                            },
+                            "end": {
+                                "line": 16,
                                 "column": 30,
-                                "index": 136
+                                "index": 458
                             }
                         }
                     }
@@ -806,20 +487,110 @@
     },
     "comments": [
         {
-            "type": "CommentLine",
-            "value": " @todo test set iffy to iffy",
-            "start": 106,
-            "end": 136,
+            "type": "CommentBlock",
+            "value": "\n@expects\n[1, Hi]\n\n@end\n\n@todo !HERE! !IMPORTANT! Should print \"Hi\" in single quotes as well as any string in arr\nconsole.log([1, \"Hi\"]) == [1, 'Hi']\n",
+            "start": 0,
+            "end": 154,
             "loc": {
                 "start": {
-                    "line": 9,
+                    "line": 1,
                     "column": 0,
-                    "index": 106
+                    "index": 0
                 },
                 "end": {
                     "line": 9,
+                    "column": 2,
+                    "index": 154
+                }
+            }
+        },
+        {
+            "type": "CommentLine",
+            "value": " will fail since first need to implement converting array to dynamic array",
+            "start": 176,
+            "end": 252,
+            "loc": {
+                "start": {
+                    "line": 12,
+                    "column": 0,
+                    "index": 176
+                },
+                "end": {
+                    "line": 12,
+                    "column": 76,
+                    "index": 252
+                }
+            }
+        },
+        {
+            "type": "CommentLine",
+            "value": " also need to make sure reference is kept though -> as in deep copy",
+            "start": 253,
+            "end": 322,
+            "loc": {
+                "start": {
+                    "line": 13,
+                    "column": 0,
+                    "index": 253
+                },
+                "end": {
+                    "line": 13,
+                    "column": 69,
+                    "index": 322
+                }
+            }
+        },
+        {
+            "type": "CommentLine",
+            "value": " so this array needs to be make a dynamic array not just casted",
+            "start": 323,
+            "end": 388,
+            "loc": {
+                "start": {
+                    "line": 14,
+                    "column": 0,
+                    "index": 323
+                },
+                "end": {
+                    "line": 14,
+                    "column": 65,
+                    "index": 388
+                }
+            }
+        },
+        {
+            "type": "CommentLine",
+            "value": " maybe use.replaceWith or something?",
+            "start": 389,
+            "end": 427,
+            "loc": {
+                "start": {
+                    "line": 15,
+                    "column": 0,
+                    "index": 389
+                },
+                "end": {
+                    "line": 15,
+                    "column": 38,
+                    "index": 427
+                }
+            }
+        },
+        {
+            "type": "CommentLine",
+            "value": " let a = [1, \"Hi\", [1,2,3]];",
+            "start": 428,
+            "end": 458,
+            "loc": {
+                "start": {
+                    "line": 16,
+                    "column": 0,
+                    "index": 428
+                },
+                "end": {
+                    "line": 16,
                     "column": 30,
-                    "index": 136
+                    "index": 458
                 }
             }
         }

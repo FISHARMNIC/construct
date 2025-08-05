@@ -2,17 +2,23 @@
 // Compiled with Construct 
 
 #include "include/js.hpp"
-
-js::dynamic a = static_cast<js::dynamic>(0);
-js::dynamic b = static_cast<js::dynamic>(0);
+void bob();
+js::number a ;
+js::number c ;
+js::number b ;
 
 int main() {
-  a = static_cast<js::dynamic>(static_cast<js::number>(10));
-  a = static_cast<js::dynamic>(js::string("hello"));
-  b = static_cast<js::dynamic>(static_cast<js::number>(123));
-  b = static_cast<js::dynamic>(js::string(" world"));
-  a = ((a + js::string(" bananas")));
-  a = ((js::string("chicken ") + b));
-  std::cout << a << std::endl;
-  return 0;
+
+a = (static_cast<js::number>(2))
+c = (static_cast<js::number>(100))
+b = (((js::string("10")+static_cast<js::number>(10))*a))
+c = (b)
+std::cout << c << std::endl
+bob()
+return 0;
+}
+void bob(){js::number a = (static_cast<js::number>(1.23))
+js::string b = (js::string("Hello"))
+std::cout << a << std::endl
+std::cout << b << std::endl
 }
