@@ -12,6 +12,7 @@
 #define NUMBER(N) N
 #define STRING(S) S
 
+// @todo switch to overloaded variant
 #define ERR_FAIL_RUNTIME               \
     std::cout << "ERROR" << std::endl; \
     exit(1);
@@ -29,13 +30,11 @@
         ERR_FAIL_STATIC \
     }
 
-// @todo need to add flipped one too
-
 // dynamic + any(!dynamic)
 // dynamic + dynamic is defined later in overloads.cpp
 template <typename OtherT>
     requires(!std::same_as<OtherT, js::dynamic>)
-js::dynamic operator+(const js::dynamic &first_, OtherT &second)
+js::dynamic operator+(const js::dynamic &first_, const OtherT &second)
 {
     const JSvalue &first_value = first_.value;
     const size_t index = first_value.index();
@@ -77,6 +76,50 @@ js::dynamic operator+(const js::dynamic &first_, OtherT &second)
     }
 }
 
+template <typename OtherT>
+    requires(!std::same_as<OtherT, js::dynamic>)
+js::dynamic operator+(const OtherT &first, const js::dynamic &second_)
+{
+    const JSvalue &second_value = second_.value;
+    const size_t index = second_value.index();
+    switch (index)
+    {
+    case JSvalues::number: // first<number> + second<any>
+    {
+        const js::number second_number = std::get<js::number>(second_value);
+
+        RULE(js::number, NUMBER(first) + second_number, js::number)                // first<number> + second<number> ==> MATH(first + second)
+        ELSE_RULE(js::string, STRING(first) + toString(second_number), js::string) // first<number> + second<string> ==> CONCAT(STRING(first) + second)
+                                                                                   // first<number> + second<arr>    ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + toString(second_number), js::string)
+        ELSE_FAIL
+    }
+    case JSvalues::string: // first<string> + second<any>
+    {
+        const js::string second_string = std::get<js::string>(second_value);
+
+        RULE(js::number, toString(first) + second_string, js::string)                  // first<string> + second<number> ==> CONCAT(first + STRING(second))
+        ELSE_RULE(js::string, STRING(first) + second_string, js::string)               // first<string> + second<string> ==> CONCAT(first + second)
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string) // first<string> + second<arr>    ==> CONCAT(first + STRING(second))
+        ELSE_FAIL
+    }
+    case JSvalues::dynamicArray:
+    {
+        const js::array<js::dynamic> second_arr = std::get<js::array<js::dynamic>>(second_value);
+        js::string second_string = toString(second_arr);
+
+        RULE(js::number, toString(first) + second_string, js::string)                  // first<arr> + second<number>    ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_RULE(js::string, STRING(first) + second_string, js::string)               // first<arr> + second<string>    ==> CONCAT(STRING(first) + second)
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string) // first<arr> + second<arr>       ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_FAIL
+    }
+    default:
+    {
+        ERR_FAIL_RUNTIME
+    }
+    }
+}
+
 // @todo enforce types only in js namespace
 #define DYN_OVERLOAD_FOR(_op_)                                                                                                                                                     \
     template <typename firstT, typename secondT>                                                                                                                                   \
@@ -84,14 +127,14 @@ js::dynamic operator+(const js::dynamic &first_, OtherT &second)
     js::number operator _op_(const firstT &first, const secondT &second)                                                                                                           \
     {                                                                                                                                                                              \
         return toNumber(first) _op_ toNumber(second);                                                                                                                              \
-    }        
+    }
 
-    // template <typename firstT, typename secondT>                                            
-    //     requires(std::same_as<firstT, js::dynamic> || std::same_as<secondT, js::dynamic>)   
-    // js::dynamic operator _op_(const firstT &first, const secondT &second)                  
-    // {                                                                                       
-    //     return static_cast<js::dynamic>(toNumber(first) _op_ toNumber(second));             
-    // }
+// template <typename firstT, typename secondT>
+//     requires(std::same_as<firstT, js::dynamic> || std::same_as<secondT, js::dynamic>)
+// js::dynamic operator _op_(const firstT &first, const secondT &second)
+// {
+//     return static_cast<js::dynamic>(toNumber(first) _op_ toNumber(second));
+// }
 
 // All of the other maths attempt to do: toNumber(left) (op) toNumber(right)
 // This also creates the overloads for dynamic (op) any which does the same thing as above comment, but returns as a dynamic
