@@ -32,6 +32,7 @@
 // @todo need to add flipped one too
 
 // dynamic + any(!dynamic)
+// dynamic + dynamic is defined later in overloads.cpp
 template <typename OtherT>
     requires(!std::same_as<OtherT, js::dynamic>)
 js::dynamic operator+(const js::dynamic &first_, OtherT &second)

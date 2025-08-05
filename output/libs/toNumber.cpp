@@ -20,8 +20,3 @@ js::number toNumber(js::dynamic _value)
         },
     _value.value);
 }
-
-js::number toNumber(js::array<js::dynamic> value)
-{
-    return value._toNumber();
-}
