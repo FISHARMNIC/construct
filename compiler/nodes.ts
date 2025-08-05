@@ -302,6 +302,7 @@ export default {
                 ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
             }
             else if (cpp.functions.allTemplates().has(binding)) { // template function
+                console.log(`[tfunc] binding ${functionCalled.name} ==> ${binding.name}`)
                 const ctempfunc: CTemplateFunction = cpp.functions.allTemplates().get(binding)!;
                 const evaluated: buildInfo = evaluateAndCallTemplateFunction(ctempfunc, evaluatedArguments);
 

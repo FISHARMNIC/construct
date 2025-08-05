@@ -125,23 +125,35 @@ export function ident2binding(node: ESTree.Identifier): ESTree.Identifier | unde
     return undefined;
 }
 
+// @todo !IMPORTANT! this may not be working correctly. has to add fnID.name === def.node.id.name
+// It was returning the wrong binding in test 12 bob became jon???
 // @todo modified version of ident2binding. Gross. remove later
 export function fnIdent2binding(fnID: ESTree.Identifier): ESTree.Identifier | undefined {
+
+    let foundMatch: undefined | ESTree.Identifier = undefined;
+
     for (const scope of eslintScope.scopes) {
         for (const variable of scope.variables) {
             for (const def of variable.defs) {
                 if (def.type === "FunctionName" && def.node.type === "FunctionDeclaration") {
+                                    console.log("::::::::", def.name)
                     for (const ref of variable.scope.references) {
-                        if (ref.identifier === fnID)
-                            return def.node.id as ESTree.Identifier;
+                        if (ref.identifier === fnID && fnID.name === def.node.id.name)
+                        {
+                            if(foundMatch)
+                            {
+                                // if thise ever happens its becuase this function is garbage
+                                ASTerr_kill(fnID, `[INTERNAL] Function "${fnID.name}" has at least two possible matches.\nMatch names are: "${foundMatch.name}" and "${def.node.id.name}"`);
+                            }
+                            foundMatch = def.node.id as ESTree.Identifier;
+                        }
                     }
-
                 }
             }
         }
     }
 
-    return undefined;
+    return foundMatch;
 }
 
 // @todo also disgusting

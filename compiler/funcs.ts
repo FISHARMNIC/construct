@@ -276,6 +276,11 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
                 - actually maybe can do but dont mess with getID
     */
 
+    if(givenParams.length != funcInfo.params.length)
+    {
+        ASTerr_kill(funcInfo.func, `Function "${funcInfo.name}" given ${givenParams.length} arguments but expected ${funcInfo.params.length}`);
+    }
+
     let parameter_genList: string[] = [];
 
     let argumentTypes: ctype[] = [];
