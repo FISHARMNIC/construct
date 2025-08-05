@@ -5,6 +5,7 @@ import { ctype } from './ctypes';
 
 const supportedOps = ['+','-','*','/'];
 
+// @todo refactor all of the lazy if else
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
 {
     let operator: string = node.operator;
@@ -16,7 +17,14 @@ export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType
     }
     else if(leftType === cpp.types.IFFY || rightType === cpp.types.IFFY)
     {
+        if(operator === '+')
+        {
         returnType = cpp.types.IFFY; 
+        }
+        else
+        {
+            returnType = cpp.types.NUMBER;
+        }
     }
     else
     {

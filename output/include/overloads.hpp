@@ -76,19 +76,21 @@ js::dynamic operator+(const js::dynamic &first_, OtherT &second)
     }
 }
 
-#define DYN_OVERLOAD_FOR(_op_)                                                              \
-    template <typename firstT, typename secondT>                                            \
-        requires(!std::same_as<firstT, js::dynamic> && !std::same_as<secondT, js::dynamic>) \
-    js::number operator _op_(const firstT &first, const secondT &second)                    \
-    {                                                                                       \
-        return toNumber(first) _op_ toNumber(second);                                       \
-    }                                                                                       \
-    template <typename firstT, typename secondT>                                            \
-        requires(std::same_as<firstT, js::dynamic> || std::same_as<secondT, js::dynamic>)   \
-    js::dynamic operator _op_(const firstT &first, const secondT &second)                   \
-    {                                                                                       \
-        return static_cast<js::dynamic>(toNumber(first) _op_ toNumber(second));             \
-    }
+// @todo enforce types only in js namespace
+#define DYN_OVERLOAD_FOR(_op_)                                                                                                                                                     \
+    template <typename firstT, typename secondT>                                                                                                                                   \
+        requires(!(std::same_as<firstT, js::number> && std::same_as<secondT, js::number>)) /*requires(!std::same_as<firstT, js::dynamic> && !std::same_as<secondT, js::dynamic>)*/ \
+    js::number operator _op_(const firstT &first, const secondT &second)                                                                                                           \
+    {                                                                                                                                                                              \
+        return toNumber(first) _op_ toNumber(second);                                                                                                                              \
+    }        
+
+    // template <typename firstT, typename secondT>                                            
+    //     requires(std::same_as<firstT, js::dynamic> || std::same_as<secondT, js::dynamic>)   
+    // js::dynamic operator _op_(const firstT &first, const secondT &second)                  
+    // {                                                                                       
+    //     return static_cast<js::dynamic>(toNumber(first) _op_ toNumber(second));             
+    // }
 
 // All of the other maths attempt to do: toNumber(left) (op) toNumber(right)
 // This also creates the overloads for dynamic (op) any which does the same thing as above comment, but returns as a dynamic
