@@ -20,3 +20,5 @@ std::ostream &operator<<(std::ostream &os, Dynamic const &me)
 
     return os;
 }
+
+Dynamic Dynamic::__globalUndefined = Dynamic(0.0);

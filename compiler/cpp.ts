@@ -496,9 +496,17 @@ export let cpp = {
             if (cpp.types.isArray(t)) {
                 return t.slice(t.indexOf("<") + 1, t.lastIndexOf(">"));
             }
+            else if(getType(arr) === cpp.types.IFFY)
+            {
+                return cpp.types.IFFY;
+            }
+            else if(getType(arr) == cpp.types.STRING)
+            {
+                return cpp.types.STRING;
+            }
             else
             {
-                err(`[INTERNAL] value is not an array`, arr.possibleTypes);
+                err(`[INTERNAL] value is not an arrayLike`, arr.possibleTypes);
             }
         },
         instance(values: buildInfo[], unparsed: (ESTree.Expression | ESTree.SpreadElement | null)[]): buildInfo {
@@ -515,7 +523,7 @@ export let cpp = {
                 if(unparsedItem && ESTree.isIdentifier(unparsedItem))
                 {
                     const cvar = cpp.variables.getSafe(unparsedItem);
-                    if(itemType == cpp.types.IFFY && cpp.types.isArray(typeSet2type(cvar.possibleTypes)))
+                    if(itemType == cpp.types.IFFY && cpp.types.isArray(getType(cvar)))
                     {
                         addType(cvar, cpp.types.ARRAY(cpp.types.IFFY));
                         // console.log(cvar.possibleTypes);
@@ -545,7 +553,7 @@ export let cpp = {
             // console.log(value)
             // process.exit(2)
 
-            const arrayType = typeSet2type(base.possibleTypes);
+            const arrayType = getType(base);
 
             let assignment: string = `${base.name}[${index.content}] = ${cpp.cast.staticBinfo(cpp.types.arrayItemType(node, arrayType), value)}`;
 
@@ -553,7 +561,7 @@ export let cpp = {
             return {
                 content: assignment,
                 info: {
-                    type: typeSet2type(base.possibleTypes),
+                    type: getType(base),
                     // isList: true,
                 }
             }
