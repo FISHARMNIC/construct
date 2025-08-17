@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 1984,
+    "end": 2056,
     "loc": {
         "start": {
             "line": 1,
@@ -9,20 +9,20 @@
             "index": 0
         },
         "end": {
-            "line": 50,
+            "line": 60,
             "column": 12,
-            "index": 1984
+            "index": 2056
         }
     },
     "range": [
         0,
-        1984
+        2056
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 1984,
+        "end": 2056,
         "loc": {
             "start": {
                 "line": 1,
@@ -30,122 +30,122 @@
                 "index": 0
             },
             "end": {
-                "line": 50,
+                "line": 60,
                 "column": 12,
-                "index": 1984
+                "index": 2056
             }
         },
         "range": [
             0,
-            1984
+            2056
         ],
         "sourceType": "module",
         "interpreter": null,
         "body": [
             {
                 "type": "VariableDeclaration",
-                "start": 1918,
-                "end": 1934,
+                "start": 1990,
+                "end": 2006,
                 "loc": {
                     "start": {
-                        "line": 44,
+                        "line": 54,
                         "column": 0,
-                        "index": 1918
+                        "index": 1990
                     },
                     "end": {
-                        "line": 44,
+                        "line": 54,
                         "column": 16,
-                        "index": 1934
+                        "index": 2006
                     }
                 },
                 "range": [
-                    1918,
-                    1934
+                    1990,
+                    2006
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 1922,
-                        "end": 1933,
+                        "start": 1994,
+                        "end": 2005,
                         "loc": {
                             "start": {
-                                "line": 44,
+                                "line": 54,
                                 "column": 4,
-                                "index": 1922
+                                "index": 1994
                             },
                             "end": {
-                                "line": 44,
+                                "line": 54,
                                 "column": 15,
-                                "index": 1933
+                                "index": 2005
                             }
                         },
                         "range": [
-                            1922,
-                            1933
+                            1994,
+                            2005
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 1922,
-                            "end": 1923,
+                            "start": 1994,
+                            "end": 1995,
                             "loc": {
                                 "start": {
-                                    "line": 44,
+                                    "line": 54,
                                     "column": 4,
-                                    "index": 1922
+                                    "index": 1994
                                 },
                                 "end": {
-                                    "line": 44,
+                                    "line": 54,
                                     "column": 5,
-                                    "index": 1923
+                                    "index": 1995
                                 },
                                 "identifierName": "a"
                             },
                             "range": [
-                                1922,
-                                1923
+                                1994,
+                                1995
                             ],
                             "name": "a"
                         },
                         "init": {
                             "type": "ArrayExpression",
-                            "start": 1926,
-                            "end": 1933,
+                            "start": 1998,
+                            "end": 2005,
                             "loc": {
                                 "start": {
-                                    "line": 44,
+                                    "line": 54,
                                     "column": 8,
-                                    "index": 1926
+                                    "index": 1998
                                 },
                                 "end": {
-                                    "line": 44,
+                                    "line": 54,
                                     "column": 15,
-                                    "index": 1933
+                                    "index": 2005
                                 }
                             },
                             "range": [
-                                1926,
-                                1933
+                                1998,
+                                2005
                             ],
                             "elements": [
                                 {
                                     "type": "NumericLiteral",
-                                    "start": 1927,
-                                    "end": 1928,
+                                    "start": 1999,
+                                    "end": 2000,
                                     "loc": {
                                         "start": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 9,
-                                            "index": 1927
+                                            "index": 1999
                                         },
                                         "end": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 10,
-                                            "index": 1928
+                                            "index": 2000
                                         }
                                     },
                                     "range": [
-                                        1927,
-                                        1928
+                                        1999,
+                                        2000
                                     ],
                                     "extra": {
                                         "rawValue": 1,
@@ -155,23 +155,23 @@
                                 },
                                 {
                                     "type": "NumericLiteral",
-                                    "start": 1929,
-                                    "end": 1930,
+                                    "start": 2001,
+                                    "end": 2002,
                                     "loc": {
                                         "start": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 11,
-                                            "index": 1929
+                                            "index": 2001
                                         },
                                         "end": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 12,
-                                            "index": 1930
+                                            "index": 2002
                                         }
                                     },
                                     "range": [
-                                        1929,
-                                        1930
+                                        2001,
+                                        2002
                                     ],
                                     "extra": {
                                         "rawValue": 2,
@@ -181,23 +181,23 @@
                                 },
                                 {
                                     "type": "NumericLiteral",
-                                    "start": 1931,
-                                    "end": 1932,
+                                    "start": 2003,
+                                    "end": 2004,
                                     "loc": {
                                         "start": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 13,
-                                            "index": 1931
+                                            "index": 2003
                                         },
                                         "end": {
-                                            "line": 44,
+                                            "line": 54,
                                             "column": 14,
-                                            "index": 1932
+                                            "index": 2004
                                         }
                                     },
                                     "range": [
-                                        1931,
-                                        1932
+                                        2003,
+                                        2004
                                     ],
                                     "extra": {
                                         "rawValue": 3,
@@ -213,9 +213,9 @@
                 "leadingComments": [
                     {
                         "type": "CommentBlock",
-                        "value": "\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
+                        "value": "\n\nTHIS STUFF IS OLD --------\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
                         "start": 0,
-                        "end": 1916,
+                        "end": 1944,
                         "loc": {
                             "start": {
                                 "line": 1,
@@ -223,9 +223,27 @@
                                 "index": 0
                             },
                             "end": {
-                                "line": 42,
+                                "line": 44,
                                 "column": 2,
-                                "index": 1916
+                                "index": 1944
+                            }
+                        }
+                    },
+                    {
+                        "type": "CommentBlock",
+                        "value": "\n@expects\n[100, Hi, [1, 2, 4]]\n\n@end\n\n",
+                        "start": 1947,
+                        "end": 1989,
+                        "loc": {
+                            "start": {
+                                "line": 47,
+                                "column": 0,
+                                "index": 1947
+                            },
+                            "end": {
+                                "line": 53,
+                                "column": 2,
+                                "index": 1989
                             }
                         }
                     }
@@ -233,108 +251,108 @@
             },
             {
                 "type": "VariableDeclaration",
-                "start": 1936,
-                "end": 1959,
+                "start": 2008,
+                "end": 2031,
                 "loc": {
                     "start": {
-                        "line": 46,
+                        "line": 56,
                         "column": 0,
-                        "index": 1936
+                        "index": 2008
                     },
                     "end": {
-                        "line": 46,
+                        "line": 56,
                         "column": 23,
-                        "index": 1959
+                        "index": 2031
                     }
                 },
                 "range": [
-                    1936,
-                    1959
+                    2008,
+                    2031
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 1940,
-                        "end": 1958,
+                        "start": 2012,
+                        "end": 2030,
                         "loc": {
                             "start": {
-                                "line": 46,
+                                "line": 56,
                                 "column": 4,
-                                "index": 1940
+                                "index": 2012
                             },
                             "end": {
-                                "line": 46,
+                                "line": 56,
                                 "column": 22,
-                                "index": 1958
+                                "index": 2030
                             }
                         },
                         "range": [
-                            1940,
-                            1958
+                            2012,
+                            2030
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 1940,
-                            "end": 1941,
+                            "start": 2012,
+                            "end": 2013,
                             "loc": {
                                 "start": {
-                                    "line": 46,
+                                    "line": 56,
                                     "column": 4,
-                                    "index": 1940
+                                    "index": 2012
                                 },
                                 "end": {
-                                    "line": 46,
+                                    "line": 56,
                                     "column": 5,
-                                    "index": 1941
+                                    "index": 2013
                                 },
                                 "identifierName": "b"
                             },
                             "range": [
-                                1940,
-                                1941
+                                2012,
+                                2013
                             ],
                             "name": "b"
                         },
                         "init": {
                             "type": "ArrayExpression",
-                            "start": 1944,
-                            "end": 1958,
+                            "start": 2016,
+                            "end": 2030,
                             "loc": {
                                 "start": {
-                                    "line": 46,
+                                    "line": 56,
                                     "column": 8,
-                                    "index": 1944
+                                    "index": 2016
                                 },
                                 "end": {
-                                    "line": 46,
+                                    "line": 56,
                                     "column": 22,
-                                    "index": 1958
+                                    "index": 2030
                                 }
                             },
                             "range": [
-                                1944,
-                                1958
+                                2016,
+                                2030
                             ],
                             "elements": [
                                 {
                                     "type": "NumericLiteral",
-                                    "start": 1945,
-                                    "end": 1948,
+                                    "start": 2017,
+                                    "end": 2020,
                                     "loc": {
                                         "start": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 9,
-                                            "index": 1945
+                                            "index": 2017
                                         },
                                         "end": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 12,
-                                            "index": 1948
+                                            "index": 2020
                                         }
                                     },
                                     "range": [
-                                        1945,
-                                        1948
+                                        2017,
+                                        2020
                                     ],
                                     "extra": {
                                         "rawValue": 100,
@@ -344,23 +362,23 @@
                                 },
                                 {
                                     "type": "StringLiteral",
-                                    "start": 1950,
-                                    "end": 1954,
+                                    "start": 2022,
+                                    "end": 2026,
                                     "loc": {
                                         "start": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 14,
-                                            "index": 1950
+                                            "index": 2022
                                         },
                                         "end": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 18,
-                                            "index": 1954
+                                            "index": 2026
                                         }
                                     },
                                     "range": [
-                                        1950,
-                                        1954
+                                        2022,
+                                        2026
                                     ],
                                     "extra": {
                                         "rawValue": "Hi",
@@ -370,24 +388,24 @@
                                 },
                                 {
                                     "type": "Identifier",
-                                    "start": 1956,
-                                    "end": 1957,
+                                    "start": 2028,
+                                    "end": 2029,
                                     "loc": {
                                         "start": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 20,
-                                            "index": 1956
+                                            "index": 2028
                                         },
                                         "end": {
-                                            "line": 46,
+                                            "line": 56,
                                             "column": 21,
-                                            "index": 1957
+                                            "index": 2029
                                         },
                                         "identifierName": "a"
                                     },
                                     "range": [
-                                        1956,
-                                        1957
+                                        2028,
+                                        2029
                                     ],
                                     "name": "a"
                                 }
@@ -399,108 +417,108 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 1961,
-                "end": 1970,
+                "start": 2033,
+                "end": 2042,
                 "loc": {
                     "start": {
-                        "line": 48,
+                        "line": 58,
                         "column": 0,
-                        "index": 1961
+                        "index": 2033
                     },
                     "end": {
-                        "line": 48,
+                        "line": 58,
                         "column": 9,
-                        "index": 1970
+                        "index": 2042
                     }
                 },
                 "range": [
-                    1961,
-                    1970
+                    2033,
+                    2042
                 ],
                 "expression": {
                     "type": "AssignmentExpression",
-                    "start": 1961,
-                    "end": 1969,
+                    "start": 2033,
+                    "end": 2041,
                     "loc": {
                         "start": {
-                            "line": 48,
+                            "line": 58,
                             "column": 0,
-                            "index": 1961
+                            "index": 2033
                         },
                         "end": {
-                            "line": 48,
+                            "line": 58,
                             "column": 8,
-                            "index": 1969
+                            "index": 2041
                         }
                     },
                     "range": [
-                        1961,
-                        1969
+                        2033,
+                        2041
                     ],
                     "operator": "=",
                     "left": {
                         "type": "MemberExpression",
-                        "start": 1961,
-                        "end": 1965,
+                        "start": 2033,
+                        "end": 2037,
                         "loc": {
                             "start": {
-                                "line": 48,
+                                "line": 58,
                                 "column": 0,
-                                "index": 1961
+                                "index": 2033
                             },
                             "end": {
-                                "line": 48,
+                                "line": 58,
                                 "column": 4,
-                                "index": 1965
+                                "index": 2037
                             }
                         },
                         "range": [
-                            1961,
-                            1965
+                            2033,
+                            2037
                         ],
                         "object": {
                             "type": "Identifier",
-                            "start": 1961,
-                            "end": 1962,
+                            "start": 2033,
+                            "end": 2034,
                             "loc": {
                                 "start": {
-                                    "line": 48,
+                                    "line": 58,
                                     "column": 0,
-                                    "index": 1961
+                                    "index": 2033
                                 },
                                 "end": {
-                                    "line": 48,
+                                    "line": 58,
                                     "column": 1,
-                                    "index": 1962
+                                    "index": 2034
                                 },
                                 "identifierName": "a"
                             },
                             "range": [
-                                1961,
-                                1962
+                                2033,
+                                2034
                             ],
                             "name": "a"
                         },
                         "computed": true,
                         "property": {
                             "type": "NumericLiteral",
-                            "start": 1963,
-                            "end": 1964,
+                            "start": 2035,
+                            "end": 2036,
                             "loc": {
                                 "start": {
-                                    "line": 48,
+                                    "line": 58,
                                     "column": 2,
-                                    "index": 1963
+                                    "index": 2035
                                 },
                                 "end": {
-                                    "line": 48,
+                                    "line": 58,
                                     "column": 3,
-                                    "index": 1964
+                                    "index": 2036
                                 }
                             },
                             "range": [
-                                1963,
-                                1964
+                                2035,
+                                2036
                             ],
                             "extra": {
                                 "rawValue": 2,
@@ -511,23 +529,23 @@
                     },
                     "right": {
                         "type": "NumericLiteral",
-                        "start": 1968,
-                        "end": 1969,
+                        "start": 2040,
+                        "end": 2041,
                         "loc": {
                             "start": {
-                                "line": 48,
+                                "line": 58,
                                 "column": 7,
-                                "index": 1968
+                                "index": 2040
                             },
                             "end": {
-                                "line": 48,
+                                "line": 58,
                                 "column": 8,
-                                "index": 1969
+                                "index": 2041
                             }
                         },
                         "range": [
-                            1968,
-                            1969
+                            2040,
+                            2041
                         ],
                         "extra": {
                             "rawValue": 4,
@@ -539,88 +557,88 @@
             },
             {
                 "type": "ExpressionStatement",
-                "start": 1972,
-                "end": 1984,
+                "start": 2044,
+                "end": 2056,
                 "loc": {
                     "start": {
-                        "line": 50,
+                        "line": 60,
                         "column": 0,
-                        "index": 1972
+                        "index": 2044
                     },
                     "end": {
-                        "line": 50,
+                        "line": 60,
                         "column": 12,
-                        "index": 1984
+                        "index": 2056
                     }
                 },
                 "range": [
-                    1972,
-                    1984
+                    2044,
+                    2056
                 ],
                 "expression": {
                     "type": "CallExpression",
-                    "start": 1972,
-                    "end": 1983,
+                    "start": 2044,
+                    "end": 2055,
                     "loc": {
                         "start": {
-                            "line": 50,
+                            "line": 60,
                             "column": 0,
-                            "index": 1972
+                            "index": 2044
                         },
                         "end": {
-                            "line": 50,
+                            "line": 60,
                             "column": 11,
-                            "index": 1983
+                            "index": 2055
                         }
                     },
                     "range": [
-                        1972,
-                        1983
+                        2044,
+                        2055
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 1972,
-                        "end": 1980,
+                        "start": 2044,
+                        "end": 2052,
                         "loc": {
                             "start": {
-                                "line": 50,
+                                "line": 60,
                                 "column": 0,
-                                "index": 1972
+                                "index": 2044
                             },
                             "end": {
-                                "line": 50,
+                                "line": 60,
                                 "column": 8,
-                                "index": 1980
+                                "index": 2052
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            1972,
-                            1980
+                            2044,
+                            2052
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 1981,
-                            "end": 1982,
+                            "start": 2053,
+                            "end": 2054,
                             "loc": {
                                 "start": {
-                                    "line": 50,
+                                    "line": 60,
                                     "column": 9,
-                                    "index": 1981
+                                    "index": 2053
                                 },
                                 "end": {
-                                    "line": 50,
+                                    "line": 60,
                                     "column": 10,
-                                    "index": 1982
+                                    "index": 2054
                                 },
                                 "identifierName": "b"
                             },
                             "range": [
-                                1981,
-                                1982
+                                2053,
+                                2054
                             ],
                             "name": "b"
                         }
@@ -636,9 +654,9 @@
     "comments": [
         {
             "type": "CommentBlock",
-            "value": "\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
+            "value": "\n\nTHIS STUFF IS OLD --------\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
             "start": 0,
-            "end": 1916,
+            "end": 1944,
             "loc": {
                 "start": {
                     "line": 1,
@@ -646,9 +664,27 @@
                     "index": 0
                 },
                 "end": {
-                    "line": 42,
+                    "line": 44,
                     "column": 2,
-                    "index": 1916
+                    "index": 1944
+                }
+            }
+        },
+        {
+            "type": "CommentBlock",
+            "value": "\n@expects\n[100, Hi, [1, 2, 4]]\n\n@end\n\n",
+            "start": 1947,
+            "end": 1989,
+            "loc": {
+                "start": {
+                    "line": 47,
+                    "column": 0,
+                    "index": 1947
+                },
+                "end": {
+                    "line": 53,
+                    "column": 2,
+                    "index": 1989
                 }
             }
         }
