@@ -220,7 +220,16 @@ export let cpp = {
         // LATER: function () {
         //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later
         // },
-        isArray: (type: ctype) => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY
+        isArray: (type: ctype) => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY,
+        arrayItemType: (node: ESTree.Node, type: ctype) => {
+            if(!cpp.types.isArray(type))
+            {
+                // @todo strings etc
+                ASTerr_kill(node, `@todo value is not an arrayLike. Got ${type}`);
+            }
+
+            return(type.slice(cpp.types.__RAW_ARRAY.length + 1, type.length - 1));
+        }
     },
     cast:
     {
@@ -492,12 +501,32 @@ export let cpp = {
                 err(`[INTERNAL] value is not an array`, arr.possibleTypes);
             }
         },
-        instance(values: buildInfo[]): buildInfo {
+        instance(values: buildInfo[], unparsed: (ESTree.Expression | ESTree.SpreadElement | null)[]): buildInfo {
             const allTypes: ctype[] = values.map((v: buildInfo) => v.info.type);
             const itemType: ctype = typeList2type(allTypes);
             const arrayType: ctype = cpp.types.ARRAY(itemType);
 
-            const initializerList: string = `{${values.map((value: buildInfo): string => cpp.cast.staticBinfo(itemType, value))}}`;
+            let initializerItems: string[] = [];
+
+            // See 14.js 
+            values.forEach((item: buildInfo, i) => {
+                const unparsedItem = unparsed[i];
+
+                if(unparsedItem && ESTree.isIdentifier(unparsedItem))
+                {
+                    const cvar = cpp.variables.getSafe(unparsedItem);
+                    if(itemType == cpp.types.IFFY && cpp.types.isArray(typeSet2type(cvar.possibleTypes)))
+                    {
+                        addType(cvar, cpp.types.ARRAY(cpp.types.IFFY));
+                        // console.log(cvar.possibleTypes);
+                        // process.exit(1);
+                    }
+                }
+
+                initializerItems.push(cpp.cast.staticBinfo(itemType, item));
+            })
+
+            const initializerList: string = `{${initializerItems}}`;
 
             const init: string = cpp.cast.static(arrayType, initializerList, cpp.types.AUTO);
 
@@ -516,7 +545,9 @@ export let cpp = {
             // console.log(value)
             // process.exit(2)
 
-            let assignment: string = `${base.name}[${index.content}] = ${value.content}`;
+            const arrayType = typeSet2type(base.possibleTypes);
+
+            let assignment: string = `${base.name}[${index.content}] = ${cpp.cast.staticBinfo(cpp.types.arrayItemType(node, arrayType), value)}`;
 
 
             return {

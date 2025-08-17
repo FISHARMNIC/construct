@@ -24,8 +24,10 @@ export function typeList2type(types: ctype[]): ctype
         return types[0];
     }
 
+    let isDynArr = types.every(cpp.types.isArray);
+
     // @todo optimize for different iffy types
-    return cpp.types.IFFY;
+    return isDynArr? cpp.types.ARRAY(cpp.types.IFFY) : cpp.types.IFFY;
 }
 
 export function typeSet2type(types: Set<ctype>): ctype

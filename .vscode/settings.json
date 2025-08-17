@@ -81,6 +81,7 @@
         "stack": "cpp",
         "format": "cpp",
         "__memory": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "version": "cpp"
     }
 }

@@ -7,7 +7,7 @@
 #include <string>
 #include <inttypes.h>
 
-struct let;
+struct Dynamic;
 
 namespace js
 {
@@ -33,14 +33,14 @@ enum JSvalues
     dynamicArray
 };
 
-using JSvalue = std::variant<js::number, js::string,js::array<let>>;
+using JSvalue = std::variant<js::number, js::string,js::array<Dynamic>>;
 
 
-#include "let.hpp"
+#include "dynamic.hpp"
 
 namespace js
 {
-    typedef let dynamic; // @todo make upper case
+    typedef Dynamic dynamic; // @todo make upper case
 }
 
 #include "toString.hpp"

@@ -23,10 +23,15 @@ struct Array
     Array();
 
     Array(std::initializer_list<T> list);
+    
+    Array(std::vector<T> list);
+
+    template <typename O>
+    explicit Array(Array<O> arr);
 
     T &operator[](js::number index_dbl);
 
-    T &operator[](let &index_dyn);
+    T &operator[](Dynamic &index_dyn);
 
     js::string _toString();
 

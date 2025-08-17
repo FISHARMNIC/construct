@@ -2,23 +2,20 @@
 // Compiled with Construct 
 
 #include "include/js.hpp"
-void bob();
-js::number a ;
-js::number c ;
-js::number b ;
+
+js::array<js::dynamic> a ;
+js::array<js::dynamic> b ;
 
 int main() {
-
-a = (static_cast<js::number>(2))
-c = (static_cast<js::number>(100))
-b = (((js::string("10")+static_cast<js::number>(10))*a))
-c = (b)
-std::cout << c << std::endl
-bob()
-return 0;
-}
-void bob(){js::number a = (static_cast<js::number>(1.23))
-js::string b = (js::string("Hello"))
-std::cout << a << std::endl
-std::cout << b << std::endl
+  a = js::array<js::dynamic>(js::array<js::number>(
+      {(static_cast<js::number>(1)), (static_cast<js::number>(2)),
+       (static_cast<js::number>(3))}));
+  b = (js::array<js::dynamic>(
+      {static_cast<js::dynamic>(static_cast<js::number>(100)),
+       static_cast<js::dynamic>(js::string("Hi")),
+       static_cast<js::dynamic>(a)}));
+  a[static_cast<js::number>(2)] =
+      static_cast<js::dynamic>(static_cast<js::number>(4));
+  std::cout << b << std::endl;
+  return 0;
 }

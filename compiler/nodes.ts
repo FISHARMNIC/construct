@@ -155,7 +155,7 @@ export default {
                 ASTerr_kill(left, `@todo dot property access not implemented`);
             }
             else if (!ESTree.isIdentifier(left.object)) {
-                // just need to walk
+                // @todo just need to walk
                 ASTerr_kill(left.object, `@todo complex base type not supported yet`);
             }
             else {
@@ -427,7 +427,7 @@ export default {
             }
         })
 
-        let instance: buildInfo = cpp.array.instance(arrayElements);
+        let instance: buildInfo = cpp.array.instance(arrayElements, unparsedElements);
 
         return instance;
     }

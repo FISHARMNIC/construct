@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 472,
+    "end": 1984,
     "loc": {
         "start": {
             "line": 1,
@@ -9,20 +9,20 @@
             "index": 0
         },
         "end": {
-            "line": 18,
+            "line": 50,
             "column": 12,
-            "index": 472
+            "index": 1984
         }
     },
     "range": [
         0,
-        472
+        1984
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 472,
+        "end": 1984,
         "loc": {
             "start": {
                 "line": 1,
@@ -30,122 +30,122 @@
                 "index": 0
             },
             "end": {
-                "line": 18,
+                "line": 50,
                 "column": 12,
-                "index": 472
+                "index": 1984
             }
         },
         "range": [
             0,
-            472
+            1984
         ],
         "sourceType": "module",
         "interpreter": null,
         "body": [
             {
                 "type": "VariableDeclaration",
-                "start": 155,
-                "end": 173,
+                "start": 1918,
+                "end": 1934,
                 "loc": {
                     "start": {
-                        "line": 10,
+                        "line": 44,
                         "column": 0,
-                        "index": 155
+                        "index": 1918
                     },
                     "end": {
-                        "line": 10,
-                        "column": 18,
-                        "index": 173
+                        "line": 44,
+                        "column": 16,
+                        "index": 1934
                     }
                 },
                 "range": [
-                    155,
-                    173
+                    1918,
+                    1934
                 ],
                 "declarations": [
                     {
                         "type": "VariableDeclarator",
-                        "start": 159,
-                        "end": 172,
+                        "start": 1922,
+                        "end": 1933,
                         "loc": {
                             "start": {
-                                "line": 10,
+                                "line": 44,
                                 "column": 4,
-                                "index": 159
+                                "index": 1922
                             },
                             "end": {
-                                "line": 10,
-                                "column": 17,
-                                "index": 172
+                                "line": 44,
+                                "column": 15,
+                                "index": 1933
                             }
                         },
                         "range": [
-                            159,
-                            172
+                            1922,
+                            1933
                         ],
                         "id": {
                             "type": "Identifier",
-                            "start": 159,
-                            "end": 160,
+                            "start": 1922,
+                            "end": 1923,
                             "loc": {
                                 "start": {
-                                    "line": 10,
+                                    "line": 44,
                                     "column": 4,
-                                    "index": 159
+                                    "index": 1922
                                 },
                                 "end": {
-                                    "line": 10,
+                                    "line": 44,
                                     "column": 5,
-                                    "index": 160
+                                    "index": 1923
                                 },
                                 "identifierName": "a"
                             },
                             "range": [
-                                159,
-                                160
+                                1922,
+                                1923
                             ],
                             "name": "a"
                         },
                         "init": {
                             "type": "ArrayExpression",
-                            "start": 163,
-                            "end": 172,
+                            "start": 1926,
+                            "end": 1933,
                             "loc": {
                                 "start": {
-                                    "line": 10,
+                                    "line": 44,
                                     "column": 8,
-                                    "index": 163
+                                    "index": 1926
                                 },
                                 "end": {
-                                    "line": 10,
-                                    "column": 17,
-                                    "index": 172
+                                    "line": 44,
+                                    "column": 15,
+                                    "index": 1933
                                 }
                             },
                             "range": [
-                                163,
-                                172
+                                1926,
+                                1933
                             ],
                             "elements": [
                                 {
                                     "type": "NumericLiteral",
-                                    "start": 164,
-                                    "end": 165,
+                                    "start": 1927,
+                                    "end": 1928,
                                     "loc": {
                                         "start": {
-                                            "line": 10,
+                                            "line": 44,
                                             "column": 9,
-                                            "index": 164
+                                            "index": 1927
                                         },
                                         "end": {
-                                            "line": 10,
+                                            "line": 44,
                                             "column": 10,
-                                            "index": 165
+                                            "index": 1928
                                         }
                                     },
                                     "range": [
-                                        164,
-                                        165
+                                        1927,
+                                        1928
                                     ],
                                     "extra": {
                                         "rawValue": 1,
@@ -154,134 +154,68 @@
                                     "value": 1
                                 },
                                 {
-                                    "type": "StringLiteral",
-                                    "start": 167,
-                                    "end": 171,
+                                    "type": "NumericLiteral",
+                                    "start": 1929,
+                                    "end": 1930,
                                     "loc": {
                                         "start": {
-                                            "line": 10,
-                                            "column": 12,
-                                            "index": 167
+                                            "line": 44,
+                                            "column": 11,
+                                            "index": 1929
                                         },
                                         "end": {
-                                            "line": 10,
-                                            "column": 16,
-                                            "index": 171
+                                            "line": 44,
+                                            "column": 12,
+                                            "index": 1930
                                         }
                                     },
                                     "range": [
-                                        167,
-                                        171
+                                        1929,
+                                        1930
                                     ],
                                     "extra": {
-                                        "rawValue": "Hi",
-                                        "raw": "\"Hi\""
+                                        "rawValue": 2,
+                                        "raw": "2"
                                     },
-                                    "value": "Hi"
+                                    "value": 2
+                                },
+                                {
+                                    "type": "NumericLiteral",
+                                    "start": 1931,
+                                    "end": 1932,
+                                    "loc": {
+                                        "start": {
+                                            "line": 44,
+                                            "column": 13,
+                                            "index": 1931
+                                        },
+                                        "end": {
+                                            "line": 44,
+                                            "column": 14,
+                                            "index": 1932
+                                        }
+                                    },
+                                    "range": [
+                                        1931,
+                                        1932
+                                    ],
+                                    "extra": {
+                                        "rawValue": 3,
+                                        "raw": "3"
+                                    },
+                                    "value": 3
                                 }
                             ]
                         }
                     }
                 ],
                 "kind": "let",
-                "trailingComments": [
-                    {
-                        "type": "CommentLine",
-                        "value": " will fail since first need to implement converting array to dynamic array",
-                        "start": 176,
-                        "end": 252,
-                        "loc": {
-                            "start": {
-                                "line": 12,
-                                "column": 0,
-                                "index": 176
-                            },
-                            "end": {
-                                "line": 12,
-                                "column": 76,
-                                "index": 252
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " also need to make sure reference is kept though -> as in deep copy",
-                        "start": 253,
-                        "end": 322,
-                        "loc": {
-                            "start": {
-                                "line": 13,
-                                "column": 0,
-                                "index": 253
-                            },
-                            "end": {
-                                "line": 13,
-                                "column": 69,
-                                "index": 322
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " so this array needs to be make a dynamic array not just casted",
-                        "start": 323,
-                        "end": 388,
-                        "loc": {
-                            "start": {
-                                "line": 14,
-                                "column": 0,
-                                "index": 323
-                            },
-                            "end": {
-                                "line": 14,
-                                "column": 65,
-                                "index": 388
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " maybe use.replaceWith or something?",
-                        "start": 389,
-                        "end": 427,
-                        "loc": {
-                            "start": {
-                                "line": 15,
-                                "column": 0,
-                                "index": 389
-                            },
-                            "end": {
-                                "line": 15,
-                                "column": 38,
-                                "index": 427
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " let a = [1, \"Hi\", [1,2,3]];",
-                        "start": 428,
-                        "end": 458,
-                        "loc": {
-                            "start": {
-                                "line": 16,
-                                "column": 0,
-                                "index": 428
-                            },
-                            "end": {
-                                "line": 16,
-                                "column": 30,
-                                "index": 458
-                            }
-                        }
-                    }
-                ],
                 "leadingComments": [
                     {
                         "type": "CommentBlock",
-                        "value": "\n@expects\n[1, Hi]\n\n@end\n\n@todo !HERE! !IMPORTANT! Should print \"Hi\" in single quotes as well as any string in arr\nconsole.log([1, \"Hi\"]) == [1, 'Hi']\n",
+                        "value": "\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
                         "start": 0,
-                        "end": 154,
+                        "end": 1916,
                         "loc": {
                             "start": {
                                 "line": 1,
@@ -289,195 +223,409 @@
                                 "index": 0
                             },
                             "end": {
-                                "line": 9,
+                                "line": 42,
                                 "column": 2,
-                                "index": 154
+                                "index": 1916
                             }
                         }
                     }
                 ]
             },
             {
-                "type": "ExpressionStatement",
-                "start": 460,
-                "end": 472,
+                "type": "VariableDeclaration",
+                "start": 1936,
+                "end": 1959,
                 "loc": {
                     "start": {
-                        "line": 18,
+                        "line": 46,
                         "column": 0,
-                        "index": 460
+                        "index": 1936
                     },
                     "end": {
-                        "line": 18,
-                        "column": 12,
-                        "index": 472
+                        "line": 46,
+                        "column": 23,
+                        "index": 1959
                     }
                 },
                 "range": [
-                    460,
-                    472
+                    1936,
+                    1959
+                ],
+                "declarations": [
+                    {
+                        "type": "VariableDeclarator",
+                        "start": 1940,
+                        "end": 1958,
+                        "loc": {
+                            "start": {
+                                "line": 46,
+                                "column": 4,
+                                "index": 1940
+                            },
+                            "end": {
+                                "line": 46,
+                                "column": 22,
+                                "index": 1958
+                            }
+                        },
+                        "range": [
+                            1940,
+                            1958
+                        ],
+                        "id": {
+                            "type": "Identifier",
+                            "start": 1940,
+                            "end": 1941,
+                            "loc": {
+                                "start": {
+                                    "line": 46,
+                                    "column": 4,
+                                    "index": 1940
+                                },
+                                "end": {
+                                    "line": 46,
+                                    "column": 5,
+                                    "index": 1941
+                                },
+                                "identifierName": "b"
+                            },
+                            "range": [
+                                1940,
+                                1941
+                            ],
+                            "name": "b"
+                        },
+                        "init": {
+                            "type": "ArrayExpression",
+                            "start": 1944,
+                            "end": 1958,
+                            "loc": {
+                                "start": {
+                                    "line": 46,
+                                    "column": 8,
+                                    "index": 1944
+                                },
+                                "end": {
+                                    "line": 46,
+                                    "column": 22,
+                                    "index": 1958
+                                }
+                            },
+                            "range": [
+                                1944,
+                                1958
+                            ],
+                            "elements": [
+                                {
+                                    "type": "NumericLiteral",
+                                    "start": 1945,
+                                    "end": 1948,
+                                    "loc": {
+                                        "start": {
+                                            "line": 46,
+                                            "column": 9,
+                                            "index": 1945
+                                        },
+                                        "end": {
+                                            "line": 46,
+                                            "column": 12,
+                                            "index": 1948
+                                        }
+                                    },
+                                    "range": [
+                                        1945,
+                                        1948
+                                    ],
+                                    "extra": {
+                                        "rawValue": 100,
+                                        "raw": "100"
+                                    },
+                                    "value": 100
+                                },
+                                {
+                                    "type": "StringLiteral",
+                                    "start": 1950,
+                                    "end": 1954,
+                                    "loc": {
+                                        "start": {
+                                            "line": 46,
+                                            "column": 14,
+                                            "index": 1950
+                                        },
+                                        "end": {
+                                            "line": 46,
+                                            "column": 18,
+                                            "index": 1954
+                                        }
+                                    },
+                                    "range": [
+                                        1950,
+                                        1954
+                                    ],
+                                    "extra": {
+                                        "rawValue": "Hi",
+                                        "raw": "'Hi'"
+                                    },
+                                    "value": "Hi"
+                                },
+                                {
+                                    "type": "Identifier",
+                                    "start": 1956,
+                                    "end": 1957,
+                                    "loc": {
+                                        "start": {
+                                            "line": 46,
+                                            "column": 20,
+                                            "index": 1956
+                                        },
+                                        "end": {
+                                            "line": 46,
+                                            "column": 21,
+                                            "index": 1957
+                                        },
+                                        "identifierName": "a"
+                                    },
+                                    "range": [
+                                        1956,
+                                        1957
+                                    ],
+                                    "name": "a"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "kind": "let"
+            },
+            {
+                "type": "ExpressionStatement",
+                "start": 1961,
+                "end": 1970,
+                "loc": {
+                    "start": {
+                        "line": 48,
+                        "column": 0,
+                        "index": 1961
+                    },
+                    "end": {
+                        "line": 48,
+                        "column": 9,
+                        "index": 1970
+                    }
+                },
+                "range": [
+                    1961,
+                    1970
                 ],
                 "expression": {
-                    "type": "CallExpression",
-                    "start": 460,
-                    "end": 471,
+                    "type": "AssignmentExpression",
+                    "start": 1961,
+                    "end": 1969,
                     "loc": {
                         "start": {
-                            "line": 18,
+                            "line": 48,
                             "column": 0,
-                            "index": 460
+                            "index": 1961
                         },
                         "end": {
-                            "line": 18,
-                            "column": 11,
-                            "index": 471
+                            "line": 48,
+                            "column": 8,
+                            "index": 1969
                         }
                     },
                     "range": [
-                        460,
-                        471
+                        1961,
+                        1969
+                    ],
+                    "operator": "=",
+                    "left": {
+                        "type": "MemberExpression",
+                        "start": 1961,
+                        "end": 1965,
+                        "loc": {
+                            "start": {
+                                "line": 48,
+                                "column": 0,
+                                "index": 1961
+                            },
+                            "end": {
+                                "line": 48,
+                                "column": 4,
+                                "index": 1965
+                            }
+                        },
+                        "range": [
+                            1961,
+                            1965
+                        ],
+                        "object": {
+                            "type": "Identifier",
+                            "start": 1961,
+                            "end": 1962,
+                            "loc": {
+                                "start": {
+                                    "line": 48,
+                                    "column": 0,
+                                    "index": 1961
+                                },
+                                "end": {
+                                    "line": 48,
+                                    "column": 1,
+                                    "index": 1962
+                                },
+                                "identifierName": "a"
+                            },
+                            "range": [
+                                1961,
+                                1962
+                            ],
+                            "name": "a"
+                        },
+                        "computed": true,
+                        "property": {
+                            "type": "NumericLiteral",
+                            "start": 1963,
+                            "end": 1964,
+                            "loc": {
+                                "start": {
+                                    "line": 48,
+                                    "column": 2,
+                                    "index": 1963
+                                },
+                                "end": {
+                                    "line": 48,
+                                    "column": 3,
+                                    "index": 1964
+                                }
+                            },
+                            "range": [
+                                1963,
+                                1964
+                            ],
+                            "extra": {
+                                "rawValue": 2,
+                                "raw": "2"
+                            },
+                            "value": 2
+                        }
+                    },
+                    "right": {
+                        "type": "NumericLiteral",
+                        "start": 1968,
+                        "end": 1969,
+                        "loc": {
+                            "start": {
+                                "line": 48,
+                                "column": 7,
+                                "index": 1968
+                            },
+                            "end": {
+                                "line": 48,
+                                "column": 8,
+                                "index": 1969
+                            }
+                        },
+                        "range": [
+                            1968,
+                            1969
+                        ],
+                        "extra": {
+                            "rawValue": 4,
+                            "raw": "4"
+                        },
+                        "value": 4
+                    }
+                }
+            },
+            {
+                "type": "ExpressionStatement",
+                "start": 1972,
+                "end": 1984,
+                "loc": {
+                    "start": {
+                        "line": 50,
+                        "column": 0,
+                        "index": 1972
+                    },
+                    "end": {
+                        "line": 50,
+                        "column": 12,
+                        "index": 1984
+                    }
+                },
+                "range": [
+                    1972,
+                    1984
+                ],
+                "expression": {
+                    "type": "CallExpression",
+                    "start": 1972,
+                    "end": 1983,
+                    "loc": {
+                        "start": {
+                            "line": 50,
+                            "column": 0,
+                            "index": 1972
+                        },
+                        "end": {
+                            "line": 50,
+                            "column": 11,
+                            "index": 1983
+                        }
+                    },
+                    "range": [
+                        1972,
+                        1983
                     ],
                     "callee": {
                         "type": "Identifier",
-                        "start": 460,
-                        "end": 468,
+                        "start": 1972,
+                        "end": 1980,
                         "loc": {
                             "start": {
-                                "line": 18,
+                                "line": 50,
                                 "column": 0,
-                                "index": 460
+                                "index": 1972
                             },
                             "end": {
-                                "line": 18,
+                                "line": 50,
                                 "column": 8,
-                                "index": 468
+                                "index": 1980
                             },
                             "identifierName": "dbgprint"
                         },
                         "range": [
-                            460,
-                            468
+                            1972,
+                            1980
                         ],
                         "name": "dbgprint"
                     },
                     "arguments": [
                         {
                             "type": "Identifier",
-                            "start": 469,
-                            "end": 470,
+                            "start": 1981,
+                            "end": 1982,
                             "loc": {
                                 "start": {
-                                    "line": 18,
+                                    "line": 50,
                                     "column": 9,
-                                    "index": 469
+                                    "index": 1981
                                 },
                                 "end": {
-                                    "line": 18,
+                                    "line": 50,
                                     "column": 10,
-                                    "index": 470
+                                    "index": 1982
                                 },
-                                "identifierName": "a"
+                                "identifierName": "b"
                             },
                             "range": [
-                                469,
-                                470
+                                1981,
+                                1982
                             ],
-                            "name": "a"
+                            "name": "b"
                         }
                     ]
-                },
-                "leadingComments": [
-                    {
-                        "type": "CommentLine",
-                        "value": " will fail since first need to implement converting array to dynamic array",
-                        "start": 176,
-                        "end": 252,
-                        "loc": {
-                            "start": {
-                                "line": 12,
-                                "column": 0,
-                                "index": 176
-                            },
-                            "end": {
-                                "line": 12,
-                                "column": 76,
-                                "index": 252
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " also need to make sure reference is kept though -> as in deep copy",
-                        "start": 253,
-                        "end": 322,
-                        "loc": {
-                            "start": {
-                                "line": 13,
-                                "column": 0,
-                                "index": 253
-                            },
-                            "end": {
-                                "line": 13,
-                                "column": 69,
-                                "index": 322
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " so this array needs to be make a dynamic array not just casted",
-                        "start": 323,
-                        "end": 388,
-                        "loc": {
-                            "start": {
-                                "line": 14,
-                                "column": 0,
-                                "index": 323
-                            },
-                            "end": {
-                                "line": 14,
-                                "column": 65,
-                                "index": 388
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " maybe use.replaceWith or something?",
-                        "start": 389,
-                        "end": 427,
-                        "loc": {
-                            "start": {
-                                "line": 15,
-                                "column": 0,
-                                "index": 389
-                            },
-                            "end": {
-                                "line": 15,
-                                "column": 38,
-                                "index": 427
-                            }
-                        }
-                    },
-                    {
-                        "type": "CommentLine",
-                        "value": " let a = [1, \"Hi\", [1,2,3]];",
-                        "start": 428,
-                        "end": 458,
-                        "loc": {
-                            "start": {
-                                "line": 16,
-                                "column": 0,
-                                "index": 428
-                            },
-                            "end": {
-                                "line": 16,
-                                "column": 30,
-                                "index": 458
-                            }
-                        }
-                    }
-                ]
+                }
             }
         ],
         "directives": [],
@@ -488,9 +636,9 @@
     "comments": [
         {
             "type": "CommentBlock",
-            "value": "\n@expects\n[1, Hi]\n\n@end\n\n@todo !HERE! !IMPORTANT! Should print \"Hi\" in single quotes as well as any string in arr\nconsole.log([1, \"Hi\"]) == [1, 'Hi']\n",
+            "value": "\nThis is tricky because a needs to be casted to a dynamic array but its values kept\n    -> if \"a\" contains an array or object, changing that item needs to change \"b\" too\n    -> so cant just be a clone\n    -> need a reference-to-dynamic function that maintains the reference\n        -> new type in dynamic called arrayReference\n        -> example: convert js::array<js::number> into js:dynamic\n        -> process:\n            -> should be all done at runtime\n            -> template that inserts according type into variant?\n            like: given a js::array<js::number> that needs to be converted into a js::dynamic holding js::arrayReference\n            \n            template T\n            requires(T is a js::array) // or object \n            js::dynamic obj2dynref(T object)\n            {\n                js::dynamic ret = js::arrayReference(&object);\n            }\n            -> also stores what type the array is using variant or something\n            -> the array cannot have any dynamic types for now -> much more complicated\n                -> NO RUINS THE WHOLE POINT OF THIS\n\n            // wont work if new items are deleted or old ones are removed\n            // think of something else that doesnt loop over each item, instead stores address of array what type it stores\n            js::dynamic<js::arrayReference> clone;\n            for each item\n            {\n                if(item type is reference) // array of arrays or objects\n                {\n                    recursion(item);\n                }\n                else\n                {\n                    clone.pushBack(&item);\n                }\n            }\n            return clone;\n    -> the arrayReference type will need its corresponding overloads for everything too.\n    -> what is dynamic arr was removed from dynamic, so just arrayReferene now\n\n    I think best solution is to backtrack and add array<dynamic> as a type to A\n",
             "start": 0,
-            "end": 154,
+            "end": 1916,
             "loc": {
                 "start": {
                     "line": 1,
@@ -498,99 +646,9 @@
                     "index": 0
                 },
                 "end": {
-                    "line": 9,
+                    "line": 42,
                     "column": 2,
-                    "index": 154
-                }
-            }
-        },
-        {
-            "type": "CommentLine",
-            "value": " will fail since first need to implement converting array to dynamic array",
-            "start": 176,
-            "end": 252,
-            "loc": {
-                "start": {
-                    "line": 12,
-                    "column": 0,
-                    "index": 176
-                },
-                "end": {
-                    "line": 12,
-                    "column": 76,
-                    "index": 252
-                }
-            }
-        },
-        {
-            "type": "CommentLine",
-            "value": " also need to make sure reference is kept though -> as in deep copy",
-            "start": 253,
-            "end": 322,
-            "loc": {
-                "start": {
-                    "line": 13,
-                    "column": 0,
-                    "index": 253
-                },
-                "end": {
-                    "line": 13,
-                    "column": 69,
-                    "index": 322
-                }
-            }
-        },
-        {
-            "type": "CommentLine",
-            "value": " so this array needs to be make a dynamic array not just casted",
-            "start": 323,
-            "end": 388,
-            "loc": {
-                "start": {
-                    "line": 14,
-                    "column": 0,
-                    "index": 323
-                },
-                "end": {
-                    "line": 14,
-                    "column": 65,
-                    "index": 388
-                }
-            }
-        },
-        {
-            "type": "CommentLine",
-            "value": " maybe use.replaceWith or something?",
-            "start": 389,
-            "end": 427,
-            "loc": {
-                "start": {
-                    "line": 15,
-                    "column": 0,
-                    "index": 389
-                },
-                "end": {
-                    "line": 15,
-                    "column": 38,
-                    "index": 427
-                }
-            }
-        },
-        {
-            "type": "CommentLine",
-            "value": " let a = [1, \"Hi\", [1,2,3]];",
-            "start": 428,
-            "end": 458,
-            "loc": {
-                "start": {
-                    "line": 16,
-                    "column": 0,
-                    "index": 428
-                },
-                "end": {
-                    "line": 16,
-                    "column": 30,
-                    "index": 458
+                    "index": 1916
                 }
             }
         }
