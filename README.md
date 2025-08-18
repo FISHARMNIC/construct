@@ -17,13 +17,14 @@
     * current types allowed:
         * `string`
         * `number`
-        * `array<number | string>`
+        * `any`
+        * `array<number | string | any>`
+    * `any` supports all listed types above
     * dynamic re-typing
-      * Re-typing to-and-from array types is not implemented yet
-* four-function math with proper JS type coercion
+    * Muti-types arrays
+* four function math with proper JS type coercion
 * functions
     * parameters
-      * Array types not tested yet
     * returning values
     * calling
 
