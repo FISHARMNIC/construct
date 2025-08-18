@@ -1,3 +1,18 @@
+Note that if statements no longer need to have branch difference checking
+-> if variable is typed as such:
+if(a < 10)
+{
+    q = "123"
+}
+else
+{
+    q = 123
+}
+When evaluating both branches, q will just be marked as string and number and just marked as dynamic on the next pass
+
+
+
+
 Test array parameters and returns
 
 
