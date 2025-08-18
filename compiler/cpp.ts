@@ -215,7 +215,7 @@ export let cpp = {
         ARRAY: (of: ctype) => `${cpp.types.__RAW_ARRAY}<${of}>`,
         IFFY: "js::dynamic",
         AUTO: "auto", // only to be used by functions
-        BOOLEAN: "boolean",
+        BOOLEAN: "js::boolean",
         // @todo null literals
         // LATER: function () {
         //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later

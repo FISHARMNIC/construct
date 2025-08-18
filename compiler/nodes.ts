@@ -8,7 +8,7 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, err, ThrowInfoTypes } from './ASTerr';
-import { buildInfo, walk, walk_requireSingle, walkBody, walkInlineOrBody } from './walk';
+import { buildInfo, buildInfoToStr, walk, walk_requireSingle, walkBody, walkInlineOrBody } from './walk';
 import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
@@ -434,12 +434,22 @@ export default {
     WhileStatement(node: ESTree.WhileStatement): buildInfo {
 
         console.log(node);
-        
+
         const test = walk_requireSingle(node.test);
         const body = walkInlineOrBody(node.body);
 
         console.log(body);
 
-        process.exit(1);
+        ASTerr_kill(node, "@todo while statement");
+    },
+
+    BooleanLiteral(node: ESTree.BooleanLiteral): buildInfo {
+        return {
+            content: String(node.value),
+            info:
+            {
+                type: cpp.types.BOOLEAN
+            }
+        };
     }
 }

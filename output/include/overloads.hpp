@@ -97,23 +97,23 @@ js::dynamic operator+(const OtherT &first, const js::dynamic &second_)
     const size_t index = second_value.index();
     switch (index)
     {
-    case JSvalues::number: // first<number> + second<any>
+    case JSvalues::number:
     {
         const js::number second_number = std::get<js::number>(second_value);
 
-        RULE(js::number, NUMBER(first) + second_number, js::number)                // first<number> + second<number> ==> MATH(first + second)
-        ELSE_RULE(js::string, STRING(first) + toString(second_number), js::string) // first<number> + second<string> ==> CONCAT(STRING(first) + second)
-                                                                                   // first<number> + second<arr>    ==> CONCAT(STRING(first) + STRING(second))
+        RULE(js::number, NUMBER(first) + second_number, js::number)               
+        ELSE_RULE(js::string, STRING(first) + toString(second_number), js::string) 
+                                                                                   
         ELSE_RULE(js::array<js::dynamic>, toString(first) + toString(second_number), js::string)
         ELSE_FAIL
     }
-    case JSvalues::string: // first<string> + second<any>
+    case JSvalues::string:
     {
         const js::string second_string = std::get<js::string>(second_value);
 
-        RULE(js::number, toString(first) + second_string, js::string)                  // first<string> + second<number> ==> CONCAT(first + STRING(second))
-        ELSE_RULE(js::string, STRING(first) + second_string, js::string)               // first<string> + second<string> ==> CONCAT(first + second)
-        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string) // first<string> + second<arr>    ==> CONCAT(first + STRING(second))
+        RULE(js::number, toString(first) + second_string, js::string)                  
+        ELSE_RULE(js::string, STRING(first) + second_string, js::string)           
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string)
         ELSE_FAIL
     }
     case JSvalues::dynamicArray:
@@ -121,9 +121,17 @@ js::dynamic operator+(const OtherT &first, const js::dynamic &second_)
         const js::array<js::dynamic> second_arr = std::get<js::array<js::dynamic>>(second_value);
         js::string second_string = toString(second_arr);
 
-        RULE(js::number, toString(first) + second_string, js::string)                  // first<arr> + second<number>    ==> CONCAT(STRING(first) + STRING(second))
-        ELSE_RULE(js::string, STRING(first) + second_string, js::string)               // first<arr> + second<string>    ==> CONCAT(STRING(first) + second)
-        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string) // first<arr> + second<arr>       ==> CONCAT(STRING(first) + STRING(second))
+        RULE(js::number, toString(first) + second_string, js::string)                 
+        ELSE_RULE(js::string, STRING(first) + second_string, js::string)              
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + second_string, js::string)
+        ELSE_FAIL
+    }
+    case JSvalues::boolean:
+    {
+        RULE(js::number, NUMBER(first) + toNumber(second_), js::number)                  
+        ELSE_RULE(js::string, STRING(first) + toString(second_), js::string)              
+        ELSE_RULE(js::array<js::dynamic>, toString(first) + toString(second_), js::string)
+        ELSE_RULE(js::boolean, toNumber(first) + toNumber(second_), js::string)   
         ELSE_FAIL
     }
     default:
@@ -164,6 +172,7 @@ js::dynamic operator+(const js::dynamic &first, const js::dynamic &second);
 template <typename T>
 concept JSarray = std::same_as<T, js::array<typename T::valueType>>;
 
+// @todo dont think i need a concept for this. just do normal template and mark param type as js::array<T>
 template <typename T, typename OtherT>
     requires(JSarray<T> || JSarray<OtherT>)
 js::string operator+(T first, OtherT second)
@@ -171,6 +180,7 @@ js::string operator+(T first, OtherT second)
     return toString(first) + toString(second);
 }
 
+js::string operator+()
 // #endregion --------------------------------
 
 #endif // __OVERLOADS_H__
