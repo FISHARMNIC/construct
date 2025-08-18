@@ -1,16 +1,5 @@
 Test array parameters and returns
 
-@ TODO !HERE! !IMPORTANT!
-    -> add inverted overload for operator+ with dynamic + other
-
-
-@ TODO !HERE!
-Once an array is switched to a variable, it forces each item to be iffy to, and marks it as an iffy containing an iffy array
-    -> as it becomes a js::dynamic with js::array<js::dynamic>
-    -> js::dynamic needs to support js::array<js::dynamic>
-        -> also solved nesteds
-
-
 
 * serious issue
     -> everywhere where im just checking .isIdentifier needs to be walked
