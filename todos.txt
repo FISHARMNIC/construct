@@ -1,3 +1,5 @@
+Need to add boolean types
+
 Note that if statements no longer need to have branch difference checking
 -> if variable is typed as such:
 if(a < 10)

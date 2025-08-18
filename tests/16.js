@@ -1,6 +1,9 @@
 let a = 0;
-while(a < 10)
-{
-    dbgprint(a)
-    a = a + 1;
-}
+
+let b = true;
+
+// while(a < 10)
+// {
+//     dbgprint(a)
+//     a = a + 1;
+// }

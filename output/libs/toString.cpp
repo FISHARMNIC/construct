@@ -20,6 +20,11 @@ js::string toString(js::string value)
     return value;
 }
 
+js::string toString(js::boolean value)
+{
+    return value ? "true" : "false";
+}
+
 js::string toString(js::dynamic _value)
 {
     JSvalue value = _value.value;

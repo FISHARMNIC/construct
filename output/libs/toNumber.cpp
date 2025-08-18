@@ -10,6 +10,11 @@ js::number toNumber(js::string value)
     return stod_noexep(value);
 }
 
+js::number toNumber(js::boolean value)
+{
+    return static_cast<js::number>(value);
+}
+
 js::number toNumber(js::dynamic _value)
 {
     JSvalue value = _value.value;

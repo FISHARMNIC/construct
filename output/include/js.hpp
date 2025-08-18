@@ -13,6 +13,7 @@ namespace js
 {
     typedef double number;
     typedef std::string string;
+    typedef bool boolean;
 }
 
 #include "string.hpp"
@@ -30,10 +31,11 @@ enum JSvalues
 {
     number,
     string,
-    dynamicArray
+    dynamicArray,
+    boolean
 };
 
-using JSvalue = std::variant<js::number, js::string,js::array<Dynamic>>;
+using JSvalue = std::variant<js::number, js::string,js::array<Dynamic>, js::boolean>;
 
 
 #include "dynamic.hpp"
@@ -45,6 +47,7 @@ namespace js
 
 #include "toString.hpp"
 #include "toNumber.hpp"
+#include "toBoolean.hpp"
 
 #include "array2.hpp"
 

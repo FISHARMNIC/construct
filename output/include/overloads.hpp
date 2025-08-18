@@ -44,29 +44,42 @@ js::dynamic operator+(const js::dynamic &first_, const OtherT &second)
     {
         const js::number first_number = std::get<js::number>(first_value);
 
-        RULE(js::number, first_number + NUMBER(second), js::number)                // first<number> + second<number> ==> MATH(first + second)
-        ELSE_RULE(js::string, toString(first_number) + STRING(second), js::string) // first<number> + second<string> ==> CONCAT(STRING(first) + second)
-                                                                                   // first<number> + second<arr>    ==> CONCAT(STRING(first) + STRING(second))
+        RULE(js::number, first_number + NUMBER(second), js::number)                // first<number> + second<number>  ==> MATH(first + second)
+        ELSE_RULE(js::string, toString(first_number) + STRING(second), js::string) // first<number> + second<string>  ==> CONCAT(STRING(first) + second)
+                                                                                   // first<number> + second<arr>     ==> CONCAT(STRING(first) + STRING(second))
         ELSE_RULE(js::array<js::dynamic>, toString(first_number) + toString(second), js::string)
+        ELSE_RULE(js::boolean, first_number + toNumber(second), js::number)        // first<number> + second<boolean> ==> MATH(first + NUMBER(second))
         ELSE_FAIL
     }
     case JSvalues::string: // first<string> + second<any>
     {
         const js::string first_string = std::get<js::string>(first_value);
 
-        RULE(js::number, first_string + toString(second), js::string)                  // first<string> + second<number> ==> CONCAT(first + STRING(second))
-        ELSE_RULE(js::string, first_string + STRING(second), js::string)               // first<string> + second<string> ==> CONCAT(first + second)
-        ELSE_RULE(js::array<js::dynamic>, first_string + toString(second), js::string) // first<string> + second<arr>    ==> CONCAT(first + STRING(second))
+        // @todo Always concats to string so dont need this. Just do toString()
+        RULE(js::number, first_string + toString(second), js::string)                  // first<string> + second<number>  ==> CONCAT(first + STRING(second))
+        ELSE_RULE(js::string, first_string + STRING(second), js::string)               // first<string> + second<string>  ==> CONCAT(first + second)
+        ELSE_RULE(js::array<js::dynamic>, first_string + toString(second), js::string) // first<string> + second<arr>     ==> CONCAT(first + STRING(second))
+        ELSE_RULE(js::boolean, first_string + toString(second), js::string)            // first<string> + second<boolean> ==> CONCAT(first + STRING(second))
         ELSE_FAIL
     }
-    case JSvalues::dynamicArray:
+    case JSvalues::dynamicArray: // first<array> + second<any>
     {
         const js::array<js::dynamic> first_arr = std::get<js::array<js::dynamic>>(first_value);
         js::string first_string = toString(first_arr);
 
+        // @todo same as above. just use toString()
         RULE(js::number, first_string + toString(second), js::string)                  // first<arr> + second<number>    ==> CONCAT(STRING(first) + STRING(second))
-        ELSE_RULE(js::string, first_string + second, js::string)                       // first<arr> + second<string>    ==> CONCAT(STRING(first) + second)
+        ELSE_RULE(js::string, first_string + STRING(second), js::string)               // first<arr> + second<string>    ==> CONCAT(STRING(first) + second)
         ELSE_RULE(js::array<js::dynamic>, first_string + toString(second), js::string) // first<arr> + second<arr>       ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_RULE(js::boolean, first_string + toString(second), js::string)            // first<arr> + second<boolean>   ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_FAIL
+    }
+    case JSvalues::boolean: // first<boolean> + second<any>
+    {
+        RULE(js::number, toNumber(first_) + NUMBER(second), js::number)                   // first<boolean> + second<number>  ==> MATH(first + second)
+        ELSE_RULE(js::string, toString(first_) + STRING(second), js::string)               // first<boolean> + second<string>  ==> CONCAT(STRING(first) + second)
+        ELSE_RULE(js::array<js::dynamic>, toString(first_) + toString(second), js::string) // first<boolean> + second<arr>     ==> CONCAT(STRING(first) + STRING(second))
+        ELSE_RULE(js::boolean, toNumber(first_) + toNumber(second), js::string)            // first<boolean> + second<boolean> ==> CONCAT(first + second)
         ELSE_FAIL
     }
     default:

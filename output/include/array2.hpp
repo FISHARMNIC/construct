@@ -95,4 +95,10 @@ js::number Array<T>::_toNumber()
     }
 }
 
+template <typename T>
+js::boolean Array<T>::_toBoolean()
+{
+    return true;
+}
+
 #endif // __ARRAY2_H__

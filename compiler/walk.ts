@@ -55,7 +55,7 @@ export function changeNestLevel(by: number) {
  * @param beforeDelete Run this callback before the stack information along with all local variables are deleted
  * @returns Information about what was compiled, along with if it failed and why
  */
-export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void, useTypeList: TypeList_t = normalTypeLists): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined} {
+export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void, useTypeList: TypeList_t = normalTypeLists): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined } {
 
   let lastObj: stackInfo = {
     funcs: [],
@@ -222,6 +222,23 @@ export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = fal
 
   return output;
 }
+
+/**
+ * Use for things like "if", "while", etc where there could be a block beneath or it could be a one-liner
+ */
+export function walkInlineOrBody(body: ESTree.Statement, { dummy = false, unsafe = false, useTypeList = normalTypeLists, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
+  if (ESTree.isExpressionStatement(body)) {
+      return walk(body.expression, dummy, useTypeList);
+  }
+  else if(ESTree.isBlockStatement(body)) {
+    return walkBody(body.body, { dummy, unsafe, useTypeList, beforeDelete });
+  }
+  else
+  {
+    ASTerr_kill(body, `@todo [walkInlineOrBody] unable to handle statement of type ${body.type}`)
+  }
+}
+
 
 // traverse(ast, {
 //   VariableDeclaration(path: NodePath<ESTree.VariableDeclaration>) {

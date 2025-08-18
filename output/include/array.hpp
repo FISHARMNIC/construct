@@ -36,6 +36,8 @@ struct Array
     js::string _toString();
 
     js::number _toNumber();
+
+    js::boolean _toBoolean();
 };
 
 template <typename T>

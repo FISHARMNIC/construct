@@ -6,6 +6,7 @@
 js::number toNumber(js::number value);
 js::number toNumber(js::string value);
 js::number toNumber(Dynamic _value);
+js::number toNumber(js::boolean value);
 
 template <typename T>
 js::number toNumber(js::array<T> value)
