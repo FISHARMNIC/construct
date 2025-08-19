@@ -1,7 +1,7 @@
 #ifndef __TOBOOLEAN_H__
 #define __TOBOOLEAN_H__
 
-#include "../include/js.hpp"
+#include "js.hpp"
 
 js::boolean toBoolean(js::number value);
 js::boolean toBoolean(js::string value);

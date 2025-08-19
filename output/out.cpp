@@ -2,15 +2,17 @@
 // Compiled with Construct 
 
 #include "include/js.hpp"
-
+js::number bob();
 js::number a ;
-js::boolean b ;
-js::string c ;
+js::number q ;
 
 int main() {
-  a = (static_cast<js::number>(0));
-  b = (true);
-  c = ((b + js::string("123")));
-  std::cout << c << std::endl;
+  a = (static_cast<js::number>(10));
+  q = (bob());
+  std::cout << q << std::endl;
   return 0;
+}
+js::number bob(){
+  js::number c = (a);
+  return c;
 }

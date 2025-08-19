@@ -1,3 +1,10 @@
+/*
+@expects
+true123
+
+@end
+*/
+
 let a = 0;
 
 let b = true;

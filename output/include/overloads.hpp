@@ -180,7 +180,6 @@ js::string operator+(T first, OtherT second)
     return toString(first) + toString(second);
 }
 
-js::string operator+()
 // #endregion --------------------------------
 
 #endif // __OVERLOADS_H__

@@ -20,31 +20,30 @@ double stod_noexep(const std::string& s) {
         }
 }
 
-js::string operator+(NUM_STR)
-{
-    return toString(left) + right;
-}
+// js::string operator+(NUM_STR)
+// {
+//     return toString(left) + right;
+// }
 
-js::string operator+(STR_NUM)
-{
-    return left + toString(right);
-}
+// js::string operator+(STR_NUM)
+// {
+//     return left + toString(right);
+// }
 
 js::number operator-(STR_STR)
 {
     return stod_noexep(left) - stod_noexep(right);
 }
 
+// js::number operator-(NUM_STR)
+// {
+//     return left - stod_noexep(right);
+// }
 
-js::number operator-(NUM_STR)
-{
-    return left - stod_noexep(right);
-}
-
-js::number operator-(STR_NUM)
-{
-    return stod_noexep(left) - right;
-}
+// js::number operator-(STR_NUM)
+// {
+//     return stod_noexep(left) - right;
+// }
 
 js::number operator*(STR_STR)
 {
@@ -52,15 +51,15 @@ js::number operator*(STR_STR)
 }
 
 
-js::number operator*(NUM_STR)
-{
-    return left * stod_noexep(right);
-}
+// js::number operator*(NUM_STR)
+// {
+//     return left * stod_noexep(right);
+// }
 
-js::number operator*(STR_NUM)
-{
-    return stod_noexep(left) * right;
-}
+// js::number operator*(STR_NUM)
+// {
+//     return stod_noexep(left) * right;
+// }
 
 js::number operator/(STR_STR)
 {
@@ -68,12 +67,12 @@ js::number operator/(STR_STR)
 }
 
 
-js::number operator/(NUM_STR)
-{
-    return left / stod_noexep(right);
-}
+// js::number operator/(NUM_STR)
+// {
+//     return left / stod_noexep(right);
+// }
 
-js::number operator/(STR_NUM)
-{
-    return stod_noexep(left) / right;
-}
+// js::number operator/(STR_NUM)
+// {
+//     return stod_noexep(left) / right;
+// }

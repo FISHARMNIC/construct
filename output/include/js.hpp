@@ -53,5 +53,6 @@ namespace js
 
 #include "overloads.hpp"
 
+#include "string2.hpp"
 
 #endif // __JS_H__
