@@ -4,6 +4,7 @@ import { ASTerr_kill } from './ASTerr';
 import { ctype } from './ctypes';
 
 const supportedOps = ['+','-','*','/'];
+const supportedComps = ['<','>','<=','>=','==','!='];
 
 // @todo refactor all of the lazy if else
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
@@ -11,7 +12,11 @@ export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType
     let operator: string = node.operator;
     let returnType: string;
 
-    if(!(supportedOps.includes(operator)))
+    if(supportedComps.includes(operator))
+    {
+        returnType = cpp.types.BOOLEAN;
+    }
+    else if(!(supportedOps.includes(operator)))
     {
         ASTerr_kill(node, `Unsupported operation "${operator}"`);
     }

@@ -1,4 +1,6 @@
-Need to add boolean types
+Maybe hold of all function eval until call time so the dummywalk stuff isnt needed
+    -> simplifies/can get rid of  throws etc
+
 
 Note that if statements no longer need to have branch difference checking
 -> if variable is typed as such:
@@ -13,6 +15,7 @@ else
 When evaluating both branches, q will just be marked as string and number and just marked as dynamic on the next pass
 
 
+Need to add boolean types ---> done
 
 
 Test array parameters and returns

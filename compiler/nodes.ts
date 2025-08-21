@@ -438,7 +438,7 @@ export default {
         const test = walk_requireSingle(node.test);
         const body = walkInlineOrBody(node.body);
 
-        console.log(body);
+        console.log(body, test);
 
         ASTerr_kill(node, "@todo while statement");
     },
