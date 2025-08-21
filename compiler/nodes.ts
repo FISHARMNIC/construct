@@ -243,6 +243,7 @@ export default {
     BinaryExpression(node: ESTree.BinaryExpression): buildInfo {
         let left = walk_requireSingle(node.left, "Unsure what to do with binary expression (got multiple values, expected 1)");
         let right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
+        let operator = node.operator;
 
         // @todo return type based on types of left and right
         let cotype = coerce(node, left.info.type, right.info.type);
@@ -252,9 +253,10 @@ export default {
             info: {
                 type: cotype,
                 left: left,
-                right: right
+                right: right,
+                operator
             }
-        }
+        };
     },
 
     CallExpression(expression: ESTree.CallExpression): buildInfo {
@@ -435,12 +437,20 @@ export default {
 
         console.log(node);
 
-        const test = walk_requireSingle(node.test);
-        const body = walkInlineOrBody(node.body);
+        const test: buildInfo = walk_requireSingle(node.test);
+        const body: buildInfo[] = walkInlineOrBody(node.body);
 
         console.log(body, test);
 
-        ASTerr_kill(node, "@todo while statement");
+        const comparisonStatement: string = `${test.info.left?.content} ${test.info.operator} ${test.info.right?.content}`;
+        const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, comparisonStatement, test.info.type);
+
+        return {
+            content: `while(${castedComparisonStatement}) {\n${buildInfoToStr(body).join("\n")}\n}`,
+            info: {
+                type: cpp.types.AUTO
+            }
+        };
     },
 
     BooleanLiteral(node: ESTree.BooleanLiteral): buildInfo {

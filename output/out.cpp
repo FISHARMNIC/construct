@@ -2,17 +2,14 @@
 // Compiled with Construct 
 
 #include "include/js.hpp"
-js::number bob();
+
 js::number a ;
-js::number q ;
 
 int main() {
-  a = (static_cast<js::number>(10));
-  q = (bob());
-  std::cout << q << std::endl;
-  return 0;
+  a = (static_cast<js::number>(1));
+  while ((a < static_cast<js::number>(10))) {
+    std::cout << a << std::endl;
+    a = ((a + static_cast<js::number>(1)));
 }
-js::number bob(){
-  js::number c = (a);
-  return c;
+return 0;
 }
