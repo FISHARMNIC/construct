@@ -455,9 +455,7 @@ export default {
 
 function simpleComparisonBlock(comparison: ESTree.Expression): string {
     const test: buildInfo = walk_requireSingle(comparison);
-
-    const comparisonStatement: string = `${test.info.left?.content} ${test.info.operator} ${test.info.right?.content}`;
-    const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, comparisonStatement, test.info.type);
+    const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, test.content, test.info.type);
 
     return castedComparisonStatement;
 }
