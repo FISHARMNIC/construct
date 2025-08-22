@@ -5,6 +5,10 @@
     -> STRING ALREADY HAS 
     -> do general overload using spaceship that does valueOf (toNumber) -- confirm thats exactly how js does though
 
+@todo !IMPORTANT! doesnt print bool right: dbgprint([1,"hi",["hello", true]]);
+@todo !IMPORTANT! get function binding doesnt work sometimes
+
+
 @todo template hoisting
 
 @todo a
