@@ -32,6 +32,7 @@ export function safeThrow(toThrow: any): never
 export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
 {
     console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args);
+
     safeThrow(new Error());
     //process.exit(1);
 }
@@ -43,7 +44,7 @@ export function ASTwarn(node: ESTree.Node, ...args: any[]): void
 
 export function ASTerr_kill(node: ESTree.Node, ...args: any[]): never
 {
-    console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args);
+    console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args, new Error().stack);
     process.exit(1);
 }
 

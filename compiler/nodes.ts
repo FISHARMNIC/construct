@@ -433,11 +433,8 @@ export default {
         return instance;
     },
     WhileStatement(node: ESTree.WhileStatement): buildInfo {
-
-        console.log(node);
-
         const castedComparisonStatement: string = simpleComparisonBlock(node.test);
-        const body: buildInfo[] = walk(node.body);
+        const body: buildInfo[] = walkInlineOrBody(node.body);
 
         return stringTobuildInfo(`while(${castedComparisonStatement}) {\n${buildInfoToStr(body).join("\n")}\n}`);
     },
