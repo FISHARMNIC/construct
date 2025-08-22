@@ -3,6 +3,8 @@
 Maybe hold of all function eval until call time so the dummywalk stuff isnt needed
     -> simplifies/can get rid of  throws etc
 
+maybe just add BlockStatement to nodes.ts and get rid of walkInlineOrBody???
+    -> make sure no where it cares about the individual buildInfos and not just a hux conglomerate
 
 Note that if statements no longer need to have branch difference checking
 -> if variable is typed as such:
