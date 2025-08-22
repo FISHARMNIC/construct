@@ -13,20 +13,26 @@
 ### Currently implemented:
 * Produces semi-readable c++
 * Variables
-    * assignment and reassignment
-    * current types allowed:
-        * `string`
-        * `number`
-        * `any`
-        * `array<number | string | any>`
-    * `any` supports all listed types above
-    * dynamic re-typing
-    * Muti-types arrays
+  * assignment and reassignment
+  * current types allowed:
+      * `string`
+      * `number`
+      * `boolean`
+      * `any`
+      * `array<number | string | boolean |any>`
+  * `any` supports all listed types above
+  * dynamic re-typing
+  * arrays with mixed element types
 * four function math with proper JS type coercion
+* binary comparisons
+  * Currently only support number<=>number or string<=>string
 * functions
-    * parameters
-    * returning values
-    * calling
+  * parameters
+  * returning values
+  * calling
+* control flow
+  * `if` + `else if` + `else`
+  * `while` statements
 
 ### Dependencies
 * npm
