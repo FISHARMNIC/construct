@@ -1,3 +1,5 @@
+// @todo boolean is autocasted to number in c++ with plus. Just remove toNumber for bool + bool
+
 #ifndef __OVERLOADS_H__
 #define __OVERLOADS_H__
 
