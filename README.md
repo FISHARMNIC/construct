@@ -1,4 +1,6 @@
 # Javascript ==> C++ compiler
+### Highly WIP
+---
 ```JS
 // This code can be compiled by Construct!
 
@@ -143,9 +145,6 @@ return (((me + js::string(" dollar(s)"))));
 ```
 
 </details>
-
-### Highly WIP
----
 
 ### Running
 * (optional) run tester first to make sure it works properly on your computer
