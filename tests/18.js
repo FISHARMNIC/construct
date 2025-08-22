@@ -13,7 +13,7 @@ let q = 123;
 if (a > 6) {
     dbgprint(123);
 }
-else if(a > 0) {
+else if("beta" > "alpha") {
     if (false) {
         dbgprint("wait whattttt");
     }

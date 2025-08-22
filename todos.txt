@@ -1,4 +1,10 @@
-@todo !IMPORTANT! add comparison overloads with spaceship for non numeric types like strings and stuff not sure how it works in js
+@todo !IMPORTANT! add comparison overloads --> think c++ already has >/</etc
+    -> int, double, etc. have built in spaceship. 
+    -> strong_ordering has auto bool cast
+    -> also generates not eq and eq
+    -> STRING ALREADY HAS 
+    -> do general overload using spaceship that does valueOf (toNumber) -- confirm thats exactly how js does though
+
 @todo a
 Maybe hold of all function eval until call time so the dummywalk stuff isnt needed
     -> simplifies/can get rid of  throws etc
