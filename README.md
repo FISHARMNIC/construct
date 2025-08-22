@@ -168,6 +168,7 @@ return (((me + js::string(" dollar(s)"))));
   * `any` supports all listed types above
   * dynamic re-typing
   * arrays with mixed element types
+  * tries to enforce a single type as opposed to an `any` whenever possible
 * four function math with proper JS type coercion
 * binary comparisons
   * Currently only support number<=>number or string<=>string
