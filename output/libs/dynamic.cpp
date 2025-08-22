@@ -3,6 +3,8 @@
 #include <variant>
 
 Dynamic::Dynamic() : value(static_cast<js::number>(0)) {}
+
+Dynamic::Dynamic(js::boolean n) : value(n) {}
 Dynamic::Dynamic(int n) : value(static_cast<js::number>(n)) {}
 Dynamic::Dynamic(js::number n) : value(n) {}
 Dynamic::Dynamic(js::string s) : value(s) {}

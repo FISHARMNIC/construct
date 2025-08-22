@@ -15,6 +15,7 @@ struct Dynamic
 
     explicit Dynamic();
     explicit Dynamic(int n);
+    explicit Dynamic(js::boolean n);
     explicit Dynamic(js::number n);
     explicit Dynamic(js::string s);
     explicit Dynamic(const char *s);

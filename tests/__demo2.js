@@ -55,4 +55,4 @@ while(z < 3)
 }
 
 // funky arrays
-dbgprint([1, "hi", ["hello", true * false]]);
+dbgprint([1, "hi", ["hello", true * false, false]]);

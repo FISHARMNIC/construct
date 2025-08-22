@@ -118,7 +118,7 @@ function begin(justWalk: boolean = false): void {
         let ind = output.findIndex((value: buildInfo): boolean => "defer" in value);
         if (ind == -1) ind = output.length;
         ind++;
-        output.pushFront({ content: `int main() {\n`, info: { type: cpp.types.FUNCTION } });
+        output.pushFront({ content: `int main() {\n_js_init_();\n`, info: { type: cpp.types.FUNCTION } });
         output.splice(ind, 0, { content: "return 0;\n}", info: { type: cpp.types.FUNCTION } });
         output.push(...fixxes.post);
 

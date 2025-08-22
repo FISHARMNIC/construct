@@ -27,3 +27,10 @@ js::boolean toBoolean(js::dynamic _value)
         },
     _value.value);
 }
+
+// std::ostream &operator<<(std::ostream &os, js::boolean me)
+// {
+//     std::cout << (me? "true" : "false") << std::endl;
+
+//     return os;
+// }
