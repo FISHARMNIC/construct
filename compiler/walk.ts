@@ -62,7 +62,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
     funcs: [],
     vars: [],
     templateFuncs: [],
-    returnStatements: []
+    returnStatements: [],
   };
 
   tempStack.push(lastObj);

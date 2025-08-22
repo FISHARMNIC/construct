@@ -8,7 +8,7 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, err, ThrowInfoTypes } from './ASTerr';
-import { buildInfo, buildInfoToStr, walk, walk_requireSingle, walkBody, walkInlineOrBody } from './walk';
+import { buildInfo, buildInfoToStr, stringTobuildInfo, walk, walk_requireSingle, walkBody, walkInlineOrBody } from './walk';
 import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
 import { coerce } from './typeco';
 import { ast, eslintScope } from './main';
@@ -120,30 +120,30 @@ export default {
 
         // @todo !HERE! !IMPORTANT! just evaluate the binding from there and dont need to store any of that
         if (!node.computed) {
-                ASTerr_kill(node, `@todo dot property access not implemented`);
-            }
-            else if (!ESTree.isIdentifier(node.object)) {
-                // just need to walk
-                ASTerr_kill(node.object, `@todo complex base type not supported yet`);
-            }
-            else {
-                let base: ESTree.Identifier = node.object as ESTree.Identifier;
-                let index: buildInfo = walk_requireSingle(node.property);
+            ASTerr_kill(node, `@todo dot property access not implemented`);
+        }
+        else if (!ESTree.isIdentifier(node.object)) {
+            // just need to walk
+            ASTerr_kill(node.object, `@todo complex base type not supported yet`);
+        }
+        else {
+            let base: ESTree.Identifier = node.object as ESTree.Identifier;
+            let index: buildInfo = walk_requireSingle(node.property);
 
-                // @todo note i dont know how its going to work with prototype etc
-                // @todo eventually all methods will have to be implemented as a part of the class
+            // @todo note i dont know how its going to work with prototype etc
+            // @todo eventually all methods will have to be implemented as a part of the class
 
-                let existingVar = cpp.variables.getSafe(base);
+            let existingVar = cpp.variables.getSafe(base);
 
-                let type: ctype = cpp.array.itemType(existingVar);
+            let type: ctype = cpp.array.itemType(existingVar);
 
-                return {
-                    content: `${existingVar.name}[${index.content}]`,
-                    info: {
-                        type
-                    }
+            return {
+                content: `${existingVar.name}[${index.content}]`,
+                info: {
+                    type
                 }
             }
+        }
     },
 
     AssignmentExpression(node: ESTree.AssignmentExpression): buildInfo {
@@ -278,7 +278,7 @@ export default {
                 // @ts-ignore
                 // @todo for will get compiler error if you dont just put a single item
                 // it expects an identifier
-                content: `std::cout << ${expression.arguments[0].name} << std::endl`,
+                content: `std::cout << ${walk_requireSingle(expression.arguments[0]).content} << std::endl`,
                 info: {
                     type: cpp.types.NUMBER
                 }
@@ -432,27 +432,19 @@ export default {
 
         return instance;
     },
-
     WhileStatement(node: ESTree.WhileStatement): buildInfo {
 
         console.log(node);
 
-        const test: buildInfo = walk_requireSingle(node.test);
-        const body: buildInfo[] = walkInlineOrBody(node.body);
+        const castedComparisonStatement: string = simpleComparisonBlock(node.test);
+        const body: buildInfo[] = walk(node.body);
 
-        console.log(body, test);
-
-        const comparisonStatement: string = `${test.info.left?.content} ${test.info.operator} ${test.info.right?.content}`;
-        const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, comparisonStatement, test.info.type);
-
-        return {
-            content: `while(${castedComparisonStatement}) {\n${buildInfoToStr(body).join("\n")}\n}`,
-            info: {
-                type: cpp.types.AUTO
-            }
-        };
+        return stringTobuildInfo(`while(${castedComparisonStatement}) {\n${buildInfoToStr(body).join("\n")}\n}`);
     },
-
+    IfStatement(node: ESTree.IfStatement): buildInfo {
+        const out: string = genIfBrach(node);
+        return stringTobuildInfo(out);
+    },
     BooleanLiteral(node: ESTree.BooleanLiteral): buildInfo {
         return {
             content: String(node.value),
@@ -462,4 +454,35 @@ export default {
             }
         };
     }
+}
+
+function simpleComparisonBlock(comparison: ESTree.Expression): string {
+    const test: buildInfo = walk_requireSingle(comparison);
+
+    const comparisonStatement: string = `${test.info.left?.content} ${test.info.operator} ${test.info.right?.content}`;
+    const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, comparisonStatement, test.info.type);
+
+    return castedComparisonStatement;
+}
+
+function genIfBrach(node: ESTree.Statement, build: string[] = [], isIfElse: boolean = false): string {
+    
+    if (ESTree.isIfStatement(node)) {
+        let comp: string = simpleComparisonBlock(node.test);
+
+        const body = walkInlineOrBody(node.consequent);
+        build.push(`${isIfElse ? "else " : ""}if(${comp}) {\n${buildInfoToStr(body).join("\n")}\n}`);
+
+        if (node.alternate) {
+            genIfBrach(node.alternate, build, true);
+        } 
+    }
+    else {
+        const body = walkInlineOrBody(node);
+
+        build.push(`else {\n${buildInfoToStr(body).join("\n")}\n}`);
+
+    }
+
+    return build.join("\n");
 }

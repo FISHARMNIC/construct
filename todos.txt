@@ -1,5 +1,5 @@
 @todo !IMPORTANT! add comparison overloads with spaceship for non numeric types like strings and stuff not sure how it works in js
-
+@todo a
 Maybe hold of all function eval until call time so the dummywalk stuff isnt needed
     -> simplifies/can get rid of  throws etc
 
