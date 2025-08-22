@@ -1,11 +1,14 @@
 /*
 @expects
 456
+hello!
 
 @end
 */
 
 let a = 5;
+
+let q = 123;
 
 if(a > 6)
 {
@@ -13,5 +16,8 @@ if(a > 6)
 }
 else
 {
+    q = "hello!";
     dbgprint(456);
 }
+
+dbgprint(q);
