@@ -61,9 +61,9 @@ while(z < 3)
 // funky arrays
 dbgprint([1, "hi", ["hello", true * false]]);
 ```
-
+<br>
 <details>
-<summary> See compiled code </summary>
+<summary> <b> See compiled code </b> </summary>
 
 ```C++
 
@@ -145,6 +145,7 @@ return (((me + js::string(" dollar(s)"))));
 ```
 
 </details>
+<br>
 
 ### Running
 * (optional) run tester first to make sure it works properly on your computer
