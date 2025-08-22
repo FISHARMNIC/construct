@@ -1,8 +1,8 @@
 import { err } from "./ASTerr";
 
-type cleanupFn = Function | null;
+type cleanupFn = (() => void) | null;
 
-export let cleanup: {
+export const cleanup: {
     funcs: cleanupFn,
     cpp: cleanupFn,
     main: cleanupFn

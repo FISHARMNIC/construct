@@ -9,7 +9,7 @@ import { cpp } from './cpp';
 import { ASTerr_kill } from './ASTerr';
 import { ctype } from './ctypes';
 
-let truthStatements = 
+const truthStatements = 
 {
     "+": {},
     "-": {},
@@ -45,7 +45,7 @@ let truthStatements =
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
 {
 
-    let operator: string = node.operator;
+    const operator: string = node.operator;
 
     // console.log(`[tcoer] <${leftType}> ${operator} <${rightType}>`);
 

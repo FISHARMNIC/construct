@@ -14,7 +14,7 @@ Map.prototype.add = function <K extends ESTree.Identifier, V>(key: K, to: string
 
         if (inDummyMode()) {
 
-            let last = tempStack.at(-1);
+            const last = tempStack.at(-1);
 
             if (last != undefined) {
                 if(!last[to])

@@ -84,14 +84,14 @@ export function evaluateAllFunctions(): string[] {
     alreadyTried = [];
 
     while (unevaledFuncs.length != 0) {
-        let fn = unevaledFuncs.pop()!;
+        const fn = unevaledFuncs.pop()!;
 
         if (alreadyTried.includes(fn)) {
             unevaledFuncs.pushFront(fn);
             break;
         }
 
-        let info: evalInfo = evaluateSingle(fn);
+        const info: evalInfo = evaluateSingle(fn);
 
         // if failed, push it back in
         if (!info.successfull) {
@@ -155,13 +155,13 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
     let returnType: ctype = cpp.types.VOID;
 
     if (ESTree.isFunctionDeclaration(funcInfo.func)) {
-        let node = funcInfo.func as ESTree.FunctionDeclaration;
+        const node = funcInfo.func as ESTree.FunctionDeclaration;
         let allReturnStatements: buildInfo[] = [];
 
         console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
 
         // try to evaluate the function
-        let out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean, errorInfo): void => {
+        const out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean): void => {
             if (success && forceDummyOnly) {
                 // If it succeddes, and the function is never to be walked normally, evaluate return types now (beforeDeleteFn)
                 allReturnStatements = obj.returnStatements;
@@ -206,10 +206,15 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
             funcInfo.evaluatedCode.with = output;
             funcInfo.evaluatedCode.ready = true;
 
+            if(!funcInfo.func.id)
+            {
+                ASTerr_kill(node, `[INTERNAL] Function has no id: "${funcInfo.func}"`)
+            }
+
             // generate the call expression
             // @todo this is messy because callAndEvaluateTemplateFunction does this internally
             if (!templateFn)
-                funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({ return: returnType, name: funcInfo.func.id?.name! }, []) + '{';
+                funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({ return: returnType, name: funcInfo.func.id!.name! }, []) + '{';
 
             succeeded = true;
         }
@@ -234,7 +239,7 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
 
 // Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle.
 function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeList_t): evalInfo {
-    let fqe: FunctionQueueElement = {
+    const fqe: FunctionQueueElement = {
         func, evaluatedCode: {
             ready: false
         }
@@ -243,7 +248,7 @@ function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeL
     /*
     Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
     */
-    let res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true, useTypeList });
+    const res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true, useTypeList });
     if (!res.successfull) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
@@ -281,13 +286,13 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
         ASTerr_kill(funcInfo.func, `Function "${funcInfo.name}" given ${givenParams.length} arguments but expected ${funcInfo.params.length}`);
     }
 
-    let parameter_genList: string[] = [];
+    const parameter_genList: string[] = [];
 
-    let argumentTypes: ctype[] = [];
+    const argumentTypes: ctype[] = [];
 
     // See comments in iffy.ts on why the typelists are segregated for template functions
     const myID: number = template_getUniqueID();
-    let scopedTypeList = getTemplateTypeListFromUniqueID(myID);
+    const scopedTypeList = getTemplateTypeListFromUniqueID(myID);
 
     // notes the info about the parameters 
     // treats them as variables for simplicity

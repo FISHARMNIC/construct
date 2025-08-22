@@ -35,8 +35,8 @@ normalTypeLists is to be used by everything that is compiled once (not including
 Template functions are instanced multiple times, resulting in their local variables' identifiers being mashed together
     -> So templateTypeLists are segregated by template ID
 */
-export let normalTypeLists: TypeList_t = new Map<ESTree.Identifier, Set<ctype>>;
-export let templateTypeLists: TypeList_t[] = [];
+export const normalTypeLists: TypeList_t = new Map<ESTree.Identifier, Set<ctype>>;
+export const templateTypeLists: TypeList_t[] = [];
 
 /**
  * Given a template id, which is gotten by calling `template_getUniqueID`, get the appropriate type list to use

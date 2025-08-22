@@ -44,11 +44,11 @@ export default {
 
                     if (!(value_in === undefined || value_in === null)) {
                         //console.log(value_in);
-                        let value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
+                        const value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
 
-                        let compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const", useTypeList });
+                        const compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const", useTypeList });
 
-                        let ret: buildInfo = {
+                        const ret: buildInfo = {
                             content: compiled,
                             info: {
                                 type: value.info.type
@@ -126,15 +126,15 @@ export default {
             ASTerr_kill(node.object, `@todo complex base type not supported yet`);
         }
         else {
-            let base: ESTree.Identifier = node.object as ESTree.Identifier;
-            let index: buildInfo = walk_requireSingle(node.property);
+            const base: ESTree.Identifier = node.object as ESTree.Identifier;
+            const index: buildInfo = walk_requireSingle(node.property);
 
             // @todo note i dont know how its going to work with prototype etc
             // @todo eventually all methods will have to be implemented as a part of the class
 
-            let existingVar = cpp.variables.getSafe(base);
+            const existingVar = cpp.variables.getSafe(base);
 
-            let type: ctype = cpp.array.itemType(existingVar);
+            const type: ctype = cpp.array.itemType(existingVar);
 
             return {
                 content: `${existingVar.name}[${index.content}]`,
@@ -146,8 +146,8 @@ export default {
     },
 
     AssignmentExpression(node: ESTree.AssignmentExpression): buildInfo {
-        let left = node.left;
-        let rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
+        const left = node.left;
+        const rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
 
         if (ESTree.isMemberExpression(left)) { // a[X] or a.X
             if (!left.computed) {
@@ -158,13 +158,13 @@ export default {
                 ASTerr_kill(left.object, `@todo complex base type not supported yet`);
             }
             else {
-                let base: ESTree.Identifier = left.object;
-                let index: buildInfo = walk_requireSingle(left.property);
+                const base: ESTree.Identifier = left.object;
+                const index: buildInfo = walk_requireSingle(left.property);
 
                 // @todo note i dont know how its going to work with prototype etc
                 // @todo eventually all methods will have to be implemented as a part of the class
 
-                let existingVar = cpp.variables.getSafe(base);
+                const existingVar = cpp.variables.getSafe(base);
 
                 return cpp.array.modify(base, existingVar, index, rval);
             }
@@ -192,9 +192,9 @@ export default {
             //         }
             //     }
 
-            let existingVar = cpp.variables.getSafe(left);
+            const existingVar = cpp.variables.getSafe(left);
 
-            let reassignment: string = cpp.variables.reassign(left, existingVar, rval);
+            const reassignment: string = cpp.variables.reassign(left, existingVar, rval);
 
             return {
                 content: reassignment,
@@ -212,13 +212,13 @@ export default {
     },
 
     FunctionDeclaration(node: ESTree.FunctionDeclaration): buildInfo {
-        let id = node.id;
+        const id = node.id;
         if (id == undefined || id == null) {
             ASTerr_kill(node, "[INTERNAL] Function has no ID");
         }
 
-        let name: string = id.name;
-        let params = node.params;
+        const name: string = id.name;
+        const params = node.params;
 
         //console.log(node)
 
@@ -226,7 +226,7 @@ export default {
             ASTerr_kill(node, "Function has no name");
         }
         else {
-            let fn = cpp.functions.createDec(node, id, name, params, node.body);
+            const fn = cpp.functions.createDec(node, id, name, params);
             // console.log("INFO", fn);
             return {
                 content: fn.strconts,
@@ -240,13 +240,13 @@ export default {
     },
 
     BinaryExpression(node: ESTree.BinaryExpression): buildInfo {
-        let left = walk_requireSingle(node.left, "Unsure what to do with binary expression (got multiple values, expected 1)");
-        let right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
-        let operator = node.operator;
+        const left = walk_requireSingle(node.left, "Unsure what to do with binary expression (got multiple values, expected 1)");
+        const right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
+        const operator = node.operator;
 
         // @todo return type based on types of left and right
-        let cotype = coerce(node, left.info.type, right.info.type);
-        let str = cpp.cast.static(cotype, left.content + node.operator + right.content, cotype);
+        const cotype = coerce(node, left.info.type, right.info.type);
+        const str = cpp.cast.static(cotype, left.content + node.operator + right.content, cotype);
         return {
             content: str,
             info: {
@@ -274,6 +274,7 @@ export default {
         /// debug
         if (fname === "dbgprint") {
             return {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 // @todo for will get compiler error if you dont just put a single item
                 // it expects an identifier
@@ -286,8 +287,8 @@ export default {
         else {
             const fnID: ESTree.Identifier = functionCalled;
 
-            let params = expression.arguments;
-            let evaluatedArguments = params.map((value): buildInfo => {
+            const params = expression.arguments;
+            const evaluatedArguments = params.map((value): buildInfo => {
                 if (ESTree.isExpression(value)) {
                     return walk_requireSingle(value, `Expected single value in parameter`);
                 }
@@ -331,6 +332,7 @@ export default {
 
             //console.log(Array.from(allTemplateFuncs.values())[0]);
 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //// @ts-expect-error
             //true;
 
@@ -339,7 +341,7 @@ export default {
     },
 
     ExpressionStatement(node: ESTree.ExpressionStatement, build: buildInfo[]): buildInfo {
-        let expression = node.expression;
+        const expression = node.expression;
 
         if (ESTree.isCallExpression(expression)) {
             return this.CallExpression(expression, build);
@@ -373,7 +375,7 @@ export default {
     },
 
     Identifier(node: ESTree.Identifier): buildInfo {
-        let binding = cpp.variables.get(node);
+        const binding = cpp.variables.get(node);
         // if is variable
         if (binding) {
             return {
@@ -413,7 +415,7 @@ export default {
         // console.log(node);
 
         const unparsedElements = node.elements;
-        let arrayElements: buildInfo[] = [];
+        const arrayElements: buildInfo[] = [];
 
         unparsedElements.forEach((element): void => {
             if (ESTree.isExpression(element)) {
@@ -427,7 +429,7 @@ export default {
             }
         })
 
-        let instance: buildInfo = cpp.array.instance(arrayElements, unparsedElements);
+        const instance: buildInfo = cpp.array.instance(arrayElements, unparsedElements);
 
         return instance;
     },
@@ -473,7 +475,7 @@ function simpleComparisonBlock(comparison: ESTree.Expression): string {
 function genIfBranches(node: ESTree.Statement, build: string[] = [], isIfElse: boolean = false): string {
     
     if (ESTree.isIfStatement(node)) {
-        let comp: string = simpleComparisonBlock(node.test);
+        const comp: string = simpleComparisonBlock(node.test);
 
         const body = walkInlineOrBody(node.consequent);
         build.push(`${isIfElse ? "else " : ""}if(${comp}) {\n${buildInfoToStr(body).join("\n")}\n}`);

@@ -51,11 +51,11 @@ interface dummyWalkPauseOnSet_t {
     location?: ESTree.SourceLocation | null | undefined
 }
 
-let functionStack: ESTree.FunctionDeclaration[] = [];
+const functionStack: ESTree.FunctionDeclaration[] = [];
 
-export let dummyWalkPauseOnSet: dummyWalkPauseOnSet_t[] = [];
+export const dummyWalkPauseOnSet: dummyWalkPauseOnSet_t[] = [];
 
-function iffyDbgPrint(...args: any[]) {
+function iffyDbgPrint(...args: string[]) {
     if (dummyWalkPauseOnSet.length <= 0)
         console.log(...args);
     else
@@ -69,7 +69,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
         ASTwarn(ident, `[INTERNAL] binding of "${ident.name}" is undefined!`);
     }
     else if (ident !== binding) {
-        err(`[INTERNAL] iffy should only be given bindings. "${ident.name}" is not the original binding`, ident, ident2binding(ident))
+        err(`[INTERNAL] iffy should only be given bindings. "${ident.name}" is not the original binding`) //, ident.name, ident2binding(ident))
     }
 
     iffyDbgPrint(`[iffy ] START - checking for "${ident.name}" declared on line ${ident.loc?.start.line}`);
@@ -79,7 +79,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
     let isIffy = false;
 
-    let myPauser: dummyWalkPauseOnSet_t = {
+    const myPauser: dummyWalkPauseOnSet_t = {
         find: ident
     }
 
@@ -87,14 +87,14 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
     traverse(ast, {
         FunctionDeclaration(path) {
-            let node: ESTree.FunctionDeclaration = path.node;
+            const node: ESTree.FunctionDeclaration = path.node;
 
             functionStack.push(node);
 
         },
 
         Identifier(path) {
-            let node: ESTree.Identifier = path.node;
+            const node: ESTree.Identifier = path.node;
 
             myPauser.location = node.loc;
 
@@ -118,12 +118,12 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
                         iffyDbgPrint(`[iffy ] Found a matching identifier on line ${parent.loc?.start.line}`);
                         // try to evaluate the type
-                        let newValue = parent.right;
+                        const newValue = parent.right;
                         try {
-                            let result = walk_requireSingle(newValue, "Assigning multiple values to a variable", true);
+                            const result = walk_requireSingle(newValue, "Assigning multiple values to a variable", true);
                             //console.log(result);
 
-                            let newType = result.info.type;
+                            const newType = result.info.type;
 
                             if (newType !== currentType) {
                                 isIffy = true;
@@ -133,6 +133,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
                             // returnInfo.push(newType);
 
                         }
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         catch (err) { // couldn't get the type easily. try to backprop and see what it can do
 
                             /*
@@ -149,7 +150,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
 
 
-                            let wrapper = getWrapperFunc(node);
+                            const wrapper = getWrapperFunc(node);
 
                             // if the identifier lives in the same scope as me
                             if (wrapper === getWrapperFunc(ident)) {
@@ -165,7 +166,7 @@ export default function (ident: ESTree.Identifier, currentType: ctype): boolean 
 
                                 let ready = false;
                                 while (!ready && functionStack.length != 0) {
-                                    let fnScope = functionStack.pop(); // get the innermost function
+                                    const fnScope = functionStack.pop(); // get the innermost function
                                     if (fnScope?.body.body) {          // as long as it has a body (duh it does but just safe)
                                         // console.log("WALKING-------", dummyWalkPauseOnSet)
 

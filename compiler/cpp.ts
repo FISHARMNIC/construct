@@ -67,11 +67,11 @@ let allFuncs: Map<ESTree.Identifier, CFunction> = new Map<ESTree.Identifier, CFu
 let allTemplateFuncs: Map<ESTree.Identifier, CTemplateFunction> = new Map<ESTree.Identifier, CTemplateFunction>();
 export let tempStack: stackInfo[] = [];
 let dummyLevel: number = 0;
-let unique_label = 0;
+// let unique_label = 0;
 
-function new_unique() {
-    return ++unique_label;
-}
+// function new_unique() {
+//     return ++unique_label;
+// }
 
 cleanup.cpp = function () {
     allVars = new Map<ESTree.Identifier, CVariable>();
@@ -80,7 +80,7 @@ cleanup.cpp = function () {
     allTemplateFuncs = new Map<ESTree.Identifier, CTemplateFunction>();
     tempStack = [];
     dummyLevel = 0;
-    unique_label = 0;
+    // unique_label = 0;
 }
 
 /// !warning! no cleanup nor tempstack
@@ -178,7 +178,7 @@ export function getWrapperFunc(retStatement: ESTree.Node): ESTree.Function | EST
         parents.set(node, parent);
 
         for (const k in node) {
-            const child = (node as any)[k];
+            const child = (node as ESTree.Node | ESTree.Node[])[k];
             if (Array.isArray(child)) {
                 for (const c of child) {
                     if (c && typeof c === 'object' && 'type' in c) {
@@ -202,7 +202,7 @@ export function getWrapperFunc(retStatement: ESTree.Node): ESTree.Function | EST
     return null;
 }
 
-export let cpp = {
+export const cpp = {
     types:
     {
         NUMBER: "js::number",
@@ -248,7 +248,7 @@ export let cpp = {
             }
         },
         static(to: ctype, value: string, valueType: ctype): string {
-            let castTo = `static_cast<${to}>`;
+            // const castTo = `static_cast<${to}>`;
             return cpp.cast.staticBinfo(to, { content: value, info: { type: valueType } });
         },
         number(value: string): string {
@@ -296,7 +296,7 @@ export let cpp = {
         */
         create2(node: ESTree.Identifier, name: string, value: buildInfo, { constant = false, forceNoForward = false, useTypeList = normalTypeLists } = {}): string {
 
-            let newType = value.info.type;
+            const newType = value.info.type;
 
             let myTypeList: Set<ctype>;
 
@@ -312,14 +312,14 @@ export let cpp = {
                 useTypeList.set(node, myTypeList);
             }
 
-            let cvar: CVariable = {
+            const cvar: CVariable = {
                 possibleTypes: myTypeList, name, constant, // isList: bInfoIsList(value)
             };
 
             addType(cvar, newType);
 
             // console.log(myTypeList);
-            let possibleType: ctype = typeSet2type(myTypeList);
+            const possibleType: ctype = typeSet2type(myTypeList);
 
 
             if (allVars.has(node)) {
@@ -345,7 +345,7 @@ export let cpp = {
             }
         },
         reassign(node: ESTree.Identifier, existingVar: CVariable, value: buildInfo): string {
-            let newType = value.info.type;
+            const newType = value.info.type;
             addType(existingVar, newType);
 
             console.log(`[resgn] "${existingVar.name}" = "${value.content}" as "${newType}"`);
@@ -386,7 +386,7 @@ export let cpp = {
         },
 
         getSafe(node: ESTree.Identifier): CVariable {
-            let existingVar = cpp.variables.get(node);
+            const existingVar = cpp.variables.get(node);
             if (existingVar === undefined) // variable is declared elsewhere, but compiler hasn't looked at it yet
             {
                 /* 
@@ -413,8 +413,8 @@ export let cpp = {
     {
         allNormal: () => allFuncs,
         allTemplates: () => allTemplateFuncs,
-        createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[], block: ESTree.BlockStatement): { strconts: string, repObj: replaceObj } {
-            let body = block.body;
+        createDec(fn: ESTree.FunctionDeclaration, node: ESTree.Identifier, name: string, params: ESTree.FunctionParameter[]): { strconts: string, repObj: replaceObj } {
+            // const body = block.body;
 
             if (allFuncs.has(node)) {
                 ASTerr_kill(node, `Identical function "${name}" already declared`);
@@ -453,7 +453,7 @@ export let cpp = {
 
                 let ostring = `auto ${name}()\n{\n`; // @todo not "auto" once returns are implemented
 
-                let repObj: replaceObj = { ready: false, surroundings: [ostring, "\n}"] };
+                const repObj: replaceObj = { ready: false, surroundings: [ostring, "\n}"] };
                 unevaledFuncs.push({ func: fn, evaluatedCode: repObj });
                 evaluateAllFunctions();
 
@@ -492,7 +492,7 @@ export let cpp = {
     array:
     {
         itemType(arr: CVariable): ctype {
-            let t = getType(arr);
+            const t = getType(arr);
             if (cpp.types.isArray(t)) {
                 return t.slice(t.indexOf("<") + 1, t.lastIndexOf(">"));
             }
@@ -506,7 +506,7 @@ export let cpp = {
             }
             else
             {
-                err(`[INTERNAL] value is not an arrayLike`, arr.possibleTypes);
+                err(`[INTERNAL] value is not an arrayLike`, String(arr.possibleTypes));
             }
         },
         instance(values: buildInfo[], unparsed: (ESTree.Expression | ESTree.SpreadElement | null)[]): buildInfo {
@@ -514,7 +514,7 @@ export let cpp = {
             const itemType: ctype = typeList2type(allTypes);
             const arrayType: ctype = cpp.types.ARRAY(itemType);
 
-            let initializerItems: string[] = [];
+            const initializerItems: string[] = [];
 
             // See 14.js 
             values.forEach((item: buildInfo, i) => {
@@ -555,7 +555,7 @@ export let cpp = {
 
             const arrayType = getType(base);
 
-            let assignment: string = `${base.name}[${index.content}] = ${cpp.cast.staticBinfo(cpp.types.arrayItemType(node, arrayType), value)}`;
+            const assignment: string = `${base.name}[${index.content}] = ${cpp.cast.staticBinfo(cpp.types.arrayItemType(node, arrayType), value)}`;
 
 
             return {

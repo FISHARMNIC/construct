@@ -1,7 +1,9 @@
 import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 /// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { __dummyModeGlevel, cpp, enterDummyMode_raw, exitDummyMode_raw, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 import { TypeList_t, normalTypeLists } from './iffy';
@@ -58,7 +60,7 @@ export function changeNestLevel(by: number) {
  */
 export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: stackInfo, success: boolean, errorInfo: ThrowInfo | undefined) => void, useTypeList: TypeList_t = normalTypeLists): { info: buildInfo[], success: boolean, errorInfo: ThrowInfo | undefined } {
 
-  let lastObj: stackInfo = {
+  const lastObj: stackInfo = {
     funcs: [],
     vars: [],
     templateFuncs: [],
@@ -145,9 +147,9 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeLis
     enterDummyMode_raw();
   }
 
-  let build: buildInfo[] = [];
+  const build: buildInfo[] = [];
 
-  let type = node.type;
+  const type = node.type;
   if (type in nodes) {
     build.push(nodes[node.type](node, build, useTypeList));
   }
@@ -168,7 +170,7 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeLis
  * @param dummy !WARNING! see `dummyUnsafe` in `walk`
  */
 export function walk_requireSingle(node: ESTree.Node, err: string = "Expected single value", dummy: boolean = false): buildInfo {
-  let bInfo: buildInfo[] = walk(node, dummy);
+  const bInfo: buildInfo[] = walk(node, dummy);
 
   if (bInfo.length != 1) {
     ASTerr_kill(node, err);
@@ -183,13 +185,14 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
  * @param unsafe only to be used by walkBodyDummy. Forces no stack 
  * @returns 
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = false, useTypeList = normalTypeLists, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
 
   //let output: string[] = [];
-  let output: buildInfo[] = [];
+  const output: buildInfo[] = [];
 
   if (!unsafe) {
-    let lastObj: stackInfo = {
+    const lastObj: stackInfo = {
       funcs: [],
       vars: [],
       templateFuncs: [],
@@ -201,9 +204,9 @@ export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = fal
   }
 
   for (const statement of body) {
-    let info: buildInfo[] = walk(statement, dummy, useTypeList);
+    const info: buildInfo[] = walk(statement, dummy, useTypeList);
 
-    let strinfo = info.map((v: buildInfo | undefined): string => {
+    info.map((v: buildInfo | undefined): string => {
       if (v == undefined) {
         err("[INTERNAL ERROR] Something didnt return a buildinfo");
       }
@@ -227,6 +230,7 @@ export function walkBody(body: ESTree.Statement[], { dummy = false, unsafe = fal
 /**
  * Use for things like "if", "while", etc where there could be a block beneath or it could be a one-liner
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function walkInlineOrBody(body: ESTree.Statement, { dummy = false, unsafe = false, useTypeList = normalTypeLists, beforeDelete = (obj: stackInfo) => { } } = {}): buildInfo[] {
   if (ESTree.isExpressionStatement(body)) {
       return walk(body.expression, dummy, useTypeList);

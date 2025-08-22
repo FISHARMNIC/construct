@@ -22,14 +22,14 @@ export interface ThrowInfo
     };
 }
 
-export function safeThrow(toThrow: any): never
+export function safeThrow(toThrow: ThrowInfo | Error): never
 {
     exitDummyMode_raw(); // for catches
     console.warn("\t-> throwing!");
     throw toThrow;
 }
 
-export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
+export function ASTerr_throw(node: ESTree.Node, ...args: string[]): never
 {
     console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args);
 
@@ -37,12 +37,12 @@ export function ASTerr_throw(node: ESTree.Node, ...args: any[]): never
     //process.exit(1);
 }
 
-export function ASTwarn(node: ESTree.Node, ...args: any[]): void
+export function ASTwarn(node: ESTree.Node, ...args: string[]): void
 {
     console.warn(`[WARNING] on {${node.loc!.start.line}} : `, ...args);
 }
 
-export function ASTerr_kill(node: ESTree.Node, ...args: any[]): never
+export function ASTerr_kill(node: ESTree.Node, ...args: string[]): never
 {
     console.error(`[ERROR] on {${node.loc!.start.line}} : `, ...args, new Error().stack);
     process.exit(1);
@@ -54,7 +54,7 @@ export function ASTinfo_throw(info: ThrowInfo)
 }
 
 // General error, kills the program
-export function err(...args: any[]): never
+export function err(...args: string[]): never
 {
     console.error(`[ERROR] on {?} : `, ...args);
     throw new Error();

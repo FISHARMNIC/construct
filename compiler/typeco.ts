@@ -9,7 +9,7 @@ const supportedComps = ['<','>','<=','>=','==','!='];
 // @todo refactor all of the lazy if else
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
 {
-    let operator: string = node.operator;
+    const operator: string = node.operator;
     let returnType: string;
 
     if(supportedComps.includes(operator))

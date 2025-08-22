@@ -53,6 +53,7 @@ cleanup.main = function () {
 // @todo clean this up and put in other file or something
 // Overwrites console.log to display indentation
 const saveLog = console.log;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 console.log = function (...args: any[]) {
     if (nestLevel <= 0)
         saveLog(...args);
@@ -63,7 +64,7 @@ console.log = function (...args: any[]) {
 export function replaceLaters(bInfo: buildInfo[]): void {
     bInfo.forEach((info: buildInfo): void => {
         if (info.replace && info.replace.ready && info.replace.with) {
-            let repwith = buildInfoToStr(info.replace.with);
+            const repwith = buildInfoToStr(info.replace.with);
             let build = "";
             if (info.replace.surroundings) {
                 build += info.replace.surroundings[0];
@@ -83,11 +84,12 @@ function begin(justWalk: boolean = false): void {
 
     cleanAll();
 
-    /// @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    /// @ts-expect-error
     console.log(chalk.green(`|| (construct) JS => Cpp\n|| Compiling: "${INPUTFILE}"`));
 
     // Walk the body of the program
-    let output: buildInfo[] = walkBody(ast.program.body);
+    const output: buildInfo[] = walkBody(ast.program.body);
 
     // if there are any functions left over to evaluate, try to do so now
     if (unevaledFuncs.length != 0) {
@@ -97,7 +99,11 @@ function begin(justWalk: boolean = false): void {
     // if some of them couldn't be evaluatated, the code couldn't be fully compiled
     // This should ideally never happen 
     if (unevaledFuncs.length != 0) {
-        err(`Unable to evaluate functions: [${unevaledFuncs.map((value: any): string => value.func.id.name).join(", ")}]`);
+        err(`Unable to evaluate functions: [${unevaledFuncs.map((value): string => {
+            if("id" in value.func)
+                return value.func.id?.name ?? "[NO NAME]";
+            return "[NO NAME]";
+        }).join(", ")}]`);
     }
 
     if (!justWalk) {
@@ -122,7 +128,7 @@ function begin(justWalk: boolean = false): void {
         // Some functions were evaluated later, so go ahead and replace their contents accoringly
         replaceLaters(output);
 
-        let output_str: string[] = buildInfoToStr(output) //.map((v: string): string => v + ';');
+        const output_str: string[] = buildInfoToStr(output) //.map((v: string): string => v + ';');
 
         // console.log(...output.map((value: buildInfo): any => {
         //     return {
@@ -151,11 +157,13 @@ function begin(justWalk: boolean = false): void {
 
         fs.writeFileSync(OUTFILE, ostr, 'utf-8');
 
-        /// @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        /// @ts-expect-error
         console.log(chalk.green("|| DONE\n|| (g++) Cpp => Bin"));
 
         exec(FIXFILE, (e, stdout, stderr) => {
-            /// @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            /// @ts-expect-error
             console.log(chalk.green(`|| DONE\n|| Output in ${__dirname + "/../output/bin/a.out"}\n`));
 
             if (e) {
@@ -167,7 +175,8 @@ function begin(justWalk: boolean = false): void {
                 console.log(`${stderr}`);
             }
 
-            /// @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            /// @ts-expect-error
             console.log(chalk.green("(Ignore the errors above!)"));
         });
 
