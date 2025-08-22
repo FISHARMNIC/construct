@@ -8,6 +8,7 @@ js::string scale_version2__(js::array<js::number> me);
 js::number a ;
 js::dynamic b = static_cast<js::dynamic>(0);
 js::string q ;
+js::dynamic v = static_cast<js::dynamic>(0);
 js::number z ;
 
 int main() {
@@ -31,12 +32,21 @@ int main() {
                     {(js::array<js::array<js::string>>(
                         {(js::array<js::string>({(js::string("5.0"))}))}))}))
             << std::endl;
+  v = static_cast<js::dynamic>(static_cast<js::number>(123));
   if ((((a / static_cast<js::number>(100)) < static_cast<js::number>(1000)))) {
     std::cout << js::string("yup") << std::endl;
+    v = static_cast<js::dynamic>(js::string("321"));
+}
+else if(((js::string("pie")<js::string("apple")))) {
+  std::cout << js::string("hmmm") << std::endl;
+  v = static_cast<js::dynamic>(
+      js::array<js::number>({(static_cast<js::number>(321))}));
 }
 else {
   std::cout << js::string("nope") << std::endl;
+  v = static_cast<js::dynamic>(false);
 }
+std::cout << v << std::endl;
 z = (static_cast<js::number>(0));
 while(((z<static_cast<js::number>(3)))) {
   std::cout << (z + js::string(" bottles")) << std::endl;
@@ -47,8 +57,7 @@ std::cout << js::array<js::dynamic>(
                   static_cast<js::dynamic>(js::string("hi")),
                   static_cast<js::dynamic>(js::array<js::dynamic>(
                       {static_cast<js::dynamic>(js::string("hello")),
-                       static_cast<js::dynamic>((true * false)),
-                       static_cast<js::dynamic>(true)}))})
+                       static_cast<js::dynamic>((true * false))}))})
           << std::endl;
 return 0;
 }

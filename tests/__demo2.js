@@ -25,15 +25,27 @@ dbgprint(q);
 dbgprint([8000] + " Hello!");
 dbgprint(("12360.7079633" - 12345) / [[["5.0"]]]);
 
+let v = 123
+
 // branching
 if((a / 100) < 1000)
 {
     dbgprint("yup");
+    v = "321";
+}
+else if("pie" < "apple")
+{
+    dbgprint("hmmm");
+    v = [321];
 }
 else
 {
     dbgprint("nope");
+    v = false;
 }
+
+// branch-dependent types
+dbgprint(v);
 
 // loops
 let z = 0;
