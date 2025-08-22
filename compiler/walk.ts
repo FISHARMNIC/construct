@@ -2,7 +2,7 @@ import * as ESTree from '@babel/types';
 import { ASTerr_kill, err, ThrowInfo } from './ASTerr';
 import nodes from './nodes';
 /// @ts-ignore
-import { __dummyModeGlevel, cpp, enterDummyMode, enterDummyMode_raw, exitDummyMode, exitDummyMode_raw, tempStack } from './cpp';
+import { __dummyModeGlevel, cpp, enterDummyMode_raw, exitDummyMode_raw, tempStack } from './cpp';
 import { ctype, stackInfo } from './ctypes';
 import { TypeList_t, normalTypeLists } from './iffy';
 

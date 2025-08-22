@@ -22,12 +22,8 @@ NEW SYSTEM TO BE IMPLEMENTED:
 */
 
 import * as ESTree from '@babel/types';
-import traverse from '@babel/traverse';
-import { buildInfo, walk_requireSingle, walkBodyDummy } from './walk';
-import { ast } from './main';
-import { ASTerr_kill, ASTwarn, err, ThrowInfo, ThrowInfoTypes } from './ASTerr';
-import { ctype, stackInfo } from './ctypes';
-import { getWrapperFunc, ident2binding } from './cpp';
+import { err } from './ASTerr';
+import { ctype } from './ctypes';
 
 export type TypeList_t = Map<ESTree.Identifier, Set<ctype>>;
 // no cleanup for this

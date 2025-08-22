@@ -7,11 +7,10 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 */
 
 import * as ESTree from '@babel/types';
-import { ASTerr_kill, ASTerr_throw, ASTinfo_throw, ASTwarn, err, ThrowInfoTypes } from './ASTerr';
-import { buildInfo, buildInfoToStr, stringTobuildInfo, walk, walk_requireSingle, walkBody, walkInlineOrBody } from './walk';
-import { cpp, fnIdent2binding, ident2binding, inDummyMode, tempStack } from './cpp';
+import { ASTerr_kill, ASTerr_throw } from './ASTerr';
+import { buildInfo, buildInfoToStr, stringTobuildInfo, walk_requireSingle, walkInlineOrBody } from './walk';
+import { cpp, fnIdent2binding, tempStack } from './cpp';
 import { coerce } from './typeco';
-import { ast, eslintScope } from './main';
 import { evaluateAllFunctions, evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
 import { CFunction, CTemplateFunction, ctype, getType } from './ctypes';
 import { TypeList_t } from './iffy';

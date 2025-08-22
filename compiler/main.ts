@@ -8,7 +8,6 @@ Main code that handles everything else. Run tsx here
 
 
 import { buildInfoToStr, nestLevel, walkBody } from './walk';
-import * as ESTree from '@babel/types';
 import { buildInfo } from './walk';
 import { exec } from 'child_process';
 import fs from 'fs';
@@ -19,10 +18,8 @@ import { cpp } from './cpp';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
 import './extensions';
-import { traverse } from '@babel/types';
-import { ctype, getType } from './ctypes';
+import { getType } from './ctypes';
 import { cleanAll, cleanup } from './cleanup';
-import { normalTypeLists } from './iffy';
 
 // dont include any other file. Make all inclusions under js.hpp
 // Theres some order dependent stuff (let overloads depending on string overloads) that I need to fix

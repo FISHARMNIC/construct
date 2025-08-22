@@ -50,7 +50,7 @@ In dummy mode:
 
 
 import * as ESTree from '@babel/types';
-import { buildInfo, buildInfoToStr, nestLevel, replaceObj, stringTobuildInfo } from './walk';
+import { buildInfo, nestLevel, replaceObj, stringTobuildInfo } from './walk';
 import { ast, eslintScope } from './main';
 import { ASTerr_kill, ASTerr_throw, err } from './ASTerr';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';

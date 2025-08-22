@@ -31,11 +31,11 @@ function trycompile(function)
 */
 
 import * as ESTree from '@babel/types';
-import { buildInfo, buildInfoToStr, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
+import { buildInfo, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill, err } from './ASTerr';
 import './extensions';
 import { CFunction, CTemplateFunction, ctype, getType, stackInfo } from './ctypes';
-import { cpp, enterDummyMode_raw, exitDummyMode_raw } from './cpp';
+import { cpp } from './cpp';
 import { fixxes } from './main';
 import { typeList2type } from './iffyTypes';
 import { cleanup } from './cleanup';
