@@ -1,7 +1,7 @@
 # Javascript ==> C++ compiler
 ```JS
 // This code can be compiled by Construct!
-// The code is a little long though. See below for the compiled code of another example.
+// The result is a little long though. See below for the compiled code of another example.
 
 let a = 123;
 dbgprint(a + 1000); // math

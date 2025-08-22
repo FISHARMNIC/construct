@@ -9,6 +9,7 @@
     -> think its pulling wrong overload in variant?
     -> maybe use templates and concepts to block implicit bool conversion in toString or something 
         -> not sure if thats the exact issue
+    -> !std::same_as<T, bool>
 @todo !IMPORTANT! get function binding doesnt work sometimes
 
 
