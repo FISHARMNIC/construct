@@ -6,7 +6,7 @@ dbgprint(a + 1000); // math
 
 let b = a;
 b = "Hello";
-b = [1,2,3]; // dynamic types
+b = [1, 2, 3]; // dynamic types
 
 function scale(me)
 {
@@ -44,4 +44,4 @@ while(z < 3)
 }
 
 // funky arrays
-dbgprint([1,"hi",["hello",true * false]]);
+dbgprint([1, "hi", ["hello", true * false]]);
