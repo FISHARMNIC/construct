@@ -5,6 +5,8 @@
     -> STRING ALREADY HAS 
     -> do general overload using spaceship that does valueOf (toNumber) -- confirm thats exactly how js does though
 
+@todo template hoisting
+
 @todo a
 Maybe hold of all function eval until call time so the dummywalk stuff isnt needed
     -> simplifies/can get rid of  throws etc

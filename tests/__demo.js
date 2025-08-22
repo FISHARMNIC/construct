@@ -1,6 +1,3 @@
-// NO IDEA WHY FAILS
-
-// @important issue is probably with identToBinding ugh
 let a = 123;
 let b = [1,2, a + 10];
 
