@@ -2,64 +2,40 @@
 ### Highly WIP
 ---
 ```JS
-// This code can be compiled by Construct!
+// !!!!BROKEN!!!!
 
 let a = 123;
-dbgprint(a + 1000); // math
+let b = [1,2, a + 10];
 
-let b = a;
-b = "Hello";
-b = [1, 2, 3]; // dynamic types
+dbgprint(b);
 
-function scale(me)
+let c = "hello!";
+c = 1000;
+
+function eek(bob)
 {
-    dbgprint(me * 10);
-
-    return me + " dollar(s)";
+    dbgprint(bob * 10);
 }
 
-// templated functions
-scale(a);           // a is a number    : 123 * 10 = 1230
-scale(b);           // b is a dynamic   :  [1,2,3] * 10 = NaN
-let q = scale([1]); // this is an array : [1] * 10 = 10
-dbgprint(q);
-
-// proper JS coercion
-dbgprint([8000] + " Hello!");
-dbgprint(("12360.7079633" - 12345) / [[["5.0"]]]);
-
-let v = 123
-
-// branching
-if((a / 100) < 1000)
+if(a > 100)
 {
-    dbgprint("yup");
-    v = "321";
-}
-else if("pie" < "apple")
-{
-    dbgprint("hmmm");
-    v = [321];
+    while(a < 130)
+    {
+        dbgprint(a);
+        a = a + 1;
+    }
+    c = a * 5;
+    dbgprint([10] * 10 + " chickens");
+    dbgprint(c);
+
+    eek(c);
+    eek(a);
+    eek("hi");
 }
 else
 {
-    dbgprint("nope");
-    v = false;
+    dbgprint(["whatttttt", 2, 3]);
 }
-
-// branch-dependent types
-dbgprint(v);
-
-// loops
-let z = 0;
-while(z < 3)
-{
-    dbgprint(z + " bottles");
-    z = z + 1;
-}
-
-// funky arrays
-dbgprint([1, "hi", ["hello", true * false]]);
 ```
 <br>
 <details>
@@ -80,30 +56,31 @@ js::dynamic v = static_cast<js::dynamic>(0);
 js::number z ;
 
 int main() {
-  a = (static_cast<js::number>(123));
-  std::cout << (a + static_cast<js::number>(1000)) << std::endl;
-  b = static_cast<js::dynamic>(a);
-  b = static_cast<js::dynamic>(js::string("Hello"));
-  b = static_cast<js::dynamic>(js::array<js::number>(
-      {(static_cast<js::number>(1)), (static_cast<js::number>(2)),
-       (static_cast<js::number>(3))}));
-  scale_version0__((a));
-  scale_version1__((b));
-  q = (scale_version2__(
-      (js::array<js::number>({(static_cast<js::number>(1))}))));
-  std::cout << q << std::endl;
-  std::cout << (js::array<js::number>({(static_cast<js::number>(8000))}) +
-                js::string(" Hello!"))
-            << std::endl;
-  std::cout << ((js::string("12360.7079633") - static_cast<js::number>(12345)) /
-                js::array<js::array<js::array<js::string>>>(
-                    {(js::array<js::array<js::string>>(
-                        {(js::array<js::string>({(js::string("5.0"))}))}))}))
-            << std::endl;
-  v = static_cast<js::dynamic>(static_cast<js::number>(123));
-  if ((((a / static_cast<js::number>(100)) < static_cast<js::number>(1000)))) {
-    std::cout << js::string("yup") << std::endl;
-    v = static_cast<js::dynamic>(js::string("321"));
+_js_init_();
+
+a = (static_cast<js::number>(123));
+std::cout << (a + static_cast<js::number>(1000)) << std::endl;
+b = static_cast<js::dynamic>(a);
+b = static_cast<js::dynamic>(js::string("Hello"));
+b = static_cast<js::dynamic>(js::array<js::number>(
+    {(static_cast<js::number>(1)), (static_cast<js::number>(2)),
+     (static_cast<js::number>(3))}));
+scale_version0__((a));
+scale_version1__((b));
+q = (scale_version2__((js::array<js::number>({(static_cast<js::number>(1))}))));
+std::cout << q << std::endl;
+std::cout << (js::array<js::number>({(static_cast<js::number>(8000))}) +
+              js::string(" Hello!"))
+          << std::endl;
+std::cout << ((js::string("12360.7079633") - static_cast<js::number>(12345)) /
+              js::array<js::array<js::array<js::string>>>(
+                  {(js::array<js::array<js::string>>(
+                      {(js::array<js::string>({(js::string("5.0"))}))}))}))
+          << std::endl;
+v = static_cast<js::dynamic>(static_cast<js::number>(123));
+if((((a/static_cast<js::number>(100))<static_cast<js::number>(1000)))) {
+  std::cout << js::string("yup") << std::endl;
+  v = static_cast<js::dynamic>(js::string("321"));
 }
 else if(((js::string("pie")<js::string("apple")))) {
   std::cout << js::string("hmmm") << std::endl;
@@ -125,7 +102,8 @@ std::cout << js::array<js::dynamic>(
                   static_cast<js::dynamic>(js::string("hi")),
                   static_cast<js::dynamic>(js::array<js::dynamic>(
                       {static_cast<js::dynamic>(js::string("hello")),
-                       static_cast<js::dynamic>((true * false))}))})
+                       static_cast<js::dynamic>((true * false)),
+                       static_cast<js::dynamic>(false)}))})
           << std::endl;
 return 0;
 }
