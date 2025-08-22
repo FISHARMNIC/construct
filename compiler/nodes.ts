@@ -439,7 +439,7 @@ export default {
         return stringTobuildInfo(`while(${castedComparisonStatement}) {\n${buildInfoToStr(body).join("\n")}\n}`);
     },
     IfStatement(node: ESTree.IfStatement): buildInfo {
-        const out: string = genIfBrach(node);
+        const out: string = genIfBranches(node);
         return stringTobuildInfo(out);
     },
     BooleanLiteral(node: ESTree.BooleanLiteral): buildInfo {
@@ -453,6 +453,11 @@ export default {
     }
 }
 
+// @todo move these to another file
+
+/**
+ * Walks an expression and casts to a boolean 
+ */
 function simpleComparisonBlock(comparison: ESTree.Expression): string {
     const test: buildInfo = walk_requireSingle(comparison);
     const castedComparisonStatement: string = cpp.cast.static(cpp.types.BOOLEAN, test.content, test.info.type);
@@ -460,7 +465,13 @@ function simpleComparisonBlock(comparison: ESTree.Expression): string {
     return castedComparisonStatement;
 }
 
-function genIfBrach(node: ESTree.Statement, build: string[] = [], isIfElse: boolean = false): string {
+/**
+ * Recursive helper for IfStatement that handles nested if/(if else)/else statements
+ * @param build used internally 
+ * @param isIfElse used internally
+ * @returns entire block of branch statements
+ */
+function genIfBranches(node: ESTree.Statement, build: string[] = [], isIfElse: boolean = false): string {
     
     if (ESTree.isIfStatement(node)) {
         let comp: string = simpleComparisonBlock(node.test);
@@ -469,7 +480,7 @@ function genIfBrach(node: ESTree.Statement, build: string[] = [], isIfElse: bool
         build.push(`${isIfElse ? "else " : ""}if(${comp}) {\n${buildInfoToStr(body).join("\n")}\n}`);
 
         if (node.alternate) {
-            genIfBrach(node.alternate, build, true);
+            genIfBranches(node.alternate, build, true);
         } 
     }
     else {
