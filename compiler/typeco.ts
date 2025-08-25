@@ -6,6 +6,16 @@ import { ctype } from './ctypes';
 const supportedOps = ['+','-','*','/'];
 const supportedComps = ['<','>','<=','>=','==','!='];
 
+function eitherIs(leftType: ctype, rightType: ctype, type: ctype | ((_: ctype) => boolean)): boolean
+{
+    if(typeof(type) === 'function')
+    {
+        return type(leftType) || type(rightType)
+    }
+
+    return leftType === type || rightType === type;
+}
+
 // @todo refactor all of the lazy if else
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype
 {
@@ -18,9 +28,16 @@ export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType
     }
     else if(!(supportedOps.includes(operator)))
     {
+        if(operator == '===' || operator == '!==')
+        {
+            ASTerr_kill(node, `@todo please use loose equality only.`);
+        }
+        else
+        {
         ASTerr_kill(node, `Unsupported operation "${operator}"`);
+        }
     }
-    else if(leftType === cpp.types.IFFY || rightType === cpp.types.IFFY)
+    else if(eitherIs(leftType, rightType, cpp.types.IFFY))
     {
         if(operator === '+')
         {
@@ -35,7 +52,7 @@ export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType
     {
         if(operator === '+')
         {
-            if((leftType === cpp.types.STRING) || (rightType === cpp.types.STRING))
+            if(eitherIs(leftType, rightType, cpp.types.STRING) || eitherIs(leftType, rightType, cpp.types.isArray))
             {
                 returnType = cpp.types.STRING;
             }

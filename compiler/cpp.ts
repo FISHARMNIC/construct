@@ -220,7 +220,7 @@ export const cpp = {
         // LATER: function () {
         //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later
         // },
-        isArray: (type: ctype) => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY,
+        isArray: (type: ctype): boolean => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY,
         arrayItemType: (node: ESTree.Node, type: ctype) => {
             if(!cpp.types.isArray(type))
             {
@@ -534,7 +534,7 @@ export const cpp = {
                 initializerItems.push(cpp.cast.staticBinfo(itemType, item));
             })
 
-            const initializerList: string = `{${initializerItems}}`;
+            const initializerList: string = `std::initializer_list<${itemType}>{${initializerItems}}`;
 
             const init: string = cpp.cast.static(arrayType, initializerList, cpp.types.AUTO);
 

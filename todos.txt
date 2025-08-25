@@ -1,3 +1,5 @@
+objects use dynamic array and hashmap with strings for different index types
+
 @todo !IMPORTANT! add comparison overloads --> think c++ already has >/</etc
     -> int, double, etc. have built in spaceship. 
     -> strong_ordering has auto bool cast
