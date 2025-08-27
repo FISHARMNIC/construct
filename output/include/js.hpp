@@ -55,6 +55,8 @@ namespace js
 
 #include "string2.hpp"
 
+#include "comparisonOverloads.hpp"
+
 void _js_init_();
 
 #endif // __JS_H__
