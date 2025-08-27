@@ -258,6 +258,31 @@ export default {
         };
     },
 
+    UnaryExpression(node: ESTree.UnaryExpression): buildInfo {
+        const operator = node.operator;
+
+        if(operator === '-')
+        {
+            const toNeg: buildInfo = walk_requireSingle(node.argument);
+            toNeg.content = `-(${toNeg.content})`;
+            
+            const casted: string = cpp.cast.staticBinfo(cpp.types.NUMBER, toNeg);
+
+            return {
+                content: casted,
+                info: {
+                    type: cpp.types.NUMBER
+                }
+            };
+        }
+        else
+        {
+            // + does to string i think. Some other ones maybe too
+            ASTerr_kill(node, `@todo unary operator "${operator}" not implemented`);
+        }
+            
+    },
+
     CallExpression(expression: ESTree.CallExpression): buildInfo {
         if (ESTree.isV8IntrinsicIdentifier(expression.callee)) {
             ASTerr_kill(expression, "Unable to handle callee of type V8IntrinsicIdentifier");
