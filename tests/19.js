@@ -38,6 +38,8 @@ if(false > -1)
 // need to implement String vs .toString
 // console log has space, normally no space though
 // also should be 1,2 not [1, 2]
+
+// issue is operator== only does toNumber not toString first check rules
 if([1, 2] == "[1, 2]")
 {
     dbgprint(5);

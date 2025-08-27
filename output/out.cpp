@@ -22,6 +22,9 @@ if(((js::string("5")<static_cast<js::number>(10)))) {
 if(((false>(-(static_cast<js::number>(1)))))) {
   std::cout << static_cast<js::number>(4) << std::endl;
 }
+std::cout << js::array<js::number>(std::initializer_list<js::number>{
+                 (static_cast<js::number>(1)), (static_cast<js::number>(2))})
+          << std::endl;
 if(((js::array<js::number>(std::initializer_list<js::number>{(static_cast<js::number>(1)),(static_cast<js::number>(2))})==js::string("[1, 2]")))) {
   std::cout << static_cast<js::number>(5) << std::endl;
 }
