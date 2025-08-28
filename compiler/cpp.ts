@@ -216,6 +216,7 @@ export const cpp = {
         IFFY: "js::dynamic",
         AUTO: "auto", // only to be used by functions
         BOOLEAN: "js::boolean",
+        OBJECT: "js::object",
         // @todo null literals
         // LATER: function () {
         //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later

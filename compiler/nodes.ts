@@ -265,7 +265,7 @@ export default {
         {
             const toNeg: buildInfo = walk_requireSingle(node.argument);
             toNeg.content = `-(${toNeg.content})`;
-            
+
             const casted: string = cpp.cast.staticBinfo(cpp.types.NUMBER, toNeg);
 
             return {
@@ -474,6 +474,34 @@ export default {
             info:
             {
                 type: cpp.types.BOOLEAN
+            }
+        };
+    },
+
+    ObjectExpression(node: ESTree.ObjectExpression): buildInfo {
+        const properties: {key: buildInfo, value: buildInfo}[] = node.properties.map((value: ESTree.ObjectMethod | ESTree.ObjectProperty | ESTree.SpreadElement) => {
+            if(!ESTree.isObjectProperty(value))
+            {
+                ASTerr_kill(node, `@todo "${value.type}" type not implemented in objects yet`);
+            }
+            else
+            {
+                return {
+                    key: ESTree.isIdentifier(value.key) ? stringTobuildInfo(`"${value.key.name}"`, cpp.types.STRING) :  walk_requireSingle(value.key),
+                    value: walk_requireSingle(value.value)
+                };
+            }
+        });
+
+        const pairs: string[] = properties.map(el => {
+            return `Object::pairType({${cpp.cast.staticBinfo(cpp.types.STRING, el.key)}, ${cpp.cast.staticBinfo(cpp.types.IFFY, el.value)}})`
+        })
+
+        const startingValue: string = cpp.cast.static(cpp.types.OBJECT, `Object::initListType({${pairs.join(", ")}})`, cpp.types.AUTO);
+        return {
+            content: startingValue,
+            info: {
+                type: cpp.types.OBJECT
             }
         };
     }

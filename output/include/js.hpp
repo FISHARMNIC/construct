@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <inttypes.h>
+#include <utility>
 
 struct Dynamic;
 
@@ -56,6 +57,15 @@ namespace js
 #include "string2.hpp"
 
 #include "comparisonOverloads.hpp"
+
+#include "prototype.hpp"
+
+#include "object.hpp"
+
+namespace js
+{
+    typedef Object object;
+}
 
 void _js_init_();
 

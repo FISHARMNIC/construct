@@ -1,4 +1,11 @@
 objects use dynamic array and hashmap with strings for different index types
+    -> should be prototype based
+    -> implement Prototype class with virtual functions that are overwritten by subclasses
+    -> each object is a child of Prototype
+    -> array should do it too
+    -> NO ARRAY -> CONVERT INDEXING TO STRING
+
+@todo dynamic should include a function type
 
 @todo use === instead of == in ts compiler side
 
