@@ -1,7 +1,7 @@
 {
     "type": "File",
     "start": 0,
-    "end": 38,
+    "end": 167,
     "loc": {
         "start": {
             "line": 1,
@@ -9,20 +9,20 @@
             "index": 0
         },
         "end": {
-            "line": 4,
-            "column": 2,
-            "index": 38
+            "line": 9,
+            "column": 0,
+            "index": 167
         }
     },
     "range": [
         0,
-        38
+        167
     ],
     "errors": [],
     "program": {
         "type": "Program",
         "start": 0,
-        "end": 38,
+        "end": 167,
         "loc": {
             "start": {
                 "line": 1,
@@ -30,14 +30,14 @@
                 "index": 0
             },
             "end": {
-                "line": 4,
-                "column": 2,
-                "index": 38
+                "line": 9,
+                "column": 0,
+                "index": 167
             }
         },
         "range": [
             0,
-            38
+            167
         ],
         "sourceType": "module",
         "interpreter": null,
@@ -280,7 +280,324 @@
                         }
                     }
                 ],
-                "kind": "let"
+                "kind": "let",
+                "trailingComments": [
+                    {
+                        "type": "CommentLine",
+                        "value": " why is bob being marked as Set(2) { 'js::object', 'js::array<js::number>' } and not just obj??",
+                        "start": 40,
+                        "end": 137,
+                        "loc": {
+                            "start": {
+                                "line": 6,
+                                "column": 0,
+                                "index": 40
+                            },
+                            "end": {
+                                "line": 6,
+                                "column": 97,
+                                "index": 137
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "ExpressionStatement",
+                "start": 138,
+                "end": 153,
+                "loc": {
+                    "start": {
+                        "line": 7,
+                        "column": 0,
+                        "index": 138
+                    },
+                    "end": {
+                        "line": 7,
+                        "column": 15,
+                        "index": 153
+                    }
+                },
+                "range": [
+                    138,
+                    153
+                ],
+                "expression": {
+                    "type": "AssignmentExpression",
+                    "start": 138,
+                    "end": 152,
+                    "loc": {
+                        "start": {
+                            "line": 7,
+                            "column": 0,
+                            "index": 138
+                        },
+                        "end": {
+                            "line": 7,
+                            "column": 14,
+                            "index": 152
+                        }
+                    },
+                    "range": [
+                        138,
+                        152
+                    ],
+                    "operator": "=",
+                    "left": {
+                        "type": "MemberExpression",
+                        "start": 138,
+                        "end": 146,
+                        "loc": {
+                            "start": {
+                                "line": 7,
+                                "column": 0,
+                                "index": 138
+                            },
+                            "end": {
+                                "line": 7,
+                                "column": 8,
+                                "index": 146
+                            }
+                        },
+                        "range": [
+                            138,
+                            146
+                        ],
+                        "object": {
+                            "type": "Identifier",
+                            "start": 138,
+                            "end": 141,
+                            "loc": {
+                                "start": {
+                                    "line": 7,
+                                    "column": 0,
+                                    "index": 138
+                                },
+                                "end": {
+                                    "line": 7,
+                                    "column": 3,
+                                    "index": 141
+                                },
+                                "identifierName": "bob"
+                            },
+                            "range": [
+                                138,
+                                141
+                            ],
+                            "name": "bob"
+                        },
+                        "computed": true,
+                        "property": {
+                            "type": "StringLiteral",
+                            "start": 142,
+                            "end": 145,
+                            "loc": {
+                                "start": {
+                                    "line": 7,
+                                    "column": 4,
+                                    "index": 142
+                                },
+                                "end": {
+                                    "line": 7,
+                                    "column": 7,
+                                    "index": 145
+                                }
+                            },
+                            "range": [
+                                142,
+                                145
+                            ],
+                            "extra": {
+                                "rawValue": "a",
+                                "raw": "'a'"
+                            },
+                            "value": "a"
+                        }
+                    },
+                    "right": {
+                        "type": "NumericLiteral",
+                        "start": 149,
+                        "end": 152,
+                        "loc": {
+                            "start": {
+                                "line": 7,
+                                "column": 11,
+                                "index": 149
+                            },
+                            "end": {
+                                "line": 7,
+                                "column": 14,
+                                "index": 152
+                            }
+                        },
+                        "range": [
+                            149,
+                            152
+                        ],
+                        "extra": {
+                            "rawValue": 765,
+                            "raw": "765"
+                        },
+                        "value": 765
+                    }
+                },
+                "leadingComments": [
+                    {
+                        "type": "CommentLine",
+                        "value": " why is bob being marked as Set(2) { 'js::object', 'js::array<js::number>' } and not just obj??",
+                        "start": 40,
+                        "end": 137,
+                        "loc": {
+                            "start": {
+                                "line": 6,
+                                "column": 0,
+                                "index": 40
+                            },
+                            "end": {
+                                "line": 6,
+                                "column": 97,
+                                "index": 137
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "ExpressionStatement",
+                "start": 154,
+                "end": 166,
+                "loc": {
+                    "start": {
+                        "line": 8,
+                        "column": 0,
+                        "index": 154
+                    },
+                    "end": {
+                        "line": 8,
+                        "column": 12,
+                        "index": 166
+                    }
+                },
+                "range": [
+                    154,
+                    166
+                ],
+                "expression": {
+                    "type": "AssignmentExpression",
+                    "start": 154,
+                    "end": 165,
+                    "loc": {
+                        "start": {
+                            "line": 8,
+                            "column": 0,
+                            "index": 154
+                        },
+                        "end": {
+                            "line": 8,
+                            "column": 11,
+                            "index": 165
+                        }
+                    },
+                    "range": [
+                        154,
+                        165
+                    ],
+                    "operator": "=",
+                    "left": {
+                        "type": "MemberExpression",
+                        "start": 154,
+                        "end": 159,
+                        "loc": {
+                            "start": {
+                                "line": 8,
+                                "column": 0,
+                                "index": 154
+                            },
+                            "end": {
+                                "line": 8,
+                                "column": 5,
+                                "index": 159
+                            }
+                        },
+                        "range": [
+                            154,
+                            159
+                        ],
+                        "object": {
+                            "type": "Identifier",
+                            "start": 154,
+                            "end": 157,
+                            "loc": {
+                                "start": {
+                                    "line": 8,
+                                    "column": 0,
+                                    "index": 154
+                                },
+                                "end": {
+                                    "line": 8,
+                                    "column": 3,
+                                    "index": 157
+                                },
+                                "identifierName": "bob"
+                            },
+                            "range": [
+                                154,
+                                157
+                            ],
+                            "name": "bob"
+                        },
+                        "computed": false,
+                        "property": {
+                            "type": "Identifier",
+                            "start": 158,
+                            "end": 159,
+                            "loc": {
+                                "start": {
+                                    "line": 8,
+                                    "column": 4,
+                                    "index": 158
+                                },
+                                "end": {
+                                    "line": 8,
+                                    "column": 5,
+                                    "index": 159
+                                },
+                                "identifierName": "b"
+                            },
+                            "range": [
+                                158,
+                                159
+                            ],
+                            "name": "b"
+                        }
+                    },
+                    "right": {
+                        "type": "NumericLiteral",
+                        "start": 162,
+                        "end": 165,
+                        "loc": {
+                            "start": {
+                                "line": 8,
+                                "column": 8,
+                                "index": 162
+                            },
+                            "end": {
+                                "line": 8,
+                                "column": 11,
+                                "index": 165
+                            }
+                        },
+                        "range": [
+                            162,
+                            165
+                        ],
+                        "extra": {
+                            "rawValue": 999,
+                            "raw": "999"
+                        },
+                        "value": 999
+                    }
+                }
             }
         ],
         "directives": [],
@@ -288,5 +605,24 @@
             "topLevelAwait": false
         }
     },
-    "comments": []
+    "comments": [
+        {
+            "type": "CommentLine",
+            "value": " why is bob being marked as Set(2) { 'js::object', 'js::array<js::number>' } and not just obj??",
+            "start": 40,
+            "end": 137,
+            "loc": {
+                "start": {
+                    "line": 6,
+                    "column": 0,
+                    "index": 40
+                },
+                "end": {
+                    "line": 6,
+                    "column": 97,
+                    "index": 137
+                }
+            }
+        }
+    ]
 }

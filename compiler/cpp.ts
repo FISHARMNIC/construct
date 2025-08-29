@@ -223,13 +223,20 @@ export const cpp = {
         // },
         isArray: (type: ctype): boolean => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY,
         arrayItemType: (node: ESTree.Node, type: ctype) => {
-            if(!cpp.types.isArray(type))
+            if(cpp.types.isArray(type))
             {
                 // @todo strings etc
-                ASTerr_kill(node, `@todo value is not an arrayLike. Got ${type}`);
+                return(type.slice(cpp.types.__RAW_ARRAY.length + 1, type.length - 1));
             }
-
-            return(type.slice(cpp.types.__RAW_ARRAY.length + 1, type.length - 1));
+            else if(type === cpp.types.OBJECT)
+            {
+                return cpp.types.IFFY;
+            }
+            else
+            {
+                // console.log(cpp.variables.all())
+                ASTerr_kill(node, `@todo item "${(node as {name: string}).name ?? "[NO NAME]"}" is not an arrayLike. Got "${type}"`);
+            }
         }
     },
     cast:
@@ -518,6 +525,10 @@ export const cpp = {
             const initializerItems: string[] = [];
 
             // See 14.js 
+
+            // console.log("INSTANCE");
+            // err();
+
             values.forEach((item: buildInfo, i) => {
                 const unparsedItem = unparsed[i];
 
@@ -549,10 +560,12 @@ export const cpp = {
         },
         modify(node: ESTree.Identifier, base: CVariable, index: buildInfo, value: buildInfo): buildInfo {
             const valueType: ctype = value.info.type;
-            addType(base, cpp.types.ARRAY(valueType));
 
-            // console.log(value)
-            // process.exit(2)
+            // @todo maybe remove these two lines
+            if(getType(base) !== cpp.types.OBJECT)
+            {
+                addType(base, cpp.types.ARRAY(valueType));
+            }
 
             const arrayType = getType(base);
 

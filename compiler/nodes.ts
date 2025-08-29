@@ -149,9 +149,20 @@ export default {
         const left = node.left;
         const rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
 
+        // @todo maybe just use walk and add memberExpression
+        // @todo nested too yeah this needs export
         if (ESTree.isMemberExpression(left)) { // a[X] or a.X
             if (!left.computed) {
-                ASTerr_kill(left, `@todo dot property access not implemented`);
+                if(!ESTree.isIdentifier(left.property))
+                {
+                    ASTerr_kill(node, `@todo member is not identifier`);
+                }
+
+                ASTerr_kill(node, `@todo KILL, see notes`);
+
+                // const propName: string = left.property.name;
+
+                // const set: string = `${lef}`
             }
             else if (!ESTree.isIdentifier(left.object)) {
                 // @todo just need to walk

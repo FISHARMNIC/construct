@@ -13,5 +13,6 @@ bob = (static_cast<js::object>(Object::initListType(
          {("a"), static_cast<js::dynamic>(static_cast<js::number>(123))}),
      Object::pairType(
          {("b"), static_cast<js::dynamic>(static_cast<js::number>(456))})})));
+bob[js::string("a")] = static_cast<js::dynamic>(static_cast<js::number>(765));
 return 0;
 }
