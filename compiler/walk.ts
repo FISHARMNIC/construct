@@ -19,7 +19,8 @@ interface nodeInfo {
   left?: buildInfo,         // info about what is on the left (not always provided)
   right?: buildInfo         // "
   returningData?: string, // used only for return analysis
-  operator?: string
+  operator?: string,
+  baseIndexPair?: {base: buildInfo, index: buildInfo},     // used in member expressions to set instead of get
   // isList?: boolean,
 }
 
@@ -177,6 +178,18 @@ export function walk_requireSingle(node: ESTree.Node, err: string = "Expected si
   }
 
   return bInfo[0];
+}
+
+export function walk_requireSingleOrGetIdString(node: ESTree.Node): buildInfo
+{
+  if(ESTree.isIdentifier(node))
+  {
+    return stringTobuildInfo(`"${node.name}"`, cpp.types.STRING);
+  }
+  else
+  {
+    return walk_requireSingle(node);
+  }
 }
 
 /**

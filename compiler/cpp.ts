@@ -136,12 +136,10 @@ export function fnIdent2binding(fnID: ESTree.Identifier): ESTree.Identifier | un
         for (const variable of scope.variables) {
             for (const def of variable.defs) {
                 if (def.type === "FunctionName" && def.node.type === "FunctionDeclaration") {
-                                    console.log("::::::::", def.name)
+                    console.log("::::::::", def.name)
                     for (const ref of variable.scope.references) {
-                        if (ref.identifier === fnID && fnID.name === def.node.id.name)
-                        {
-                            if(foundMatch)
-                            {
+                        if (ref.identifier === fnID && fnID.name === def.node.id.name) {
+                            if (foundMatch) {
                                 // if thise ever happens its becuase this function is garbage
                                 ASTerr_kill(fnID, `[INTERNAL] Function "${fnID.name}" has at least two possible matches.\nMatch names are: "${foundMatch.name}" and "${def.node.id.name}"`);
                             }
@@ -222,20 +220,18 @@ export const cpp = {
         //     return `__TYPE_${new_unique()}__` // @todo use macros to replace later
         // },
         isArray: (type: ctype): boolean => type.slice(0, cpp.types.__RAW_ARRAY.length) === cpp.types.__RAW_ARRAY,
+        // @todo get rid of this use arrays.itemType
         arrayItemType: (node: ESTree.Node, type: ctype) => {
-            if(cpp.types.isArray(type))
-            {
+            if (cpp.types.isArray(type)) {
                 // @todo strings etc
-                return(type.slice(cpp.types.__RAW_ARRAY.length + 1, type.length - 1));
+                return (type.slice(cpp.types.__RAW_ARRAY.length + 1, type.length - 1));
             }
-            else if(type === cpp.types.OBJECT)
-            {
+            else if (type === cpp.types.OBJECT) {
                 return cpp.types.IFFY;
             }
-            else
-            {
+            else {
                 // console.log(cpp.variables.all())
-                ASTerr_kill(node, `@todo item "${(node as {name: string}).name ?? "[NO NAME]"}" is not an arrayLike. Got "${type}"`);
+                ASTerr_kill(node, `@todo item "${(node as { name: string }).name ?? "[NO NAME]"}" is not an arrayLike. Got "${type}"`);
             }
         }
     },
@@ -499,21 +495,32 @@ export const cpp = {
     },
     array:
     {
-        itemType(arr: CVariable): ctype {
-            const t = getType(arr);
+        itemType_raw(t: ctype): ctype {
             if (cpp.types.isArray(t)) {
                 return t.slice(t.indexOf("<") + 1, t.lastIndexOf(">"));
             }
-            else if(getType(arr) === cpp.types.IFFY)
-            {
+            else if (t === cpp.types.IFFY || t === cpp.types.OBJECT) {
                 return cpp.types.IFFY;
             }
-            else if(getType(arr) == cpp.types.STRING)
-            {
+            else if (t === cpp.types.STRING) {
                 return cpp.types.STRING;
             }
-            else
-            {
+            else {
+                err(`[INTERNAL] value is not an arrayLike`, t);
+            }
+        },
+        itemType(arr: CVariable): ctype {
+            const t = getType(arr);
+             if (cpp.types.isArray(t)) {
+                return t.slice(t.indexOf("<") + 1, t.lastIndexOf(">"));
+            }
+            else if (getType(arr) === cpp.types.IFFY || getType(arr) === cpp.types.OBJECT) {
+                return cpp.types.IFFY;
+            }
+            else if (getType(arr) == cpp.types.STRING) {
+                return cpp.types.STRING;
+            }
+            else {
                 err(`[INTERNAL] value is not an arrayLike`, String(arr.possibleTypes));
             }
         },
@@ -532,11 +539,9 @@ export const cpp = {
             values.forEach((item: buildInfo, i) => {
                 const unparsedItem = unparsed[i];
 
-                if(unparsedItem && ESTree.isIdentifier(unparsedItem))
-                {
+                if (unparsedItem && ESTree.isIdentifier(unparsedItem)) {
                     const cvar = cpp.variables.getSafe(unparsedItem);
-                    if(itemType == cpp.types.IFFY && cpp.types.isArray(getType(cvar)))
-                    {
+                    if (itemType == cpp.types.IFFY && cpp.types.isArray(getType(cvar))) {
                         addType(cvar, cpp.types.ARRAY(cpp.types.IFFY));
                         // console.log(cvar.possibleTypes);
                         // process.exit(1);
@@ -562,8 +567,7 @@ export const cpp = {
             const valueType: ctype = value.info.type;
 
             // @todo maybe remove these two lines
-            if(getType(base) !== cpp.types.OBJECT)
-            {
+            if (getType(base) !== cpp.types.OBJECT) {
                 addType(base, cpp.types.ARRAY(valueType));
             }
 

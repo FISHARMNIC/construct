@@ -1,3 +1,10 @@
+arrays might need to be marked as fully dynamic
+-> static type resolution for nested arrays is impossible basically with references
+-> maybe not
+-> idents arent carried have something like (bob)[10]
+    -> maybe need to add binding or something to a buildinfo
+    -> genuinily might just need to mark arrays as dynamic half the time
+
 objects use dynamic array and hashmap with strings for different index types
     -> should be prototype based
     -> implement Prototype class with virtual functions that are overwritten by subclasses
@@ -5,7 +12,12 @@ objects use dynamic array and hashmap with strings for different index types
     -> array should do it too
     -> NO ARRAY -> CONVERT INDEXING TO STRING
 
+
+
+
 @todo dynamic should include a function type
+
+@todo nested objects will work once obj added to dynamic
 
 @todo use === instead of == in ts compiler side
 

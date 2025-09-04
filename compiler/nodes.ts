@@ -7,12 +7,12 @@ Each node is automatically called by walk, and is expected to return a buildInfo
 */
 
 import * as ESTree from '@babel/types';
-import { ASTerr_kill, ASTerr_throw } from './ASTerr';
-import { buildInfo, buildInfoToStr, stringTobuildInfo, walk_requireSingle, walkInlineOrBody } from './walk';
+import { ASTerr_kill, ASTerr_throw, err } from './ASTerr';
+import { buildInfo, buildInfoToStr, stringTobuildInfo, walk_requireSingle, walk_requireSingleOrGetIdString, walkInlineOrBody } from './walk';
 import { cpp, fnIdent2binding, tempStack } from './cpp';
 import { coerce } from './typeco';
 import { evaluateAllFunctions, evaluateAndCallTemplateFunction, unevaledFuncs } from './funcs';
-import { CFunction, CTemplateFunction, ctype, getType } from './ctypes';
+import { CFunction, CTemplateFunction, getType } from './ctypes';
 import { TypeList_t } from './iffy';
 
 /**
@@ -113,48 +113,116 @@ export default {
         }
     },
 
+    // @todo update this
     MemberExpression(node: ESTree.MemberExpression): buildInfo {
 
         // err(`@todo MemberExpression needs to be reworked`);
 
-        // @todo !HERE! !IMPORTANT! just evaluate the binding from there and dont need to store any of that
-        if (!node.computed) {
-            ASTerr_kill(node, `@todo dot property access not implemented`);
-        }
-        else if (!ESTree.isIdentifier(node.object)) {
-            // just need to walk
-            ASTerr_kill(node.object, `@todo complex base type not supported yet`);
-        }
-        else {
-            const base: ESTree.Identifier = node.object as ESTree.Identifier;
-            const index: buildInfo = walk_requireSingle(node.property);
+        const index: buildInfo = walk_requireSingleOrGetIdString(node.property);
+        const base: buildInfo = walk_requireSingle(node.object);
+        const gottenType = cpp.array.itemType_raw(base.info.type);
 
-            // @todo note i dont know how its going to work with prototype etc
-            // @todo eventually all methods will have to be implemented as a part of the class
-
-            const existingVar = cpp.variables.getSafe(base);
-
-            const type: ctype = cpp.array.itemType(existingVar);
-
-            return {
-                content: `${existingVar.name}[${index.content}]`,
-                info: {
-                    type
+        const content: string = `(${base.content})[${cpp.cast.staticBinfo(cpp.types.STRING, index)}]`;
+        return {
+            content,
+            info: {
+                type: gottenType,
+                baseIndexPair: {
+                    base, index
                 }
+                // add binding here
             }
-        }
+        };
+
+        // // @todo !HERE! !IMPORTANT! just evaluate the binding from there and dont need to store any of that
+        // if (!node.computed) {
+        //     ASTerr_kill(node, `@todo dot property access not implemented`);
+        // }
+        // else if (!ESTree.isIdentifier(node.object)) {
+        //     // just need to walk
+        //     ASTerr_kill(node.object, `@todo complex base type not supported yet`);
+        // }
+        // else {
+        //     const base: ESTree.Identifier = node.object as ESTree.Identifier;
+        //     const index: buildInfo = walk_requireSingle(node.property);
+
+        //     // @todo note i dont know how its going to work with prototype etc
+        //     // @todo eventually all methods will have to be implemented as a part of the class
+
+        //     const existingVar = cpp.variables.getSafe(base);
+
+        //     const type: ctype = cpp.array.itemType(existingVar);
+
+        //     return {
+        //         content: `${existingVar.name}[${index.content}]`,
+        //         info: {
+        //             type
+        //         }
+        //     }
+        // }
     },
 
     AssignmentExpression(node: ESTree.AssignmentExpression): buildInfo {
+        const left: buildInfo = walk_requireSingle(node.left);
+        const right: buildInfo = walk_requireSingle(node.right);
+
+        console.log(left, right);
+        process.exit();
+        // @ todo 
+
+        if (left.info.type === cpp.types.OBJECT) {
+            if ("baseIndexPair" in left.info) // member operator @todo make sure this works properly with nested??
+            {
+                const pair: { base: buildInfo, index: buildInfo } = left.info.baseIndexPair!;
+                left.content = `${pair.base}.set(${pair.index}, ${cpp.cast.staticBinfo(cpp.types.IFFY, right)})`;
+            }
+            return stringTobuildInfo(left.content, cpp.types.OBJECT);
+        }
+        else if (cpp.types.isArray(left.info.type)) {
+            err("@todo arrays kill");
+            // @todo array
+            // if(ESTree.isIdentifier(node.left))
+            // {
+            //     const itemType = cpp.array.itemType_raw(left.info.type);
+            //     if("baseIndexPair" in left.info)
+            //     {
+            //                     const existingVar = cpp.variables.getSafe(node.left);
+            //                     const pair: {base: buildInfo, index: buildInfo} = left.info.baseIndexPair!;
+            // return cpp.array.modify(node.left, existingVar, left.info.baseIndexPair?.index, right);
+            //     }
+            // }
+
+            // cpp.array.modify(base, existingVar, index, rval);
+        }
+        else if (ESTree.isIdentifier(node.left)) {
+
+            const existingVar = cpp.variables.getSafe(node.left);
+
+            const reassignment: string = cpp.variables.reassign(node.left, existingVar, right);
+
+            return {
+                content: reassignment,
+                info: {
+                    type: getType(existingVar),
+                }
+            };
+        }
+        else
+        {
+            ASTerr_kill(node, `@todo unsure how to set item of type "${node.left.type}"`);
+        }
+    },
+
+    AssignmentExpression__old(node: ESTree.AssignmentExpression): buildInfo {
         const left = node.left;
         const rval = walk_requireSingle(node.right, "Assigning multiple values to a variable");
+
 
         // @todo maybe just use walk and add memberExpression
         // @todo nested too yeah this needs export
         if (ESTree.isMemberExpression(left)) { // a[X] or a.X
             if (!left.computed) {
-                if(!ESTree.isIdentifier(left.property))
-                {
+                if (!ESTree.isIdentifier(left.property)) {
                     ASTerr_kill(node, `@todo member is not identifier`);
                 }
 
@@ -272,8 +340,7 @@ export default {
     UnaryExpression(node: ESTree.UnaryExpression): buildInfo {
         const operator = node.operator;
 
-        if(operator === '-')
-        {
+        if (operator === '-') {
             const toNeg: buildInfo = walk_requireSingle(node.argument);
             toNeg.content = `-(${toNeg.content})`;
 
@@ -286,12 +353,11 @@ export default {
                 }
             };
         }
-        else
-        {
+        else {
             // + does to string i think. Some other ones maybe too
             ASTerr_kill(node, `@todo unary operator "${operator}" not implemented`);
         }
-            
+
     },
 
     CallExpression(expression: ESTree.CallExpression): buildInfo {
@@ -490,15 +556,13 @@ export default {
     },
 
     ObjectExpression(node: ESTree.ObjectExpression): buildInfo {
-        const properties: {key: buildInfo, value: buildInfo}[] = node.properties.map((value: ESTree.ObjectMethod | ESTree.ObjectProperty | ESTree.SpreadElement) => {
-            if(!ESTree.isObjectProperty(value))
-            {
+        const properties: { key: buildInfo, value: buildInfo }[] = node.properties.map((value: ESTree.ObjectMethod | ESTree.ObjectProperty | ESTree.SpreadElement) => {
+            if (!ESTree.isObjectProperty(value)) {
                 ASTerr_kill(node, `@todo "${value.type}" type not implemented in objects yet`);
             }
-            else
-            {
+            else {
                 return {
-                    key: ESTree.isIdentifier(value.key) ? stringTobuildInfo(`"${value.key.name}"`, cpp.types.STRING) :  walk_requireSingle(value.key),
+                    key: ESTree.isIdentifier(value.key) ? stringTobuildInfo(`"${value.key.name}"`, cpp.types.STRING) : walk_requireSingle(value.key),
                     value: walk_requireSingle(value.value)
                 };
             }
@@ -537,7 +601,7 @@ function simpleComparisonBlock(comparison: ESTree.Expression): string {
  * @returns entire block of branch statements
  */
 function genIfBranches(node: ESTree.Statement, build: string[] = [], isIfElse: boolean = false): string {
-    
+
     if (ESTree.isIfStatement(node)) {
         const comp: string = simpleComparisonBlock(node.test);
 
@@ -546,7 +610,7 @@ function genIfBranches(node: ESTree.Statement, build: string[] = [], isIfElse: b
 
         if (node.alternate) {
             genIfBranches(node.alternate, build, true);
-        } 
+        }
     }
     else {
         const body = walkInlineOrBody(node);
