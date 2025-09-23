@@ -1,9 +1,10 @@
 arrays might need to be marked as fully dynamic
 -> static type resolution for nested arrays is impossible basically with references
 -> maybe not
--> idents arent carried have something like (bob)[10]
+-> idents arent carried if have something like (bob)[10]
     -> maybe need to add binding or something to a buildinfo
     -> genuinily might just need to mark arrays as dynamic half the time
+    -> Just maybe use the JS classes like Uint8Array as markings
 
 objects use dynamic array and hashmap with strings for different index types
     -> should be prototype based
