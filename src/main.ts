@@ -26,18 +26,18 @@ import { cleanAll, cleanup } from './cleanup';
 const pre = `
 // Compiled with Construct 
 
-#include "include/js.hpp"
+#include "../runtime/include/js.hpp"
 `
 
 const OUTFILE = __dirname + "/../output/out.cpp";
-const FIXFILE = __dirname + "/../output/sh/fix.sh";
+const FIXFILE = __dirname + "/../runtime/sh/fix.sh";
 
 const DEFAULT_FILE = '9.js';
 
 const INPUTFILE = __dirname + `/../tests/${process.argv[2] ?? DEFAULT_FILE}`;
 
 export const ast = parseAST(INPUTFILE);
-export const eslintScope = analyze(ast, { ecmaVersion: 2020 });
+export const eslintScope: any = analyze(ast.program as never, { ecmaVersion: 2020 });
 export let fixxes: { pre: string[], post: buildInfo[] } = {
     pre: [],
     post: []
@@ -85,7 +85,7 @@ function begin(justWalk: boolean = false): void {
     cleanAll();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-expect-error
+    /// @ts-ignore
     console.log(chalk.green(`|| (construct) JS => Cpp\n|| Compiling: "${INPUTFILE}"`));
 
     // Walk the body of the program
@@ -158,12 +158,12 @@ function begin(justWalk: boolean = false): void {
         fs.writeFileSync(OUTFILE, ostr, 'utf-8');
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        /// @ts-expect-error
+        /// @ts-ignore
         console.log(chalk.green("|| DONE\n|| (g++) Cpp => Bin"));
 
         exec(FIXFILE, (e, stdout, stderr) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            /// @ts-expect-error
+            /// @ts-ignore
             console.log(chalk.green(`|| DONE\n|| Output in ${__dirname + "/../output/bin/a.out"}\n`));
 
             if (e) {
@@ -176,7 +176,7 @@ function begin(justWalk: boolean = false): void {
             }
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            /// @ts-expect-error
+            /// @ts-ignore
             console.log(chalk.green("(Ignore the errors above!)"));
         });
 

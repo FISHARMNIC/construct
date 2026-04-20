@@ -1,5 +1,3 @@
-import * as ESTree from '@babel/types';
-
 export {};
 
 declare global {
@@ -8,6 +6,6 @@ declare global {
     }
 
     interface Map<K, V> {
-            add(key: ESTree.Identifier, to: string, value: V): void;
+        add(key: any, to: string, value: V): void;
     }
 }

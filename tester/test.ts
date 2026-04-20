@@ -4,8 +4,8 @@ import { execSync } from 'child_process';
 import chalk from 'chalk';
 
 const testingDir = __dirname + '/../tests';
-const main = 'tsx ' + __dirname + '/../compiler/main.ts ';
-const runBin = __dirname + '/../output/sh/run.sh';
+const main = 'tsx ' + __dirname + '/../src/main.ts ';
+const runBin = __dirname + '/../runtime/sh/run.sh';
 
 const startOffset: string | undefined = process.argv[2];
 let ready: boolean = startOffset == undefined;

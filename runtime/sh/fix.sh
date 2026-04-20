@@ -20,8 +20,8 @@ COMPFLAGS=(
 )
 
 # sometimes it doesn't work fully the first time
-clang-tidy "${CTIDYFLAGS[@]}" "$D/../out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
-clang-tidy "${CTIDYFLAGS[@]}" "$D/../out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
+clang-tidy "${CTIDYFLAGS[@]}" "$D/../../output/out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
+clang-tidy "${CTIDYFLAGS[@]}" "$D/../../output/out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
 
 echo "RUNNING COMPILER" 
 "$D/comp.sh"

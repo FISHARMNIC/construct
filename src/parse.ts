@@ -16,6 +16,6 @@ export default function parseAST(fileDir: string): ParseResult<ESTree.File> {
         ranges: true,    
         // tokens: true
     });
-    fs.writeFileSync('AST.json', JSON.stringify(ast, null, 4));
+    fs.writeFileSync(__dirname + '/../output/AST.json', JSON.stringify(ast, null, 4));
     return ast;
 }

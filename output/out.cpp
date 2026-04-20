@@ -1,7 +1,7 @@
 
 // Compiled with Construct 
 
-#include "include/js.hpp"
+#include "../runtime/include/js.hpp"
 js::number bob();
 js::number a ;
 js::number q ;
