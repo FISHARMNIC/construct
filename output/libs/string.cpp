@@ -14,10 +14,8 @@ double stod_noexep(const std::string& s) {
         {
             return std::numeric_limits<double>::quiet_NaN();
         }
-        else
-        {
-            return converted;
-        }
+
+        return converted;
 }
 
 // js::string operator+(NUM_STR)

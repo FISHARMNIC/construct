@@ -15,6 +15,6 @@ std::cout << q << std::endl;
 return 0;
 }
 js::number bob(){
-js::number c = (a);
-return c;
+  js::number c = a;
+  return c;
 }

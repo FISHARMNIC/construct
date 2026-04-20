@@ -62,14 +62,13 @@ T &Array<T>::operator[](Dynamic &index_dyn)
 template <typename T>
 js::string Array<T>::_toString()
 {
-    std::string output = "";
-    std::vector<T> arr = *reference;
-    size_t size = arr.size();
+  std::string output;
+  std::vector<T> arr = *reference;
+  size_t size = arr.size();
 
-    if (size == 0)
-    {
-        return output;
-    }
+  if (size == 0) {
+    return output;
+  }
 
     size_t i = 0;
     for (; i < size - 1; i++)
@@ -89,10 +88,8 @@ js::number Array<T>::_toNumber()
     {
         return toNumber(list[0]);
     }
-    else
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
+
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 template <typename T>

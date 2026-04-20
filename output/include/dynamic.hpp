@@ -44,26 +44,22 @@ struct Dynamic
         {
             return __globalUndefined;
         }
-        else if(std::holds_alternative<js::array<Dynamic>>(value))
-        {
-            const auto& arr = std::get<js::array<Dynamic>>(value).reference;
-            const size_t size = arr->size();
+        if (std::holds_alternative<js::array<Dynamic>>(value)) {
+          const auto& arr = std::get<js::array<Dynamic>>(value).reference;
+          const size_t size = arr->size();
 
-            return index < size? arr->at(index) : __globalUndefined;
+          return index < size ? arr->at(index) : __globalUndefined;
         }
-        else if(std::holds_alternative<js::string>(value))
-        {
-            const js::string& str = std::get<js::string>(value);
-            const size_t size = str.length();
+        if (std::holds_alternative<js::string>(value)) {
+          const js::string& str = std::get<js::string>(value);
+          const size_t size = str.length();
 
-            // note that this wont be the same reference
-            // In js strings are immutable anyways
-            return index < size? Dynamic(js::string(1, str.at(index))) : __globalUndefined;
+          // note that this wont be the same reference
+          // In js strings are immutable anyways
+          return index < size ? Dynamic(js::string(1, str.at(index)))
+                              : __globalUndefined;
         }
-        else
-        {
-            return __globalUndefined;
-        }
+        return __globalUndefined;
     }
 
     /*

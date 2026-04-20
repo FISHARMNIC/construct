@@ -5,14 +5,16 @@
 
 js::string toString(js::number value)
 {
-    if (std::isnan(value))
-        return "NaN";
-    else if (value == +INFINITY)
-        return "Infinity";
-    else if (value == -INFINITY)
-        return "-Infinity";
-    else 
-        return fmt::format("{}", value);
+  if (std::isnan(value)) {
+    return "NaN";
+  }
+  if (value == +INFINITY) {
+    return "Infinity";
+  }
+  if (value == -INFINITY) {
+    return "-Infinity";
+  }
+  return fmt::format("{}", value);
 }
 
 js::string toString(js::string value)

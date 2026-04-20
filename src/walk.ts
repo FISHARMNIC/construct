@@ -83,7 +83,7 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   }
   catch (err) {
     success = false;
-    errInfo = err;
+    errInfo = err as ThrowInfo;
   }
 
   // console.log(">>>>>> out", nestLevel, nestLevel - 1);
@@ -151,6 +151,7 @@ export function walk(node: ESTree.Node, dummyUnsafe: boolean = false, useTypeLis
 
   const type = node.type;
   if (type in nodes) {
+    // @ts-ignore
     build.push(nodes[node.type](node, build, useTypeList));
   }
   else {

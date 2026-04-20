@@ -7,10 +7,7 @@ js::boolean toBoolean(js::number value)
     return (!std::isnan(value) && static_cast<bool>(value));
 }
 
-js::boolean toBoolean(js::string value)
-{
-    return value.length() != 0;
-}
+js::boolean toBoolean(js::string value) { return !value.empty(); }
 
 js::boolean toBoolean(js::boolean value)
 {

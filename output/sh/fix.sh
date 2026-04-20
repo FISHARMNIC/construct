@@ -1,11 +1,27 @@
 #!/bin/bash
 
-D=$(dirname "$0")
+D=$(cd "$(dirname "$0")" && pwd)
+LIBS_DIR="$D/../libs"
+
+CTIDYFLAGS=(
+  --fix
+  --fix-errors
+  --format-style=google
+  -checks=readability-*
+  --header-filter=''
+)
+
+COMPFLAGS=(
+  --
+  -std=c++20
+  -lfmt
+  -I/opt/homebrew/include
+  -L/opt/homebrew/lib
+)
 
 # sometimes it doesn't work fully the first time
-CTIDYFLAGS="--header-filter='' --fix --fix-errors --format-style=google -checks=readability-empty-loop-body -- -std=c++20"
-echo $CTIDYFLAGS
-clang-tidy $D/../out.cpp $CTIDYFLAGS
-clang-tidy $D/../out.cpp $CTIDYFLAGS
+clang-tidy "${CTIDYFLAGS[@]}" "$D/../out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
+clang-tidy "${CTIDYFLAGS[@]}" "$D/../out.cpp" $LIBS_DIR/*.cpp "${COMPFLAGS[@]}"
 
-$D/comp.sh
+echo "RUNNING COMPILER" 
+"$D/comp.sh"
