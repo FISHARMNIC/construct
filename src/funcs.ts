@@ -1,39 +1,20 @@
 /*
-!IMPORTANT! Alot of these are for function decs only, not arrows, etc. 
-    -> Specify the required types as .FunctionDeclaration insteaf of just .Function when necessary
 
-slightly outdated, but mostly correct:
+Function evaluation queue
 
-Expects:
-    * A list/queue of all function declarations / methods / etc
+idea:
+    keep trying function declarations until they can compile cleanly
+    if one fails because context is missing, push it back and retry later
 
-Returns
-    * A list of strings with the compiled code
-    * The indices of the returned list are the same as those of the given argument
-Does:
-
-until no more functions in queue
-    dequeue a function
-    trycompile(that function)
-
-function trycompile(function)
-    try(Evaluate function in dummy mode)
-    catch(
-    if failed on calling unknown function?
-        --> recurse(failed function)
-        --> keep evaling
-    else if failed on unknown variable or something else
-        --> push this to the back of the queue
-        --> quit 
-    )
-     
+template functions:
+    each call instantiates a version with a unique name
+    local types for each instance stay isolated via template type-lists
 
 */
 
 import * as ESTree from '@babel/types';
 import { buildInfo, changeNestLevel, replaceObj, stringTobuildInfo, walkBody, walkBodyDummy } from './walk';
 import { ASTerr_kill, err } from './ASTerr';
-import './extensions';
 import { CFunction, CTemplateFunction, ctype, getType, stackInfo } from './ctypes';
 import { cpp } from './cpp';
 import { fixxes } from './main';
@@ -42,13 +23,13 @@ import { cleanup } from './cleanup';
 import { getTemplateTypeListFromUniqueID, TypeList_t, normalTypeLists } from './iffy';
 
 interface FunctionQueueElement {
-    func: ESTree.Function;     // @todo make this FunctionDeclaration
-    evaluatedCode: replaceObj; // used for .replace
+    func: ESTree.FunctionDeclaration;
+    evaluatedCode: replaceObj;
 };
 
 interface evalInfo {
     bInfo: buildInfo[],
-    successfull: boolean,
+    successful: boolean,
     returnType: ctype,
 };
 
@@ -68,41 +49,31 @@ cleanup.funcs = function () {
 function template_getUniqueID(): number {
     return namingCounter++;
 }
-/**
- * @returns A unique identifier
- */
-function template_newName(uniqueID: number): string // @todo this is lazy. Make one for each template function
-{
+// keep names simple and deterministic for now
+function template_newName(uniqueID: number): string {
     return `_version${uniqueID}__`;
 }
 
-/**
- * Attempts to evaluate all functions in the queue. If some fail, keep them in the queue for next time
-*/
-export function evaluateAllFunctions(): string[] {
+export function evaluateAllFunctions(): void {
 
     alreadyTried = [];
 
-    while (unevaledFuncs.length != 0) {
+    while (unevaledFuncs.length !== 0) {
         const fn = unevaledFuncs.pop()!;
 
+        // if we cycle back to something we already retried this round, stop and keep leftovers queued
         if (alreadyTried.includes(fn)) {
-            unevaledFuncs.pushFront(fn);
+            unevaledFuncs.unshift(fn);
             break;
         }
 
         const info: evalInfo = evaluateSingle(fn);
 
-        // if failed, push it back in
-        if (!info.successfull) {
-            unevaledFuncs.pushFront(fn);
+        if (!info.successful) {
+            unevaledFuncs.unshift(fn);
             alreadyTried.push(fn);
         }
-
-        // @todo check loops, for now if its never fixed then it will just go forever
     }
-
-    return [""];
 }
 
 /**
@@ -128,103 +99,80 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
         })
 
         if (!templateFn) {
-            const name = (funcInfo.func as ESTree.FunctionDeclaration).id?.name;
+            const name = funcInfo.func.id?.name;
             if (!name) {
                 err(`[INTERNAL] :: function has no name`);
             }
 
-            // generate the forward definition for the function
-            // @todo this is messy because callAndEvaluateTemplateFunction does this internally
             fixxes.pre.push(cpp.functions.generateDef({ name, return: singleReturnType }, []) + ';');
-        }
-        else {
-            // obj.vars.forEach((variable: ESTree.Identifier): void => {
-            //     cpp.variables.remove(variable);
-            // })
         }
 
         return singleReturnType;
     }
 
-    // Doesnt nest again if the parent is handeling the scope
+    // Does not nest again if the parent is handling the scope
     if (changeNest)
         changeNestLevel(1);
 
     let succeeded = false;
     let output: buildInfo[] = [];
     let returnType: ctype = cpp.types.VOID;
+    const node = funcInfo.func;
+    let allReturnStatements: buildInfo[] = [];
 
-    if (ESTree.isFunctionDeclaration(funcInfo.func)) {
-        const node = funcInfo.func as ESTree.FunctionDeclaration;
-        let allReturnStatements: buildInfo[] = [];
+    console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
 
-        console.log(`[funcs] ATTEMPTING EVAL ON "${node.id?.name}"`);
+    const out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean): void => {
+        if (success && forceDummyOnly) {
+            // template path only: evaluate returns from dummy walk directly
+            allReturnStatements = obj.returnStatements;
+            returnType = beforeDeletefn(obj, allReturnStatements)
+        }
+    }, useTypeList);
 
-        // try to evaluate the function
-        const out = walkBodyDummy(node.body.body, (obj: stackInfo, success: boolean): void => {
-            if (success && forceDummyOnly) {
-                // If it succeddes, and the function is never to be walked normally, evaluate return types now (beforeDeleteFn)
-                allReturnStatements = obj.returnStatements;
-                returnType = beforeDeletefn(obj, allReturnStatements)
-            }
-        }, useTypeList);
+    if (out.success) {
+        console.log(`[funcs] -> SUCCESS on eval "${node.id?.name}"`);
 
-
-        if (out.success) {
-            console.log(`[funcs] -> SUCCESS on eval "${node.id?.name}"`);
-
-            // if it gets here, it succeeded
-            if (forceDummyOnly) {
-                output = out.info;
-            }
-            else {
-                // if not only walking in dummy mode, walk for reals this time 
-                // @todo is this really needed? Can just leave in dummy mode? because local scope cant cause global effects? or what?
-                output = walkBody(node.body.body, {
-                    useTypeList,
-                    beforeDelete: (obj: stackInfo): void => {
-                        allReturnStatements = obj.returnStatements;
-                        returnType = beforeDeletefn(obj, allReturnStatements);
-                    }
-                },
-                );
-            }
-
-            const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates().get(funcInfo.func.id!);
-            const normalMatch: CFunction | undefined = cpp.functions.allNormal().get(funcInfo.func.id!);
-
-            // Mark the functions return type if its a normal (non-template) function
-            // Template functions each have their own return type
-            if (normalMatch) { // could use !templateFn here too
-                normalMatch.return = returnType;
-            }
-            else if (!templateMatch || !(funcInfo.func.id)) {
-                // should never reach here
-                ASTerr_kill(funcInfo.func, `[INTERNAL] Critical failiure. Unknown function "${funcInfo.func.id?.name}"`);
-            }
-
-            funcInfo.evaluatedCode.with = output;
-            funcInfo.evaluatedCode.ready = true;
-
-            if(!funcInfo.func.id)
-            {
-                ASTerr_kill(node, `[INTERNAL] Function has no id: "${funcInfo.func}"`)
-            }
-
-            // generate the call expression
-            // @todo this is messy because callAndEvaluateTemplateFunction does this internally
-            if (!templateFn)
-                funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({ return: returnType, name: funcInfo.func.id!.name! }, []) + '{';
-
-            succeeded = true;
+        if (forceDummyOnly) {
+            output = out.info;
         }
         else {
-            console.log(`[funcs] -> FAILIURE on eval "${node.id?.name}"`);
-            succeeded = false;
+            // normal path: walk again in real mode so scoped vars/functions are persisted
+            output = walkBody(node.body.body, {
+                useTypeList,
+                beforeDelete: (obj: stackInfo): void => {
+                    allReturnStatements = obj.returnStatements;
+                    returnType = beforeDeletefn(obj, allReturnStatements);
+                }
+            });
         }
+
+        const templateMatch: CTemplateFunction | undefined = cpp.functions.allTemplates().get(node.id!);
+        const normalMatch: CFunction | undefined = cpp.functions.allNormal().get(node.id!);
+
+        if (normalMatch) {
+            normalMatch.return = returnType;
+        }
+        else if (!templateMatch || !node.id) {
+            ASTerr_kill(node, `[INTERNAL] Critical failure. Unknown function "${node.id?.name}"`);
+        }
+
+        funcInfo.evaluatedCode.with = output;
+        funcInfo.evaluatedCode.ready = true;
+
+        if (!node.id) {
+            ASTerr_kill(node, `[INTERNAL] Function has no id: "${node}"`)
+        }
+
+        if (!templateFn) {
+            funcInfo.evaluatedCode.surroundings![0] = cpp.functions.generateDef({ return: returnType, name: node.id.name }, []) + '{';
+        }
+
+        succeeded = true;
     }
     else {
-        ASTerr_kill(funcInfo.func, `Unable to process function type "${funcInfo.func.type}"`);
+        console.log(`[funcs] -> FAILURE on eval "${node.id?.name}"`);
+        succeeded = false;
     }
 
     if (changeNest)
@@ -232,24 +180,21 @@ function evaluateSingle(funcInfo: FunctionQueueElement, { changeNest = true, for
 
     return {
         bInfo: output,
-        successfull: succeeded,
+        successful: succeeded,
         returnType
     };
 }
 
-// Helper for `evaluateTemplateFunction`. This just wraps evaluateSingle.
-function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeList_t): evalInfo {
+function evaluateSingleTemplate_helper(func: ESTree.FunctionDeclaration, useTypeList: TypeList_t): evalInfo {
     const fqe: FunctionQueueElement = {
         func, evaluatedCode: {
             ready: false
         }
     };
 
-    /*
-    Note: it never evaluates in real mode (forceDummyOnly: true) since all local variables will have the same bindings on next template instance
-    */
+    // never evaluate template instance in full mode; param bindings are reused and would clash
     const res = evaluateSingle(fqe, { changeNest: false, forceDummyOnly: true, templateFn: true, useTypeList });
-    if (!res.successfull) {
+    if (!res.successful) {
         ASTerr_kill(func, `[CRITICAL ERROR] Unable to evaluate template function`);
     }
 
@@ -264,24 +209,7 @@ function evaluateSingleTemplate_helper(func: ESTree.Function, useTypeList: TypeL
  * @returns 
  */
 export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, givenParams: buildInfo[]): buildInfo {
-    /*
-    @todo:
-        * -- DONE -- create temporary variables that are the names of the params
-            -> Binding is the param in the function itself
-            -> Just pass the funcInfo.params[N] so bindings work correctly
-        * -- DONE -- Generate the header and footer of the overload
-            -> give name like <function>_version1__
-        * -- DONE -- Compile code using those temporaries
-    @todo LATER:
-            * Store the functions that have already been compiled with types A, B, etc...
-            * See if new call uses params already compiled for
-                -> Use those instead of generating new ones with the same types
-            * DO NOT DO: generate better names like bob_returns_number_takes_number_string
-                -> using template ID system to track their identifier
-                - actually maybe can do but dont mess with getID
-    */
-
-    if(givenParams.length != funcInfo.params.length)
+    if(givenParams.length !== funcInfo.params.length)
     {
         ASTerr_kill(funcInfo.func, `Function "${funcInfo.name}" given ${givenParams.length} arguments but expected ${funcInfo.params.length}`);
     }
@@ -294,59 +222,39 @@ export function evaluateAndCallTemplateFunction(funcInfo: CTemplateFunction, giv
     const myID: number = template_getUniqueID();
     const scopedTypeList = getTemplateTypeListFromUniqueID(myID);
 
-    // notes the info about the parameters 
-    // treats them as variables for simplicity
-    // note that this shouldn't be run in dummy mode since at this point everything should be known
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
         const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
-            // no need to read the return since its not actually a variable
-            // console.log(givenParams)
             cpp.variables.create2(param, param.name, value, { forceNoForward: true, useTypeList: scopedTypeList });
-            // type may be iffy if param is reassigned
             const ptype: ctype = getType(cpp.variables.all().get(param)!);
 
-            // generates the parameter as in: <type> <name>
             parameter_genList.push(`${ptype} ${param.name}`);
             argumentTypes.push(ptype);
         }
         else {
-            ASTerr_kill(param, `@todo unknown parameter type "${param.type}"`)
+            ASTerr_kill(param, `Unsupported parameter type "${param.type}"`)
         }
     });
 
-    // enterDummyMode();
-    // changeNestLevel(1);
-
-    // evaluate the template functions body
     const evaluatedInfo: evalInfo = evaluateSingleTemplate_helper(funcInfo.func, scopedTypeList);
     const evaluatedFunc: buildInfo[] = evaluatedInfo.bInfo;
 
-    const fnName = funcInfo.name + template_newName(myID); // @todo maybe dont even need this bc c++ has native overloads?? Or maybe better for ambiguity idk
+    const fnName = funcInfo.name + template_newName(myID);
 
-    // generate the call expression as in: <function name>(<argument list>)
-    // @todo use cpp.functions._call
     const callExpr = cpp.functions._call({ name: fnName, return: evaluatedInfo.returnType }, givenParams, argumentTypes);
 
-    // generate the definition as in: <function name>(<parameter list>)
-    // used for forward def and actual dec
     const fnDef = cpp.functions.generateDef({ name: fnName, return: evaluatedInfo.returnType }, parameter_genList);
 
-    // forward def
     fixxes.pre.push(fnDef + ';');
 
-    // actual function declaration
     fixxes.post.push(stringTobuildInfo(fnDef + "{"), ...evaluatedFunc, stringTobuildInfo("}"));
 
-    // get rid of all of the parameters, since they were stored as variables
     funcInfo.params.forEach((param: ESTree.FunctionParameter, i: number): void => {
-        const value: buildInfo = givenParams[i];
         if (ESTree.isIdentifier(param)) {
             cpp.variables.remove(param);
-            parameter_genList.push(`${value.info.type} ${param.name}`)
         }
         else {
-            ASTerr_kill(param, `@todo not sure how to get rid of param of type "${param.type}"`)
+            ASTerr_kill(param, `Unsupported parameter type "${param.type}"`)
         }
     });
 

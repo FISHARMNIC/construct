@@ -8,7 +8,7 @@ import fs from 'fs';
 import * as ESTree from '@babel/types';
 import { parse, ParseResult } from '@babel/parser';
 
-/// @todo get rid of sync to parse multiple inputs at one time
+// sync for now since compile flow is single-input and linear
 export default function parseAST(fileDir: string): ParseResult<ESTree.File> {
     const CODE: string = fs.readFileSync(fileDir, 'utf-8');
     const ast = parse(CODE, {

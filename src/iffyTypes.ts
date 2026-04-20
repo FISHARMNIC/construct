@@ -7,7 +7,7 @@ Takes a multiple types and returns the best type that encompasses all those
 
 for now, just the basic types and the regular iffy
 
-@todo in the future there should be different iffys for string/number, object/array, etc to reduce the std::variant overhead
+In the future this could split dynamic types by domain (for example scalar/object) to reduce std::variant overhead.
 
 */
 export function typeList2type(types: ctype[]): ctype
@@ -26,7 +26,6 @@ export function typeList2type(types: ctype[]): ctype
 
     const isDynArr = types.every(cpp.types.isArray);
 
-    // @todo optimize for different iffy types
     return isDynArr? cpp.types.ARRAY(cpp.types.IFFY) : cpp.types.IFFY;
 }
 

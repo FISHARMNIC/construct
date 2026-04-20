@@ -25,112 +25,47 @@ import { TypeList_t } from './iffy';
 export default {
     VariableDeclaration(node: ESTree.VariableDeclaration, build: buildInfo[], useTypeList: TypeList_t): buildInfo {
         const kind = node.kind; // let, const, var
-        // let myType = cpp.types.;
+        // supports multi-declaration now: let a=1, b=2;
+        const declarations: string[] = [];
+        let lastType: ctype = cpp.types.VOID;
 
-        if (node.declarations.length != 1) {
-            ASTerr_kill(node, "@todo multiple declarations not implemented");
-        }
-        else {
-            for (const dec of node.declarations) {
-                // each declaration can have multiple declarators: "let a = 2,b = 10";
-                const ident = dec.id;
-                if (!ESTree.isIdentifier(ident)) {
-                    ASTerr_kill(node, "@todo non-simple variable declaration (destructuring?) not implemented");
-                }
-                else {
-                    const name = ident.name;
-
-                    const value_in: ESTree.Expression | null | undefined = dec.init;
-
-                    if (!(value_in === undefined || value_in === null)) {
-                        //console.log(value_in);
-                        const value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
-
-                        const compiled = cpp.variables.create2(ident, name, value, { constant: kind === "const", useTypeList });
-
-                        const ret: buildInfo = {
-                            content: compiled,
-                            info: {
-                                type: value.info.type
-                            }
-                        };
-
-
-                        return ret;
-                    }
-                    else {
-                        ASTerr_kill(ident, "@todo Variable has no value");
-                    }
-
-                    //console.log(dec);
-
-                    // const value_in: ESTree.Expression | null | undefined = dec.init;
-
-                    // let value: buildInfo = {
-                    //     content: "",
-                    //     info: {
-                    //         type: cpp.types.IFFY
-                    //     }
-                    // };
-
-
-                    //     // given value: "let a = 10" as opposed to "let a"
-                    //     if (!(value_in === undefined || value_in === null)) {
-                    //         //console.log(value_in);
-                    //         value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
-
-
-                    //             if (value.info.type) {
-                    //                 myType = value.info.type;
-                    //             }
-
-                    //             if (iffy(ident, myType)) {
-                    //                 myType = cpp.types.IFFY;
-                    //             }
-
-                    //     }
-
-                    // //console.log("CREATING", myType, name, value)
-                    // let compiled = cpp.variables.create(ident, myType, name, value.content, kind === "const");
-
-                    //console.log(compiled);
-
-                    // let ret: buildInfo = {
-                    //     content: compiled,
-                    //     info: {
-                    //         type: myType
-                    //     }
-                    // };
-
-
-                    // return ret;
-                }
+        for (const dec of node.declarations) {
+            const ident = dec.id;
+            if (!ESTree.isIdentifier(ident)) {
+                ASTerr_kill(node, "Non-simple variable declaration (destructuring) is not implemented");
             }
 
-            // Should never get here. 
-            // @todo Remove this when multiple decs implemented
-            ASTerr_kill(node, "Inconcievable! ;)");
+            const value_in: ESTree.Expression | null | undefined = dec.init;
+            if (value_in === undefined || value_in === null) {
+                ASTerr_kill(ident, `Variable "${ident.name}" must have an initializer`);
+            }
+
+            const value = walk_requireSingle(value_in, "Assigning multiple values to single variable");
+            const compiled = cpp.variables.create2(ident, ident.name, value, { constant: kind === "const", useTypeList });
+
+            declarations.push(compiled);
+            lastType = value.info.type;
         }
+
+        return {
+            content: declarations.join(";\n"),
+            info: {
+                type: lastType
+            }
+        };
     },
 
     MemberExpression(node: ESTree.MemberExpression): buildInfo {
-
-        // err(`@todo MemberExpression needs to be reworked`);
-
-        // @todo !HERE! !IMPORTANT! just evaluate the binding from there and dont need to store any of that
+        // right now this is only array/string style access with computed index (obj[idx])
         if (!node.computed) {
-            ASTerr_kill(node, `@todo dot property access not implemented`);
+            ASTerr_kill(node, `Dot property access is not implemented`);
         }
         else if (!ESTree.isIdentifier(node.object)) {
-            // just need to walk
-            ASTerr_kill(node.object, `@todo complex base type not supported yet`);
+            ASTerr_kill(node.object, `Complex base type is not supported yet`);
         }
         else {
             const base: ESTree.Identifier = node.object as ESTree.Identifier;
             const index: buildInfo = walk_requireSingle(node.property);
-
-            // @todo note i dont know how its going to work with prototype etc
-            // @todo eventually all methods will have to be implemented as a part of the class
 
             const existingVar = cpp.variables.getSafe(base);
 
@@ -151,18 +86,14 @@ export default {
 
         if (ESTree.isMemberExpression(left)) { // a[X] or a.X
             if (!left.computed) {
-                ASTerr_kill(left, `@todo dot property access not implemented`);
+                ASTerr_kill(left, `Dot property access is not implemented`);
             }
             else if (!ESTree.isIdentifier(left.object)) {
-                // @todo just need to walk
-                ASTerr_kill(left.object, `@todo complex base type not supported yet`);
+                ASTerr_kill(left.object, `Complex base type is not supported yet`);
             }
             else {
                 const base: ESTree.Identifier = left.object;
                 const index: buildInfo = walk_requireSingle(left.property);
-
-                // @todo note i dont know how its going to work with prototype etc
-                // @todo eventually all methods will have to be implemented as a part of the class
 
                 const existingVar = cpp.variables.getSafe(base);
 
@@ -170,28 +101,6 @@ export default {
             }
         }
         else if (ESTree.isIdentifier(left)) {
-            // used when "iffy" is looking for reassignments
-            // let lookingFor = dummyWalkPauseOnSet.at(-1);
-            // if (lookingFor)
-            //     if (inDummyMode() && lookingFor.find == binding) {
-            //         if (!lookingFor.location)
-            //             ASTerr_kill(left, "Error");
-
-            //         if (lookingFor.location == left.loc) {
-            //             console.log(`----- FOUND what iffy was looking for! : "${left.name}" -----`);
-
-            //             let value = walk_requireSingle(node.right, "Assigning multiple values to a variable");
-
-            //             ASTinfo_throw({
-            //                 type: ThrowInfoTypes.IdentFound,
-            //                 contents: {
-            //                     bInfo: value
-            //                 }
-            //             })
-
-            //         }
-            //     }
-
             const existingVar = cpp.variables.getSafe(left);
 
             const reassignment: string = cpp.variables.reassign(left, existingVar, rval);
@@ -206,7 +115,7 @@ export default {
 
         }
         else {
-            ASTerr_kill(left, `@todo unable to handle LHS of assignment as "${left.type}"`);
+            ASTerr_kill(left, `Unable to handle LHS of assignment as "${left.type}"`);
         }
 
     },
@@ -244,7 +153,6 @@ export default {
         const right = walk_requireSingle(node.right, "Unsure what to do with binary expression (got multiple values, expected 1)");
         const operator = node.operator;
 
-        // @todo return type based on types of left and right
         const cotype = coerce(node, left.info.type, right.info.type);
         const str = cpp.cast.static(cotype, left.content + node.operator + right.content, cotype);
         return {
@@ -266,19 +174,19 @@ export default {
         const functionCalled: ESTree.Expression = expression.callee;
 
         if (!ESTree.isIdentifier(functionCalled))
-            // @todo just do a walk
-            ASTerr_kill(functionCalled, `@todo unable to call function of type ${functionCalled.type}`);
+            ASTerr_kill(functionCalled, `Unable to call function of type ${functionCalled.type}`);
 
         const fname: string = functionCalled.name;
 
-        /// debug
+        // special builtin mapped straight to cout
         if (fname === "dbgprint") {
+            const firstArg = expression.arguments[0];
+            if (!firstArg || !ESTree.isExpression(firstArg)) {
+                ASTerr_kill(expression, `dbgprint expects one expression argument`);
+            }
+
             return {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                // @todo for will get compiler error if you dont just put a single item
-                // it expects an identifier
-                content: `std::cout << ${walk_requireSingle(expression.arguments[0]).content} << std::endl`,
+                content: `std::cout << ${walk_requireSingle(firstArg).content} << std::endl`,
                 info: {
                     type: cpp.types.NUMBER
                 }
@@ -293,14 +201,13 @@ export default {
                     return walk_requireSingle(value, `Expected single value in parameter`);
                 }
                 else {
-                    ASTerr_kill(value, `@todo unimplemented parameter type "${value.type}"`)
+                    ASTerr_kill(value, `Unsupported parameter type "${value.type}"`)
                 }
             })
 
             const binding = fnIdent2binding(fnID);
             if (binding == undefined) {
-                // @todo maybe make this dont kill? - same thing as var use without linear control flow
-                ASTerr_kill(fnID, `@todo Undeclared function "${fname}"`);
+                ASTerr_kill(fnID, `Undeclared function "${fname}"`);
             }
             else if (cpp.functions.allTemplates().has(binding)) { // template function
                 console.log(`[tfunc] binding ${functionCalled.name} ==> ${binding.name}`)
@@ -317,11 +224,17 @@ export default {
                     return id === binding
                 })
                 if (findIndex() !== -1) {
-                    evaluateAllFunctions(); // @todo don't need to do all. Just add new param that lets it just find one, and returns success or not
-                    if (findIndex() !== -1) // see comment above on how this could be opt
+                    // function is known but deferred; try resolving queue now
+                    evaluateAllFunctions();
+                    if (findIndex() !== -1)
                     {
                         ASTerr_kill(fnID, `Was not able to evaluate function "${funcData.name}" at call time`);
                     }
+                }
+
+                if (evaluatedArguments.length !== 0) {
+                    // non-template functions are currently zero-param only
+                    ASTerr_kill(fnID, `Function "${funcData.name}" does not take arguments`);
                 }
 
                 return cpp.functions._call(funcData, [], []);
@@ -329,14 +242,6 @@ export default {
             else {
                 ASTerr_kill(fnID, `Unknown function "${fnID.name}"`);
             }
-
-            //console.log(Array.from(allTemplateFuncs.values())[0]);
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //// @ts-expect-error
-            //true;
-
-            // ASTerr_kill(expression, "@todo call expressions not implemented (only dbgprint)");
         }
     },
 
@@ -351,7 +256,7 @@ export default {
                 return this[expression.type](expression, build);
             }
             else {
-                ASTerr_kill(expression, `@todo expression type ${expression.type} not implemented`);
+                ASTerr_kill(expression, `Expression type ${expression.type} is not implemented`);
             }
         }
     },
@@ -386,7 +291,7 @@ export default {
             };
         }
         else {
-            ASTerr_throw(node, `@todo identifier "${node.name}" is not declared or is unimplemented`);
+            ASTerr_throw(node, `Identifier "${node.name}" is not declared or is not implemented`);
         }
     },
 
@@ -422,10 +327,10 @@ export default {
                 arrayElements.push(walk_requireSingle(element, "Expected single element in array"));
             }
             else if (ESTree.isSpreadElement(element)) {
-                ASTerr_kill(node, `@todo array spread not implemented`);
+                ASTerr_kill(node, `Array spread is not implemented`);
             }
             else {
-                ASTerr_kill(node, `@todo value in array is null?`);
+                ASTerr_kill(node, `Array literal contains an unsupported null element`);
             }
         })
 
@@ -453,8 +358,6 @@ export default {
         };
     }
 }
-
-// @todo move these to another file
 
 /**
  * Walks an expression and casts to a boolean 

@@ -50,7 +50,8 @@ export function ASTerr_kill(node: ESTree.Node, ...args: string[]): never
 
 export function ASTinfo_throw(info: ThrowInfo)
 {
-    safeThrow(info); // @todo this is not good practice. Throw a subclass of error that removes the Error: XXX prefix
+    // this intentionally throws structured info (not Error) so dummy walkers can branch on type
+    safeThrow(info);
 }
 
 // General error, kills the program

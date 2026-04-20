@@ -17,7 +17,6 @@ import { analyze } from 'eslint-scope';
 import { cpp } from './cpp';
 import { evaluateAllFunctions, unevaledFuncs } from './funcs';
 import { err } from './ASTerr';
-import './extensions';
 import { getType } from './ctypes';
 import { cleanAll, cleanup } from './cleanup';
 
@@ -50,7 +49,7 @@ cleanup.main = function () {
     };
 }
 
-// @todo clean this up and put in other file or something
+// keep log override local here for now since walker nesting level lives in this file graph
 // Overwrites console.log to display indentation
 const saveLog = console.log;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,7 +120,7 @@ function begin(justWalk: boolean = false): void {
         let ind = output.findIndex((value: buildInfo): boolean => "defer" in value);
         if (ind == -1) ind = output.length;
         ind++;
-        output.pushFront({ content: `int main() {\n_js_init_();\n`, info: { type: cpp.types.FUNCTION } });
+        output.unshift({ content: `int main() {\n_js_init_();\n`, info: { type: cpp.types.FUNCTION } });
         output.splice(ind, 0, { content: "return 0;\n}", info: { type: cpp.types.FUNCTION } });
         output.push(...fixxes.post);
 
@@ -146,9 +145,7 @@ function begin(justWalk: boolean = false): void {
 
         // Define all global variables
         cpp.variables.globals().forEach((variable) => {
-            // console.log("!!!!!", variable)
-            // @todo ? Add undefined DO NOT MAKE DEFAULT UNDEFINED since the value may be defined, just only give default for let
-            // @todo !important! maybe make two types of "let", one that is only numbers or strings, one that is objects and arrays, and one that is everything
+            // if variable became dynamic across passes, seed with 0-cast so c++ declaration is always valid
             ostr += `${getType(variable)} ${variable.name} ${(getType(variable) == cpp.types.IFFY) ? "= " + cpp.cast.static(cpp.types.IFFY, "0", cpp.types.NUMBER) : ""};\n`;
         })
 

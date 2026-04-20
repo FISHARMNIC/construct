@@ -9,20 +9,17 @@ export interface CVariable {
     possibleTypes: Set<ctype>,
     name: string,
     constant: boolean,
-    // isList: boolean //@todo change this to store if its a variable, function, list, etc
 }
 
 export function addType(variable: CVariable, type: ctype): void
 {
+    // mark that we need another pass only when there is genuinely new type info
     if(!variable.possibleTypes.has(type))
     {
         newTypeInformation();
     }
 
     variable.possibleTypes.add(type);
-
-    // @todo store the types that changed here for faster difference resolving before next pass
-    // cant just force do it. need to check that its actually new first or else whats the point of this function
 }
 export function getType(variable: CVariable): ctype
 {
@@ -45,7 +42,7 @@ export interface CFunction {
  * Function WITH parameters
  */
 export interface CTemplateFunction {
-    func: ESTree.Function,
+    func: ESTree.FunctionDeclaration,
     params: ESTree.FunctionParameter[],
     name: string,
 }

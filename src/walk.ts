@@ -92,9 +92,8 @@ export function walkBodyDummy(body: ESTree.Statement[], beforeDelete?: (obj: sta
   if (beforeDelete)
     beforeDelete(lastObj, success, errInfo);
 
-  ///  @todo make this more dynamic. Just instead of it being an Identifier[] also hold the delete function
-
   // clean up all temporary stuff
+  // note: these were tracked while in dummy mode via tempStack bookkeeping
   lastObj.funcs.forEach((value: ESTree.Identifier): void => {
     cpp.functions.allNormal().delete(value);
   });
@@ -236,13 +235,12 @@ export function walkInlineOrBody(body: ESTree.Statement, { dummy = false, unsafe
   if (ESTree.isExpressionStatement(body)) {
       return walk(body.expression, dummy, useTypeList);
   }
-  else if(ESTree.isBlockStatement(body)) {
+  else if (ESTree.isBlockStatement(body)) {
     return walkBody(body.body, { dummy, unsafe, useTypeList, beforeDelete });
   }
-  else
-  {
-    ASTerr_kill(body, `@todo [walkInlineOrBody] unable to handle statement of type ${body.type}`)
-  }
+
+  // fallback for single-line control-flow statements that are still statements (return, if, while, etc)
+  return walk(body, dummy, useTypeList);
 }
 
 
