@@ -164,6 +164,7 @@ js::dynamic operator+(const OtherT &first, const js::dynamic &second_)
 DYN_OVERLOAD_FOR(-)
 DYN_OVERLOAD_FOR(*)
 DYN_OVERLOAD_FOR(/)
+// DYN_OVERLOAD_FOR(%)
 
 js::dynamic operator+(const js::dynamic &first, const js::dynamic &second);
 

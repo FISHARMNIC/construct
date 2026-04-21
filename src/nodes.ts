@@ -154,7 +154,9 @@ export default {
         const operator = node.operator;
 
         const cotype = coerce(node, left.info.type, right.info.type);
-        const str = cpp.cast.static(cotype, left.content + node.operator + right.content, cotype);
+
+        const str = cpp.cast.static(cotype, operator == '%' ? `std::fmod(${left.content},${right.content})` : `${left.content} ${operator} ${right.content}`, cotype);
+        
         return {
             content: str,
             info: {

@@ -3,7 +3,7 @@ import { cpp } from './cpp';
 import { ASTerr_kill } from './ASTerr';
 import { ctype } from './ctypes';
 
-const supportedOps = new Set(['+', '-', '*', '/']);
+const supportedOps = new Set(['+', '-', '*', '/', '%']);
 const supportedComps = new Set(['<', '>', '<=', '>=', '==', '!=']);
 
 export function coerce(node: ESTree.BinaryExpression, leftType: ctype, rightType: ctype): ctype

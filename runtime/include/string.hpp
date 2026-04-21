@@ -47,4 +47,11 @@ js::number operator/(const A& left, const js::string& right);
 template <JSNumeric A>
 js::number operator/(const js::string& left, const A& right);
 
+// template <JSNumeric A>
+// js::number operator%(const A& left, const js::string& right);
+
+// template <JSNumeric A>
+// js::number operator%(const js::string& left, const A& right);
+
+
 #endif // __STRING_H__

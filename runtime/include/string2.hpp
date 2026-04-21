@@ -54,4 +54,16 @@ js::number operator/(const js::string& left, const A& right)
     return stod_noexep(left) / right;
 }
 
+// template <JSNumeric A>
+// js::number operator%(const A& left, const js::string& right)
+// {
+//     return left % stod_noexep(right);
+// }
+
+// template <JSNumeric A>
+// js::number operator%(const js::string& left, const A& right)
+// {
+//     return stod_noexep(left) % right;
+// }
+
 #endif // __STRING_H__
