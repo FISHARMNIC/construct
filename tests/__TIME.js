@@ -6,19 +6,23 @@ while(n < 100000) {
     let d = 2;
     
     while(d * d <= n) {
-        // let dStr = d + "";
-        // let dCoerced = dStr * 1;
-        // let remainder = n % dCoerced;
-        // let remStr = remainder + "";
-        // let remNum = remStr * 1;
-        // if(remNum == 0) {
-        //     isPrime = 0;
-        // }
-        let remainder = n % d;
-        if(remainder == 0)
-        {
+
+        let dStr = d + "";
+        let dCoerced = dStr * 1;
+        let remainder = n % dCoerced;
+        let remStr = remainder + "";
+        let remNum = remStr * 1;
+        if(remNum == 0) {
             isPrime = 0;
         }
+
+        // let remainder = n % d;
+        // if(remainder == 0)
+        // {
+        //     isPrime = 0;
+        // }
+
+
         
         d = d + 1;
     }
@@ -31,5 +35,4 @@ while(n < 100000) {
 }
 
 // const dbgprint = console.log;
-
 dbgprint(primeCount);
